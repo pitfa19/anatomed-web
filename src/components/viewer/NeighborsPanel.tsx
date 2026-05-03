@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Crosshair, Eye, EyeOff, Minus, Plus } from 'lucide-react';
+import { Check, Crosshair, Eye, EyeOff, Minus, Plus } from 'lucide-react';
 import type {
   Neighbor,
   NeighborMap,
@@ -114,7 +114,7 @@ export default function NeighborsPanel({
         )}
       </div>
 
-      <div className="flex flex-wrap gap-1">
+      <div className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:flex-wrap lg:overflow-visible lg:pb-0">
         {groups.map((g) => {
           const isSel = g.system.id === activeGroup.system.id;
           const ticked = g.rows.filter((r) => extras.has(r.part.id)).length;
@@ -124,7 +124,7 @@ export default function NeighborsPanel({
               type="button"
               onClick={() => setSelected(g.system.id)}
               className={
-                'flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] transition-colors ' +
+                'flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors lg:px-2 lg:py-1 lg:text-[11px] ' +
                 (isSel
                   ? 'border-accent bg-accent/15 text-text-strong'
                   : 'border-border bg-surface text-text-muted hover:bg-surface-2 hover:text-text-strong')
@@ -156,9 +156,10 @@ export default function NeighborsPanel({
             disabled={!canCollapse}
             title="Skupi posljednji sloj"
             aria-label="Skupi sloj"
-            className="flex size-6 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted"
+            className="flex size-9 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted lg:size-6"
           >
-            <Minus size={12} />
+            <Minus size={14} className="lg:hidden" />
+            <Minus size={12} className="hidden lg:block" />
           </button>
           <button
             type="button"
@@ -166,9 +167,10 @@ export default function NeighborsPanel({
             disabled={!canExpand}
             title="Proširi za jedan sloj"
             aria-label="Proširi sloj"
-            className="flex size-6 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted"
+            className="flex size-9 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted lg:size-6"
           >
-            <Plus size={12} />
+            <Plus size={14} className="lg:hidden" />
+            <Plus size={12} className="hidden lg:block" />
           </button>
         </div>
       </div>
@@ -183,26 +185,31 @@ export default function NeighborsPanel({
             <li key={part.id}>
               <div
                 className={
-                  'group flex items-start gap-2 rounded-lg border px-2 py-1.5 text-sm transition-colors ' +
+                  'group flex min-h-11 items-stretch gap-1 rounded-lg border text-sm transition-colors lg:min-h-0 ' +
                   (ticked
                     ? 'border-accent/50 bg-accent/10'
                     : 'border-transparent hover:bg-surface-2')
                 }
               >
-                <input
-                  type="checkbox"
-                  className="mt-1 cursor-pointer"
-                  checked={ticked}
-                  onChange={() => onToggle(part.id)}
-                  style={{ accentColor: sys?.tint }}
-                  aria-label={`Prikaži ${part.name_en} u 3D`}
-                />
                 <button
                   type="button"
-                  onClick={() => onFocus(part)}
-                  title="Postavi kao izabrano"
-                  className="flex min-w-0 flex-1 cursor-pointer items-start gap-1 text-left"
+                  onClick={() => onToggle(part.id)}
+                  aria-pressed={ticked}
+                  aria-label={ticked ? `Ukloni ${part.name_en}` : `Dodaj ${part.name_en}`}
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-l-lg px-2 py-1 text-left active:bg-accent/15"
                 >
+                  <span
+                    className={
+                      'flex size-5 shrink-0 items-center justify-center rounded border transition-colors lg:size-4 ' +
+                      (ticked
+                        ? 'border-transparent text-bg'
+                        : 'border-border bg-surface text-transparent')
+                    }
+                    style={ticked ? { backgroundColor: sys?.tint ?? 'var(--accent)' } : undefined}
+                    aria-hidden="true"
+                  >
+                    <Check size={12} strokeWidth={3} />
+                  </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-text-strong">{part.name_en}</span>
                     {part.name_lat && part.name_lat !== part.name_en && (
@@ -211,10 +218,7 @@ export default function NeighborsPanel({
                       </span>
                     )}
                   </span>
-                  <Crosshair
-                    size={12}
-                    className="mt-1 shrink-0 text-text-muted opacity-0 transition-opacity group-hover:opacity-100"
-                  />
+                  <span className="shrink-0 text-[10px] text-text-muted">{distCm} cm</span>
                 </button>
                 {ticked && (
                   <button
@@ -222,12 +226,22 @@ export default function NeighborsPanel({
                     onClick={() => onToggleLabels(part.id)}
                     title={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
                     aria-label={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
-                    className="mt-0.5 shrink-0 rounded p-0.5 text-text-muted hover:text-text-strong"
+                    className="flex size-9 shrink-0 items-center justify-center rounded text-text-muted hover:text-text-strong lg:size-7"
                   >
-                    {labelsOn ? <Eye size={14} /> : <EyeOff size={14} />}
+                    {labelsOn ? <Eye size={16} className="lg:hidden" /> : <EyeOff size={16} className="lg:hidden" />}
+                    {labelsOn ? <Eye size={14} className="hidden lg:block" /> : <EyeOff size={14} className="hidden lg:block" />}
                   </button>
                 )}
-                <span className="shrink-0 text-[10px] text-text-muted">{distCm} cm</span>
+                <button
+                  type="button"
+                  onClick={() => onFocus(part)}
+                  title="Postavi kao izabrano"
+                  aria-label={`Postavi ${part.name_en} kao izabrano`}
+                  className="flex size-9 shrink-0 items-center justify-center rounded-r-lg text-text-muted hover:text-text-strong lg:size-7 lg:opacity-0 lg:group-hover:opacity-100"
+                >
+                  <Crosshair size={16} className="lg:hidden" />
+                  <Crosshair size={12} className="hidden lg:block" />
+                </button>
               </div>
             </li>
           );

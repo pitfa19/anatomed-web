@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Loader2, ArrowLeft, X as XIcon, Crosshair, BookOpen, Eye, EyeOff } from 'lucide-react';
+import { Loader2, ArrowLeft, X as XIcon, Crosshair, BookOpen, Eye, EyeOff, Plus } from 'lucide-react';
 import { useGLTF, useProgress } from '@react-three/drei';
 import { cn } from '../lib/cn';
 import PartSearchBar from '../components/viewer/PartSearchBar';
@@ -142,6 +142,7 @@ export default function Viewer() {
     });
     setActive(part);
     setLayerStacks({});
+    setDrawerOpen(false);
   }
 
   /** Search-bar pick → start fresh: clear all extras, labels, layers,
@@ -151,6 +152,7 @@ export default function Viewer() {
     setLabelsByPartId(new Set());
     setLayerStacks({});
     setActive(part);
+    setDrawerOpen(false);
   }
 
   /** Deep-link entry point that preserves the extras + labels passed via
@@ -174,6 +176,7 @@ export default function Viewer() {
     setLayerStacks({});
     setActive(null);
     setLandingQuery('');
+    setDrawerOpen(false);
   }
 
   useEffect(() => {
@@ -497,7 +500,7 @@ export default function Viewer() {
         )}
       </aside>
 
-      <div className="min-h-0 flex-1 overflow-hidden p-2 sm:p-3 lg:p-0">
+      <div className="min-h-0 flex-1 overflow-hidden p-2 pb-20 sm:p-3 sm:pb-20 lg:p-0 lg:pb-0">
         <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-surface">
           <AnatomyScene
             ref={sceneRef}
@@ -509,18 +512,128 @@ export default function Viewer() {
             onPartClick={focusFromNeighbor}
           />
           <ModelLoadingOverlay />
-          <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+          <div className="absolute right-4 bottom-4 flex flex-col gap-2">
             <button
               type="button"
               onClick={() => sceneRef.current?.recenter()}
               aria-label="Centriraj"
               title="Centriraj na izolirani dio"
-              className="flex size-10 items-center justify-center rounded-full border border-border bg-surface text-text-muted shadow-md transition-colors hover:bg-surface-2 hover:text-text-strong"
+              className="flex size-11 items-center justify-center rounded-full border border-border bg-surface text-text-muted shadow-md transition-colors hover:bg-surface-2 hover:text-text-strong lg:size-10"
             >
               <Crosshair size={18} />
             </button>
           </div>
         </div>
+      </div>
+
+      <MobileDock
+        active={active}
+        activeSystem={activeSystem}
+        catalog={catalog}
+        extras={extras}
+        onOpenDrawer={() => setDrawerOpen(true)}
+        onFocusExtra={focusFromNeighbor}
+        onRemoveExtra={toggleExtra}
+      />
+    </div>
+  );
+}
+
+interface MobileDockProps {
+  active: Part;
+  activeSystem: SystemMeta | null;
+  catalog: PartsCatalog;
+  extras: Set<string>;
+  onOpenDrawer: () => void;
+  onFocusExtra: (part: Part) => void;
+  onRemoveExtra: (id: string) => void;
+}
+
+/** Persistent bottom dock on mobile only. Always visible on the canvas, lets
+ *  the user swap/remove selected parts in one tap without opening the drawer.
+ *  Hidden at lg+ since the desktop sidebar already exposes everything. */
+function MobileDock({
+  active,
+  activeSystem,
+  catalog,
+  extras,
+  onOpenDrawer,
+  onFocusExtra,
+  onRemoveExtra,
+}: MobileDockProps) {
+  const extraParts = useMemo(() => {
+    const byId = new Map(catalog.parts.map((p) => [p.id, p]));
+    const out: Part[] = [];
+    for (const id of extras) {
+      const p = byId.get(id);
+      if (p) out.push(p);
+    }
+    return out;
+  }, [extras, catalog]);
+
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] lg:hidden">
+      <div className="pointer-events-auto flex items-center gap-1.5 rounded-2xl border border-border bg-surface/95 p-1.5 shadow-lg backdrop-blur">
+        <button
+          type="button"
+          onClick={onOpenDrawer}
+          aria-label="Otvori detalje aktivnog dijela"
+          className="flex h-11 min-w-0 max-w-[40%] shrink-0 items-center gap-1.5 rounded-xl px-2 text-left text-text-strong active:bg-surface-2"
+        >
+          <span
+            className="size-2.5 shrink-0 rounded-full"
+            style={{ backgroundColor: activeSystem?.tint }}
+          />
+          <span className="min-w-0 truncate text-sm font-medium">{active.name_en}</span>
+        </button>
+
+        <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+          {extraParts.length === 0 ? (
+            <span className="px-1 text-[11px] text-text-muted">
+              Dodaj susjedne dijelove →
+            </span>
+          ) : (
+            extraParts.map((p) => {
+              const sys = catalog.systems.find((s) => s.id === p.system);
+              return (
+                <div
+                  key={p.id}
+                  className="flex h-9 shrink-0 items-center gap-0.5 rounded-full border border-border bg-bg pl-2 text-xs"
+                >
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: sys?.tint }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onFocusExtra(p)}
+                    title="Postavi kao izabrano"
+                    className="max-w-[110px] truncate px-1.5 text-text-strong"
+                  >
+                    {p.name_en}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveExtra(p.id)}
+                    aria-label={`Ukloni ${p.name_en}`}
+                    className="flex size-8 items-center justify-center rounded-full text-text-muted hover:text-warn"
+                  >
+                    <XIcon size={14} />
+                  </button>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={onOpenDrawer}
+          aria-label="Dodaj dijelove"
+          className="flex h-11 shrink-0 items-center gap-1 rounded-xl bg-accent/15 px-3 text-sm font-medium text-accent active:bg-accent/25"
+        >
+          <Plus size={16} /> Dodaj
+        </button>
       </div>
     </div>
   );
