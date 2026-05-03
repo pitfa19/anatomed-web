@@ -34,6 +34,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.169.0",
     "@vercel/config": "^0.3.0",
+    "@vercel/node": "^5.7.15",
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
