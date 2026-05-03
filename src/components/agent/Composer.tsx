@@ -65,7 +65,7 @@ export default function Composer({ onSend, pending, initial }: Props) {
         </button>
       </div>
       <p className="mt-1.5 text-center text-[10px] text-text-muted">
-        Mock odgovori — backend nije spojen.
+        Mock odgovori - backend nije spojen.
       </p>
     </div>
   );

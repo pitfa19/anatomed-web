@@ -88,7 +88,7 @@ export default function BentoAgentTile({ className }: { className?: string }) {
         </p>
       </div>
 
-      {/* Hidden link click target — actual link is the wrapper */}
+      {/* Hidden link click target - actual link is the wrapper */}
       <span className="sr-only">{SOURCE_LINK}</span>
     </Link>
   );

@@ -53,7 +53,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
 
     const filename = file.name;
 
-    // Read the file IMMEDIATELY before clearing the input — some browsers
+    // Read the file IMMEDIATELY before clearing the input - some browsers
     // invalidate the File reference once the input is reset, and any awaited
     // work (loadUnifiedIndex, dynamic import) before we read the buffer can
     // race against that.
@@ -140,7 +140,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
       bumpLocalDocsCache();
       if (result.warning === 'no_searchable_text') {
         setWarning(
-          'PDF nema tekstualni sloj — pretraga neće raditi (vjerojatno skenirani dokument).',
+          'PDF nema tekstualni sloj - pretraga neće raditi (vjerojatno skenirani dokument).',
         );
       }
       onUploaded(result.slug);

@@ -79,7 +79,7 @@ export default function Profile() {
           <h2 className="text-sm font-semibold">Kupi kredite za AI</h2>
         </div>
         <p className="mt-1 text-xs text-text-muted">
-          Krediti se troše za pitanja AI agentu. Demo — klik = uplata.
+          Krediti se troše za pitanja AI agentu. Demo - klik = uplata.
         </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">

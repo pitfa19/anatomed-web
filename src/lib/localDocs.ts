@@ -116,7 +116,7 @@ export async function saveLocalDoc(r: IndexResultLike): Promise<void> {
     await awaitTx(t);
   }
 
-  // Step 3: docs record LAST — its presence flags the doc as complete.
+  // Step 3: docs record LAST - its presence flags the doc as complete.
   {
     const t = tx(db, [STORE_DOCS], 'readwrite');
     const record: LocalDocRecord = {
@@ -326,7 +326,7 @@ export async function cleanupOrphans(): Promise<void> {
     await awaitTx(t);
   }
 
-  // Drop docs whose pdfBlob is 0 bytes — corrupt records from a prior bug
+  // Drop docs whose pdfBlob is 0 bytes - corrupt records from a prior bug
   // where the source ArrayBuffer was detached by pdfjs before the Blob was
   // built. The bytes are gone, the doc cannot render; clean it out so the
   // user re-uploads instead of seeing a permanently broken entry.

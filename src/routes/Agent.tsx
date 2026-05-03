@@ -89,7 +89,7 @@ export default function Agent() {
       const payload: PersistedChat = { messages, summary, summarizedThrough };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
-      // storage unavailable (private mode, quota) — fail silently
+      // storage unavailable (private mode, quota) - fail silently
     }
   }, [messages, summary, summarizedThrough]);
 

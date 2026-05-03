@@ -33,7 +33,7 @@ export interface QuizAnswer {
 /** Build a deck of `cfg.count` questions for the chosen system, deterministic
  *  in (seed, system, catalog). Each question groups parts that share an
  *  English+Latin name pair so left/right counterparts collapse into one
- *  acceptable-ids set — the user is asked for the bone, not the laterality. */
+ *  acceptable-ids set - the user is asked for the bone, not the laterality. */
 export function buildDeck(catalog: PartsCatalog, cfg: QuizConfig): QuizQuestion[] {
   const inSystem = catalog.parts.filter((p) => p.system === cfg.systemId);
   const groups = new Map<string, Part[]>();
@@ -71,7 +71,7 @@ function hasUsableName(p: Part): boolean {
   return true;
 }
 
-/** Mulberry32 — small, deterministic, good enough for shuffling a quiz deck. */
+/** Mulberry32 - small, deterministic, good enough for shuffling a quiz deck. */
 function rng(seed: number): () => number {
   let s = seed >>> 0;
   return () => {
@@ -132,7 +132,7 @@ const THUMBS_BASE_URL = (import.meta.env.VITE_THUMBS_BASE_URL ?? '/models/thumbs
  *  up with the GLB node name. With VITE_THUMBS_BASE_URL set the request hits
  *  the Supabase `thumbs` bucket; without it falls back to a static
  *  `/models/thumbs/...` path under public/. Missing renders surface as a
- *  broken `<img>` — callers should provide a fallback (e.g. <PartPreview>). */
+ *  broken `<img>` - callers should provide a fallback (e.g. <PartPreview>). */
 export function thumbnailUrl(canonicalId: string): string {
   return `${THUMBS_BASE_URL}/${sanitizeId(canonicalId)}.png`;
 }

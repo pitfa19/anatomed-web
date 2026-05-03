@@ -52,7 +52,7 @@ export default function GradeButtons({ onGrade, className }: Props) {
           key={grade}
           type="button"
           onClick={() => onGrade(grade)}
-          aria-label={`${label} — sljedeće ${hint.toLowerCase()}`}
+          aria-label={`${label} - sljedeće ${hint.toLowerCase()}`}
           className={cn(
             'flex flex-col items-center gap-0.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2',
             classes,

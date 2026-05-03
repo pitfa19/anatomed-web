@@ -296,7 +296,7 @@ export default function DeckEditor() {
             {aiCards.length > 0 && (
               <div className="mt-4 flex flex-col gap-3">
                 <div className="flex items-center justify-between text-xs text-text-muted">
-                  <span>Generirane kartice — odaberi koje dodati:</span>
+                  <span>Generirane kartice - odaberi koje dodati:</span>
                   <button
                     onClick={() =>
                       setAISelected(
@@ -347,7 +347,7 @@ export default function DeckEditor() {
         </h2>
         {deck.cards.length === 0 ? (
           <p className="rounded-xl border border-border bg-surface p-6 text-center text-sm text-text-muted">
-            Još nema kartica — dodaj ih ručno ili generiraj s AI-jem.
+            Još nema kartica - dodaj ih ručno ili generiraj s AI-jem.
           </p>
         ) : (
           <ul className="flex flex-col gap-2">

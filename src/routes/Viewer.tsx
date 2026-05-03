@@ -22,7 +22,7 @@ export default function Viewer() {
   const [landingQuery, setLandingQuery] = useState('');
   const [neighbors, setNeighbors] = useState<NeighborMap | null>(null);
   const [extras, setExtras] = useState<Set<string>>(new Set());
-  /** Set of partIds for which to render landmark labels. Default empty —
+  /** Set of partIds for which to render landmark labels. Default empty -
    *  labels are off for every selected part on first toggle/search. */
   const [labelsByPartId, setLabelsByPartId] = useState<Set<string>>(new Set());
   /** Per-system BFS expansion stacks. Each entry is the list of partIds that
@@ -34,7 +34,7 @@ export default function Viewer() {
     loadNeighbors()
       .then(setNeighbors)
       .catch(() => {
-        /* neighbors are optional — if missing, panel just hides */
+        /* neighbors are optional - if missing, panel just hides */
       });
   }, []);
 
@@ -130,7 +130,7 @@ export default function Viewer() {
   /** Promote a neighbor to active without clearing the rest of the scene.
    *  The previous active becomes an extra so the user keeps their context as
    *  they walk anatomically (femur → tibia → patella → …). Labels-state for
-   *  the demoted active stays — only newly-focused part defaults to off.
+   *  the demoted active stays - only newly-focused part defaults to off.
    *  Layer stacks reset because BFS layers are defined relative to the
    *  active part, and the centre just moved. */
   function focusFromNeighbor(part: Part) {
@@ -240,7 +240,7 @@ export default function Viewer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPart]);
 
-  // Warm drei's GLTF cache the moment the catalog resolves — in parallel with
+  // Warm drei's GLTF cache the moment the catalog resolves - in parallel with
   // the React state transition rather than after the canvas mounts. Preload
   // every system referenced by the focus + extras so cross-system parts from
   // the agent handoff don't pop in late.
@@ -258,7 +258,7 @@ export default function Viewer() {
     }
   }, [catalog, pendingPart, pendingExtras]);
 
-  // PDF terms matching the current landing-search query — used to surface a
+  // PDF terms matching the current landing-search query - used to surface a
   // "Pronađi u skriptama" cross-link when the user types something that
   // doesn't match a 3D part but does have hits in the indexed PDFs.
   const pdfMatches: string[] = useMemo(() => {
@@ -268,7 +268,7 @@ export default function Viewer() {
 
   // Union of neighbors across active + every extra, deduped (min dist wins),
   // excluding parts that are themselves selected. As more extras are toggled
-  // on, more neighbors become available — the "branching" model.
+  // on, more neighbors become available - the "branching" model.
   const unionedNeighbors = useMemo<Neighbor[]>(() => {
     if (!neighbors || !active) return [];
     const selected = new Set<string>([active.id, ...extras]);
@@ -322,7 +322,7 @@ export default function Viewer() {
               3D anatomija
             </h1>
             <p className="text-sm text-text-muted sm:text-base">
-              Pretraži dio tijela — automatski ćemo izolirati taj dio iz cijelog sustava.
+              Pretraži dio tijela - automatski ćemo izolirati taj dio iz cijelog sustava.
             </p>
           </div>
           <PartSearchBar

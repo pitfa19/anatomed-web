@@ -21,7 +21,7 @@ export function startQuizSession(s: QuizSession): void {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(serialize(s)));
   } catch {
-    /* sessionStorage may be disabled — fall through, the lobby will redirect */
+    /* sessionStorage may be disabled - fall through, the lobby will redirect */
   }
 }
 

@@ -171,7 +171,7 @@ export default function RenderedPdfViewer({
 
   // IO: track which page placeholders should render (i.e. are within the
   // expanded prerender margin). Throttled to one batch per frame. The
-  // "current page" is driven by scroll position separately — see below.
+  // "current page" is driven by scroll position separately - see below.
   useEffect(() => {
     const root = scrollRef.current;
     if (!root || totalPages === 0) return;
@@ -322,7 +322,7 @@ export default function RenderedPdfViewer({
   }, [page, totalPages]);
 
   // Apply `.hl-current` to the right <mark>; re-applies as new pages mount
-  // (visiblePages changes). Does NOT scroll — scrolling is handled below so
+  // (visiblePages changes). Does NOT scroll - scrolling is handled below so
   // the user is free to scroll the page without being yanked back.
   useEffect(() => {
     if (!inSearch) return;
@@ -343,7 +343,7 @@ export default function RenderedPdfViewer({
     if (mark) mark.classList.add('hl-current');
   }, [inSearch, hits, occIdx, visiblePages]);
 
-  // Scroll to current mark — only on user-initiated nav (occIdx change OR
+  // Scroll to current mark - only on user-initiated nav (occIdx change OR
   // explicit scrollNonce bump for re-clicking the same hit). NOT on
   // visiblePages changes, so manual scrolling stays sticky.
   useEffect(() => {
@@ -729,7 +729,7 @@ function computeMatches(spans: RenderedPageSpan[], term: string): MatchRect[] {
       const idx = m.index;
       const mlen = m[0].length;
       // Approximate match position as a fraction of the span (treats glyphs
-      // as roughly equal-width — close enough for highlight overlays).
+      // as roughly equal-width - close enough for highlight overlays).
       out.push({
         left: span.x + (idx / len) * span.w,
         top: span.y,

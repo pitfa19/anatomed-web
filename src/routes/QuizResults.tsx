@@ -23,10 +23,10 @@ export default function QuizResults() {
     loadCatalog().then(setCatalog).catch(() => {});
   }, []);
 
-  // Empty / refreshed-into state — bounce.
+  // Empty / refreshed-into state - bounce.
   useEffect(() => {
     if (!session || session.answers.length === 0) {
-      navigate('/quiz', { replace: true });
+      navigate('/revise/praksa', { replace: true });
     }
   }, [session, navigate]);
 
@@ -50,12 +50,12 @@ export default function QuizResults() {
     const questions = buildDeck(catalog, cfg);
     if (questions.length === 0) return;
     startQuizSession({ config: cfg, questions, answers: [], currentIdx: 0 });
-    navigate('/quiz/play');
+    navigate('/revise/praksa/play');
   }
 
   function backToLobby() {
     clearQuizSession();
-    navigate('/quiz');
+    navigate('/revise/praksa');
   }
 
   if (!session || !catalog || !system) {

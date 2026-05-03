@@ -60,7 +60,7 @@ export default function InlineAnatomy3D({ config }: Props) {
   }, [config]);
 
   // Number of groups whose isolation effect has applied. MiniFit waits for
-  // this to reach `groups.length` before fitting — otherwise the fit fires
+  // this to reach `groups.length` before fitting - otherwise the fit fires
   // on the first frame against the un-isolated full-body bbox and the
   // camera is locked off-target.
   const [readyGroups, setReadyGroups] = useState(0);
@@ -151,7 +151,7 @@ function MiniGroup({ system, partIds, onReady }: MiniGroupProps) {
       if (o.name.includes('-lin')) o.visible = false;
     });
     // Signal that the visible bbox in this scene now reflects only the
-    // requested parts — MiniFit waits for every group before framing.
+    // requested parts - MiniFit waits for every group before framing.
     onReady();
   }, [cloned, system.tint, system.id, idsKey, partIds, onReady]);
 
@@ -206,7 +206,7 @@ function MiniFit({ ready }: { ready: boolean }) {
     ortho.zoom = 1;
     ortho.updateProjectionMatrix();
 
-    // Pivot OrbitControls around the part center — without this, rotation
+    // Pivot OrbitControls around the part center - without this, rotation
     // orbits the world origin and the bone swings out of frame.
     const c = controls as
       | { target?: THREE.Vector3; update?: () => void }

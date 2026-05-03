@@ -194,7 +194,7 @@ export default function DeckStudy() {
               >
                 <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
                 +{p.amount} XP
-                {p.leveledUp && ' — Razina gore!'}
+                {p.leveledUp && ' - Razina gore!'}
               </motion.div>
             ))}
           </AnimatePresence>

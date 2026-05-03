@@ -7,7 +7,7 @@ import type { Part, PartsCatalog, SystemMeta } from '../../lib/viewer/types';
 
 /** Scene used inside QuizGame. Loads the chosen system's GLB, fits the whole
  *  system in view, and forwards every click to a part-resolution handler.
- *  No isolation — the player sees every part and is judged on which one they
+ *  No isolation - the player sees every part and is judged on which one they
  *  clicked. */
 interface Props {
   system: SystemMeta;

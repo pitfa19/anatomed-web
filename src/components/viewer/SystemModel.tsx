@@ -16,7 +16,7 @@ interface Props {
    *  neighbors panel). They piggy-back on the active scene's visibility,
    *  joining the "stay visible" set alongside the isolated target. */
   sameSystemExtras?: ReadonlySet<string>;
-  /** Per-part labels switch — connector `-line` meshes are visible only when
+  /** Per-part labels switch - connector `-line` meshes are visible only when
    *  their owning part's id is in this set. Without this, lines would dangle
    *  with no label endpoint. */
   labelsByPartId: ReadonlySet<string>;
@@ -25,7 +25,7 @@ interface Props {
   wholeBoneLineNames: ReadonlySet<string>;
   onAnchors: (anchors: LandmarkAnchor[]) => void;
   onFit?: (info: FitInfo | null) => void;
-  /** Forwarded from AnatomyScene — receives the topmost clicked Object3D so
+  /** Forwarded from AnatomyScene - receives the topmost clicked Object3D so
    *  the parent can resolve which catalog Part was hit. */
   onObjectClick?: (obj: THREE.Object3D) => void;
 }
@@ -46,14 +46,14 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
 
   // Guard: short-circuit the isolation effect when nothing meaningful has
   // changed. Without this, the effect's `fitOrthoToObject` call kept
-  // resetting the camera target and orthographic zoom — which the user saw
+  // resetting the camera target and orthographic zoom - which the user saw
   // as "pan returns to center" and "wheel zoom does nothing". Captures the
   // last (scene, activePartId, sameSystemExtras-key) we ran for.
   const lastIsolationKeyRef = useRef<string>('');
   // Counts the remaining frames during which `useFrame` should re-run
   // `fitOrthoToObject`. OrbitControls' `update()` runs every frame and, on
   // a fresh deep-link mount, can drift the camera before its internal
-  // spherical state settles — leaving the user with a misframed (or even
+  // spherical state settles - leaving the user with a misframed (or even
   // empty) viewport until they click Centriraj. Running the fit inside
   // useFrame guarantees it executes AFTER OrbitControls each frame and
   // overrides that drift. After the counter decrements to 0 the post-fit
@@ -78,7 +78,7 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
     // remounts the OrthographicCamera) the default camera can be replaced
     // with a fresh instance whose position resets to the JSX-prop default.
     // Without this, the effect's key would match and the new camera would
-    // never get fit to the active part — model invisible until manual recenter.
+    // never get fit to the active part - model invisible until manual recenter.
     const currentKey = `${scene.uuid}|${activePartId ?? ''}|${extrasKey}|${camera.uuid}`;
     if (currentKey === lastIsolationKeyRef.current) return;
     lastIsolationKeyRef.current = currentKey;
@@ -123,7 +123,7 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
       for (const e of extraObjects) hideLinesIn(e);
       // Expand fit to include same-system extras so the user sees what they
       // ticked. Cross-system extras (in cloned scenes) aren't reachable here
-      // — Centriraj button refits on just the target if needed.
+      // - Centriraj button refits on just the target if needed.
       // Skip when size is 0×0 (transient race during deep-link mount); the
       // useFrame post-fit loop below will retry on each subsequent frame.
       const sizeValid = size.width > 0 && size.height > 0;
@@ -143,7 +143,7 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
 
 
   // Post-fit override loop. Runs `fitOrthoToObject` AFTER OrbitControls'
-  // own `update()` call each frame — for the first few frames following an
+  // own `update()` call each frame - for the first few frames following an
   // isolation change. Once `pendingPostFitFramesRef` decrements to 0, this
   // is a no-op and the user's interactive pan/zoom is left alone.
   useFrame(() => {
@@ -165,7 +165,7 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
   });
 
   // Connector visibility tracked per-part. Match by name token only (covers
-  // `Mesh`, `Line`, `LineSegments` — the FBX→glTF export can produce any of
+  // `Mesh`, `Line`, `LineSegments` - the FBX→glTF export can produce any of
   // these for the connector geometry). `-lin` matches `-line` plus any
   // similarly-prefixed variants.
   useEffect(() => {
@@ -173,7 +173,7 @@ const SystemModel = forwardRef<SystemModelHandle, Props>(function SystemModel(
     const setLines = (root: THREE.Object3D, visible: boolean) => {
       root.traverse((o) => {
         if (!o.name.includes('-lin')) return;
-        // Whole-bone connector — never render, regardless of labels switch.
+        // Whole-bone connector - never render, regardless of labels switch.
         if (wholeBoneLineNames.has(o.name)) {
           o.visible = false;
           return;
@@ -228,7 +228,7 @@ function fitOrthoToObject(
 
   // Ensure world matrices are current. On the very first isolation effect
   // after a deep-link mount, three.js may not have rendered a frame yet, so
-  // every node's matrixWorld is identity — the bbox would land at the
+  // every node's matrixWorld is identity - the bbox would land at the
   // origin and the fit would aim the camera at the wrong point. After the
   // first frame this is a no-op.
   target.updateMatrixWorld(true);
@@ -314,7 +314,7 @@ function applySystemTint(root: THREE.Object3D, tint: string, systemId: SystemId)
 
 /** Non-uniform local scale so a thin object renders as a stroke. Keeps the
  *  longest geometry-bbox axis at 1, shrinks the other two by `factor`.
- *  Idempotent — applied once per mesh. */
+ *  Idempotent - applied once per mesh. */
 function thinAxisAligned(m: THREE.Mesh, factor: number) {
   if (m.geometry.boundingBox === null) m.geometry.computeBoundingBox();
   const b = m.geometry.boundingBox;
@@ -332,7 +332,7 @@ function thinAxisAligned(m: THREE.Mesh, factor: number) {
 
 /** Per-system thinning thresholds. Thin systems (nerves / vessels / insertions)
  *  often export as fat cylindrical bars or flat plates instead of the wires /
- *  sheets they represent — be aggressive. Solid systems (skeleton / muscles /
+ *  sheets they represent - be aggressive. Solid systems (skeleton / muscles /
  *  organs / joints / regions) stay conservative so long bones aren't
  *  affected. */
 const THIN_THRESHOLDS: Record<SystemId, { maxOverMed: number; medOverMin: number }> = {

@@ -37,7 +37,7 @@ export function applyIsolation(root: THREE.Object3D, partId: string): IsolationF
     if (!m.isMesh) return;
     const isConnector = o.name.includes(LIN_TOKEN) || o.name.includes(LABELS_TOKEN_SANITIZED);
     if (isConnector && !targetSet.has(o)) {
-      // Connector lines / leftover label meshes outside the target subtree —
+      // Connector lines / leftover label meshes outside the target subtree -
       // hide. Inside the target subtree they stay visible so each label has a
       // 3D line drawn from the bone surface to its anchor position.
       if (o.visible) {
@@ -66,7 +66,7 @@ export function collectAnchors(
   partId: string,
 ): LandmarkAnchor[] {
   // Walk to the scene root and force a full matrixWorld refresh from there so
-  // every ancestor transform is current — getWorldPosition relies on the
+  // every ancestor transform is current - getWorldPosition relies on the
   // accumulated parent chain, not just the target's local matrix.
   let root: THREE.Object3D = target;
   while (root.parent) root = root.parent;

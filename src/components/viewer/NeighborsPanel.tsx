@@ -80,7 +80,7 @@ export default function NeighborsPanel({
   }, [groups, active.system]);
 
   const [selected, setSelected] = useState<SystemId | null>(defaultSystem);
-  // Re-sync default when active part changes — without a controlled key the
+  // Re-sync default when active part changes - without a controlled key the
   // useState above persists across renders.
   const [lastActive, setLastActive] = useState(active.id);
   if (lastActive !== active.id) {

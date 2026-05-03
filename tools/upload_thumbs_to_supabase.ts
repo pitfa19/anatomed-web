@@ -140,7 +140,7 @@ async function main(): Promise<void> {
   try {
     entries = await readdir(THUMBS_DIR);
   } catch {
-    console.error(`Missing ${THUMBS_DIR} — run tools/render_part_thumbnails.py first.`);
+    console.error(`Missing ${THUMBS_DIR} - run tools/render_part_thumbnails.py first.`);
     process.exit(1);
   }
   const pngs = entries.filter((e) => e.endsWith('.png'));

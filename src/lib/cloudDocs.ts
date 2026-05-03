@@ -186,7 +186,7 @@ export async function cloudSyncToLocal(userId: string): Promise<void> {
   const localSlugs = new Set(localSummaries.map((s) => s.slug));
   for (const row of rows) {
     if (localSlugs.has(row.slug)) {
-      // Already in IDB — just remember it's cloud-scoped.
+      // Already in IDB - just remember it's cloud-scoped.
       trackCloudSlug(row.slug);
       continue;
     }

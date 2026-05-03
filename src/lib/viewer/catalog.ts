@@ -73,7 +73,7 @@ export function getSystem(catalog: PartsCatalog, id: SystemId): SystemMeta | nul
 }
 
 /** Cross-app lookup used to wire `/docs` search hits to a 3D part. Matches on
- *  English or Latin name, case-insensitive, exact only — anything fuzzier
+ *  English or Latin name, case-insensitive, exact only - anything fuzzier
  *  produces too many false positives (e.g. "femur" matching every -line). */
 export function findCatalogPartByTermAnyCase(
   catalog: PartsCatalog,

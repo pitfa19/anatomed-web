@@ -21,13 +21,13 @@ interface Props {
    *  hidden. */
   wholeBoneLineNames: ReadonlySet<string>;
   onAnchors?: (anchors: LandmarkAnchor[]) => void;
-  /** Forwarded from AnatomyScene — receives the topmost clicked Object3D. */
+  /** Forwarded from AnatomyScene - receives the topmost clicked Object3D. */
   onObjectClick?: (obj: THREE.Object3D) => void;
 }
 
 /** Renders a single part from a *non-active* system at its original world
  *  position. The full system .glb is fetched (drei caches it) and cloned so
- *  this scene is independent from the cached one — needed because two
+ *  this scene is independent from the cached one - needed because two
  *  `<primitive>` components can't share the same Object3D.
  *
  *  Tinting and visibility are applied in a `useEffect` so subsequent ExtraPart
@@ -68,7 +68,7 @@ export default function ExtraPart({ partId, system, labelsOn, wholeBoneLineNames
   );
 
   // Connector visibility tracks the labels switch. Match by name only
-  // (Mesh / Line / LineSegments — any export shape). Whole-bone connectors
+  // (Mesh / Line / LineSegments - any export shape). Whole-bone connectors
   // stay hidden regardless of the switch.
   useEffect(() => {
     const target = findPartByName(cloned, partId);
@@ -103,7 +103,7 @@ export default function ExtraPart({ partId, system, labelsOn, wholeBoneLineNames
   return <primitive object={cloned} onClick={handleClick} />;
 }
 
-// Shared subtle material for every label connector across all ExtraParts —
+// Shared subtle material for every label connector across all ExtraParts -
 // translucent mid-grey, unlit, no depth write so lines layer cleanly.
 const LINE_MAT = new THREE.MeshBasicMaterial({
   color: 0x6b6b6b,
@@ -150,7 +150,7 @@ function thinAxisAligned(m: THREE.Mesh, factor: number) {
   );
 }
 
-/** Per-system thresholds — see SystemModel for rationale. Aggressive on
+/** Per-system thresholds - see SystemModel for rationale. Aggressive on
  *  thin systems (nerves / vessels / insertions), conservative elsewhere. */
 const THIN_THRESHOLDS: Record<SystemId, { maxOverMed: number; medOverMin: number }> = {
   nerves:     { maxOverMed: 4,  medOverMin: 3 },

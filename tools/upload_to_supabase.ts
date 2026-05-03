@@ -11,7 +11,7 @@
  *   #   npx tsx tools/upload_to_supabase.ts
  *
  * Idempotent: existing objects at the same path are skipped.
- * Re-run anytime — only changed/missing files are uploaded.
+ * Re-run anytime - only changed/missing files are uploaded.
  */
 import { createClient } from '@supabase/supabase-js';
 import { readFile, readdir, stat } from 'node:fs/promises';
@@ -97,7 +97,7 @@ async function listPrefix(bucket: string, prefix: string): Promise<Set<string>> 
       .from(bucket)
       .list(prefix, { limit: pageSize, offset });
     if (error) {
-      // Bucket might not exist yet — surface as empty set; ensureBucket runs first.
+      // Bucket might not exist yet - surface as empty set; ensureBucket runs first.
       throw new Error(`list ${bucket}/${prefix}: ${error.message}`);
     }
     if (!data) break;
@@ -176,7 +176,7 @@ async function uploadFile(
       }
       return;
     }
-    // Race / leftover from a prior partial run — tolerate "already exists" as a skip.
+    // Race / leftover from a prior partial run - tolerate "already exists" as a skip.
     if (/exists/i.test(error.message)) {
       skipped++;
       rememberUploaded(bucket, prefix, filename);
@@ -190,7 +190,7 @@ async function uploadFile(
     console.warn(`  retry ${attempt}/${maxAttempts - 1} for ${path} after ${delayMs}ms: ${error.message}`);
     await new Promise((r) => setTimeout(r, delayMs));
   }
-  throw new Error(`upload ${bucket}/${path}: gave up — ${lastErr}`);
+  throw new Error(`upload ${bucket}/${path}: gave up - ${lastErr}`);
 }
 
 // Free-tier Supabase plans cap single-object upload at 50 MB regardless of the
@@ -208,12 +208,12 @@ async function uploadSourcePdfs(): Promise<void> {
     try {
       info = await stat(localPath);
     } catch {
-      console.warn(`  ! missing: ${localPath} — skipping`);
+      console.warn(`  ! missing: ${localPath} - skipping`);
       continue;
     }
     if (info.size > PROJECT_FILE_SIZE_LIMIT) {
       console.warn(
-        `  ! ${filename} is ${(info.size / 1e6).toFixed(1)} MB — exceeds project upload limit (${(PROJECT_FILE_SIZE_LIMIT / 1e6).toFixed(0)} MB), skipping`,
+        `  ! ${filename} is ${(info.size / 1e6).toFixed(1)} MB - exceeds project upload limit (${(PROJECT_FILE_SIZE_LIMIT / 1e6).toFixed(0)} MB), skipping`,
       );
       continue;
     }
@@ -244,7 +244,7 @@ async function uploadRenderedSlug(slug: string): Promise<void> {
   try {
     entries = await readdir(dir);
   } catch {
-    console.warn(`  ! missing rendered dir: ${dir} — skipping`);
+    console.warn(`  ! missing rendered dir: ${dir} - skipping`);
     return;
   }
   const visible = entries.filter((e) => !e.startsWith('.'));

@@ -25,7 +25,7 @@ export default function Home() {
   const [showWelcome, setShowWelcome] = useState(false);
   const stats = useStats();
   const reduced = useReducedMotion();
-  // 0 at top, 1 after the hero has scrolled up by one viewport-height —
+  // 0 at top, 1 after the hero has scrolled up by one viewport-height -
   // drives the muscle reveal in HeroAnatomy3D.
   const heroRef = useRef<HTMLElement>(null);
   const muscleProgress = useScrollProgress(heroRef);
@@ -52,7 +52,7 @@ export default function Home() {
               eyebrow="Anatom3d · za studente medicine"
               line1="Tvoj"
               line2="atlas."
-              subhead="Pet skripti, hrvatski agent, 3D viewer — preko istog indeksa. Otvori, traži, izoliraj. Sve u browseru."
+              subhead="Pet skripti, hrvatski agent, 3D viewer - preko istog indeksa. Otvori, traži, izoliraj. Sve u browseru."
             />
 
             <div className="flex flex-wrap gap-3">
@@ -179,7 +179,7 @@ export default function Home() {
                 Skoči na stranicu, ne na rezultate.
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Svaki pogodak otvori cijelu stranicu skripte — žuto označen pojam u kontekstu. Strelice te šalju na sljedeću pojavu bez gubljenja položaja.
+                Svaki pogodak otvori cijelu stranicu skripte - žuto označen pojam u kontekstu. Strelice te šalju na sljedeću pojavu bez gubljenja položaja.
               </p>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function Home() {
                 Učitaj svoju skriptu. Ostane lokalno.
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Indeksiranje radi u browseru, ništa ne ide na server. Pretraga, agent, deep linkovi — sve radi za uploadane datoteke kao i za bundleove. Tvoje datoteke u tvom browseru.
+                Indeksiranje radi u browseru, ništa ne ide na server. Pretraga, agent, deep linkovi - sve radi za uploadane datoteke kao i za bundleove. Tvoje datoteke u tvom browseru.
               </p>
             </div>
             <div className="relative flex items-center justify-center lg:col-span-7">

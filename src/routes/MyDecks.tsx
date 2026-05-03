@@ -50,7 +50,7 @@ export default function MyDecks() {
     <div className="mx-auto h-full w-full max-w-3xl overflow-y-auto px-4 py-6 sm:px-6">
       <header className="mb-6">
         <Link
-          to="/revise"
+          to="/revise/teorija"
           className="mb-3 inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
         >
           <ArrowLeft size={12} /> Ponavljanje
@@ -59,7 +59,7 @@ export default function MyDecks() {
           <div>
             <h1 className="text-2xl font-semibold text-text-strong">Moji paketi</h1>
             <p className="mt-1 text-sm text-text-muted">
-              Vlastite kartice za učenje — stvori sam ili generiraj s AI-jem.
+              Vlastite kartice za učenje - stvori sam ili generiraj s AI-jem.
             </p>
           </div>
           <button

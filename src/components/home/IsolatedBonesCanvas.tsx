@@ -89,7 +89,7 @@ function BoneGroup({
 }
 
 export interface IsolatedBonesCanvasProps {
-  /** Stable reference — pass via useMemo or top-level constant. */
+  /** Stable reference - pass via useMemo or top-level constant. */
   partIds: string[];
   reduced?: boolean;
   /** Radians per second. */
