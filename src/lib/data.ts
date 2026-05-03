@@ -291,3 +291,38 @@ export function fuzzyMatch(query: string, terms: string[], limit = 12): string[]
   }
   return [...starts, ...contains].slice(0, limit);
 }
+
+export interface ScoredMatch {
+  term: string;
+  score: number;
+}
+
+/** Length-aware version of `fuzzyMatch`. Returns each candidate with a score
+ *  in [0, 1] so callers can reject low-confidence substring traps (e.g. the
+ *  query "foot bones" silently resolving to "Sesamoid bones of foot").
+ *
+ *  - 1.00 — exact (case-insensitive) match
+ *  - 0.90 — term starts with the query
+ *  - q.length / lc.length, capped at 0.85 — query appears as a substring;
+ *    score reflects how much of the term the query covers. A 5-char query
+ *    inside a 30-char term scores ~0.17 — caller can reject as ambiguous. */
+export function fuzzyMatchScored(
+  query: string,
+  terms: string[],
+  limit = 12,
+): ScoredMatch[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  const out: ScoredMatch[] = [];
+  for (const t of terms) {
+    const lc = t.toLowerCase();
+    if (lc === q) out.push({ term: t, score: 1 });
+    else if (lc.startsWith(q)) out.push({ term: t, score: 0.9 });
+    else if (lc.includes(q)) {
+      const ratio = q.length / lc.length;
+      out.push({ term: t, score: Math.min(ratio, 0.85) });
+    }
+  }
+  out.sort((a, b) => b.score - a.score);
+  return out.slice(0, limit);
+}

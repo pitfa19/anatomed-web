@@ -1,9 +1,13 @@
+// TODO(server-side gate): re-check the user's token balance via the
+// Supabase service role and return 402 (or a structured `code: 'no_tokens'`)
+// before invoking the LLM. Today the gate is enforced client-side in
+// AuthContext.consumeTokens; this route trusts the client.
 import Anthropic from '@anthropic-ai/sdk';
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const client = apiKey ? new Anthropic({ apiKey }) : null;
 
-export const config = { runtime: 'nodejs' };
+export const config = { runtime: 'nodejs', maxDuration: 60 };
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {

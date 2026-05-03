@@ -21,6 +21,9 @@ import {
 import { generateCards } from '../lib/aiGenerate';
 import type { GeneratedCard } from '../lib/aiGenerate';
 import { cn } from '../lib/cn';
+import { useAuth } from '../lib/AuthContext';
+import OutOfTokensModal from '../components/ai/OutOfTokensModal';
+import { FEATURE_LABEL } from '../lib/packages';
 
 export default function DeckEditor() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -48,6 +51,8 @@ export default function DeckEditor() {
   const [aiError, setAIError] = useState<string | null>(null);
   const [aiCards, setAICards] = useState<GeneratedCard[]>([]);
   const [aiSelected, setAISelected] = useState<Set<number>>(new Set());
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const { user, consumeTokens } = useAuth();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -102,6 +107,13 @@ export default function DeckEditor() {
 
   async function handleAIGenerate() {
     if (!aiTopic.trim()) return;
+    if (user) {
+      const result = await consumeTokens('deck_generate');
+      if (!result.ok) {
+        setShowBuyModal(true);
+        return;
+      }
+    }
     setAILoading(true);
     setAIError(null);
     setAICards([]);
@@ -422,6 +434,11 @@ export default function DeckEditor() {
           </ul>
         )}
       </section>
+      <OutOfTokensModal
+        open={showBuyModal}
+        onClose={() => setShowBuyModal(false)}
+        featureLabel={FEATURE_LABEL.deck_generate}
+      />
     </div>
   );
 }

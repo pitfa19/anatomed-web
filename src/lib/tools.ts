@@ -1,7 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import { fuzzyMatch, getSourceForDoc, loadUnifiedIndex } from './data';
 import { loadCatalog } from './viewer/catalog';
-import { resolvePartByQuery } from './viewer/resolveParts';
+import { resolveQueryToParts } from './viewer/resolveParts';
 import type { Anatomy3DConfig, Anatomy3DPartRef, Hit } from './types';
 import type { Part } from './viewer/types';
 
@@ -29,7 +29,7 @@ export const TOOL_DEFINITIONS: Anthropic.Tool[] = [
     description:
       'Renderira interaktivni 3D model anatomskih struktura unutar chata. ' +
       'Koristi DODATNO uz `search_skripte` kad pitanje ima vizualnu/prostornu komponentu ' +
-      '(tijek živca/krvne žile, prostorni odnosi struktura, lokacija dijela, pripoji mišića). ' +
+      '(tijek živca/krvne žile, prostorni odnosi struktura, lokacija dijela, pripoji mišića, sastav koštane skupine). ' +
       'Nemoj zvati za pojmovna pitanja gdje 3D ne pomaže (definicije, etimologija, klinički koncepti).',
     input_schema: {
       type: 'object',
@@ -37,21 +37,20 @@ export const TOOL_DEFINITIONS: Anthropic.Tool[] = [
         title: {
           type: 'string',
           description:
-            'Kratki naslov widgeta, 2-6 riječi, npr. "Tijek n. medianus" ili "Femur i okolni mišići".',
+            'Kratki naslov widgeta, 2-6 riječi, npr. "Tijek n. medianus" ili "Kosti stopala".',
         },
-        focus: {
-          type: 'string',
-          description:
-            'Glavni dio koji treba izolirati. Latinski naziv je obično najpouzdaniji, npr. "Femur", "Median nerve", "Musculus biceps brachii".',
-        },
-        extras: {
+        parts: {
           type: 'array',
           items: { type: 'string' },
           description:
-            'Dodatni povezani dijelovi (2-5) za prostorni kontekst, npr. okolne kosti, mišići, živci. Više od 5 ne pomaže razumijevanju.',
+            'Uredan popis struktura za prikaz. Prva stavka postaje fokus (kamera je centrira), ostale su dodatni dijelovi. ' +
+            'Stavka može biti pojedinačna struktura (npr. "Femur", "Median nerve") ili grupni naziv ' +
+            '(npr. "Foot bones", "Kosti stopala", "Tarsus", "Cervical spine") koji alat sam proširi u sve članove grupe. ' +
+            'Za fokusirana pitanja: 1 glavna struktura + 2-5 anatomski povezanih. ' +
+            'Za kolektivna pitanja: jedan grupni naziv ili eksplicitan popis svih članova.',
         },
       },
-      required: ['title', 'focus'],
+      required: ['title', 'parts'],
     },
   },
 ];
@@ -127,43 +126,69 @@ function partRef(p: Part): Anatomy3DPartRef {
 
 export async function runPrikaz3d(input: {
   title?: unknown;
+  parts?: unknown;
+  // Legacy schema, accepted for backward-compat with persisted chats / older
+  // tool calls. Translated to `parts` if `parts` itself is missing.
   focus?: unknown;
   extras?: unknown;
 }): Promise<Anatomy3DConfig | { error: string }> {
   const title = typeof input.title === 'string' ? input.title.trim() : '';
-  const focusQuery = typeof input.focus === 'string' ? input.focus.trim() : '';
   if (!title) return { error: 'title je obavezan' };
-  if (!focusQuery) return { error: 'focus je obavezan' };
+
+  // Normalize input to a flat string list. Prefer `parts`; fall back to
+  // `[focus, ...extras]` if the agent used the legacy schema.
+  let queries: string[] = [];
+  if (Array.isArray(input.parts)) {
+    queries = input.parts.filter((p): p is string => typeof p === 'string');
+  } else if (typeof input.focus === 'string') {
+    queries = [input.focus];
+    if (Array.isArray(input.extras)) {
+      for (const e of input.extras) if (typeof e === 'string') queries.push(e);
+    }
+  }
+  queries = queries.map((q) => q.trim()).filter(Boolean);
+  if (queries.length === 0) return { error: 'parts je obavezan (lista struktura)' };
 
   const catalog = await loadCatalog();
-  const focusPart = resolvePartByQuery(catalog, focusQuery);
-  if (!focusPart) {
-    return { error: `Nije pronađen dio: "${focusQuery}"` };
-  }
 
-  const extrasIn = Array.isArray(input.extras) ? input.extras : [];
-  const resolvedExtras: Anatomy3DPartRef[] = [];
-  const seenIds = new Set<string>([focusPart.id]);
+  const seenIds = new Set<string>();
+  const ordered: Part[] = [];
   const unmatched: string[] = [];
-  for (const e of extrasIn) {
-    if (typeof e !== 'string') continue;
-    const q = e.trim();
-    if (!q) continue;
-    const part = resolvePartByQuery(catalog, q);
-    if (!part) {
+  const expanded: { query: string; label: string; count: number }[] = [];
+
+  for (const q of queries) {
+    const resolved = resolveQueryToParts(catalog, q);
+    if (!resolved) {
       unmatched.push(q);
       continue;
     }
-    if (seenIds.has(part.id)) continue;
-    seenIds.add(part.id);
-    resolvedExtras.push(partRef(part));
+    if (resolved.expanded) {
+      expanded.push({
+        query: q,
+        label: resolved.expanded.label,
+        count: resolved.expanded.count,
+      });
+    }
+    for (const p of resolved.parts) {
+      if (seenIds.has(p.id)) continue;
+      seenIds.add(p.id);
+      ordered.push(p);
+    }
   }
 
+  if (ordered.length === 0) {
+    return {
+      error: `Nije pronađen nijedan dio. Neusklađeno: ${unmatched.join(', ')}`,
+    };
+  }
+
+  const [focus, ...rest] = ordered;
   return {
     title,
-    focus: partRef(focusPart),
-    extras: resolvedExtras,
+    focus: partRef(focus!),
+    extras: rest.map(partRef),
     unmatched,
+    ...(expanded.length > 0 ? { expanded } : {}),
   };
 }
 
