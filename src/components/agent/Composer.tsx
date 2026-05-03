@@ -64,9 +64,6 @@ export default function Composer({ onSend, pending, initial }: Props) {
           <ArrowUp size={16} />
         </button>
       </div>
-      <p className="mt-1.5 text-center text-[10px] text-text-muted">
-        Mock odgovori - backend nije spojen.
-      </p>
     </div>
   );
 }
