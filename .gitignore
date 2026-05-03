@@ -11,11 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+.env.local
 
 # Vercel
 .vercel
 
-# Rendered PDF page images (~431 MB) — served from Supabase Storage in production.
+# Rendered PDF page images (~431 MB) - served from Supabase Storage in production.
 # Keep locally for dev; do not commit. See tools/upload_to_supabase.ts.
 public/pdfs-rendered/
 
@@ -24,11 +25,11 @@ public/pdfs-rendered/
 # `pdfs` bucket. Don't commit.
 files/
 
-# Per-part PNG thumbnails — rendered by tools/render_part_thumbnails.py and
+# Per-part PNG thumbnails - rendered by tools/render_part_thumbnails.py and
 # served from Supabase `thumbs` bucket in production. Don't commit.
 public/models/thumbs/
 
-# Local agent state — Claude Code session, MCP server config
+# Local agent state - Claude Code session, MCP server config
 .claude/
 .mcp.json
 
