@@ -4,6 +4,7 @@ import { ArrowRight, MessagesSquare, X, Sparkles, Search } from 'lucide-react';
 import { useStats } from '../lib/useStats';
 import { useReducedMotion } from '../lib/useReducedMotion';
 import { useScrollProgress } from '../lib/useScrollProgress';
+import { bundledPageImageUrl } from '../lib/data';
 import MeshGradientBg from '../components/home/MeshGradientBg';
 import CursorSpotlight from '../components/home/CursorSpotlight';
 import HeroHeadline from '../components/home/HeroHeadline';
@@ -144,7 +145,7 @@ export default function Home() {
                 </div>
                 <div className="relative aspect-[16/10] bg-bg">
                   <img
-                    src="/pdfs-rendered/handout_a1/0001.webp"
+                    src={bundledPageImageUrl('handout_a1', 1)}
                     alt=""
                     className="h-full w-full object-cover opacity-95"
                     loading="lazy"

@@ -1,12 +1,31 @@
-import Anthropic from '@anthropic-ai/sdk';
+import type Anthropic from '@anthropic-ai/sdk';
 import type { ChatMessage } from './types';
 import { TOOL_DEFINITIONS, runTool } from './tools';
 
-const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY as string | undefined;
+const PROXY_URL = '/api/agent/chat';
 
-const client = apiKey
-  ? new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
-  : null;
+async function callAnthropic(
+  payload: Anthropic.MessageCreateParamsNonStreaming,
+): Promise<Anthropic.Message> {
+  const r = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!r.ok) {
+    let body: { error?: string; code?: string } = {};
+    try {
+      body = await r.json();
+    } catch {
+      // ignore
+    }
+    if (r.status === 500 && body.code === 'missing_key') {
+      throw new MissingApiKeyError();
+    }
+    throw new Error(`Agent proxy ${r.status}: ${body.error ?? r.statusText}`);
+  }
+  return (await r.json()) as Anthropic.Message;
+}
 
 // Hybrid model strategy: Haiku makes the first tool-decision round (cheap,
 // fast — picking the right `search_skripte` query is a small decision), and
@@ -91,7 +110,7 @@ Ako \`prikaz_3d\` vrati \`error\` (npr. \`focus\` se nije razriješio), NE emiti
 
 export class MissingApiKeyError extends Error {
   constructor() {
-    super('VITE_ANTHROPIC_API_KEY is not set. Add it to web-prototype/.env.local');
+    super('ANTHROPIC_API_KEY is not set on the server.');
     this.name = 'MissingApiKeyError';
   }
 }
@@ -117,7 +136,6 @@ export async function summarizeMessages(
   toSummarize: ChatMessage[],
   existingSummary: string,
 ): Promise<string> {
-  if (!client) throw new MissingApiKeyError();
   if (toSummarize.length === 0) return existingSummary;
 
   const conversation = toSummarize
@@ -128,7 +146,7 @@ export async function summarizeMessages(
     ? `Postojeći sažetak razgovora:\n${existingSummary}\n\nNovi dio razgovora koji treba uključiti u sažetak:\n${conversation}\n\nVrati novi cjelokupni sažetak razgovora u 3-5 rečenica na hrvatskom. Sačuvaj sve ključne anatomske termine i kontekst koji bi mogao biti potreban za nastavak razgovora.`
     : `Sažmi sljedeći razgovor između studenta medicine i AI asistenta za anatomiju u 3-5 rečenica na hrvatskom. Sačuvaj ključne anatomske termine i kontekst:\n\n${conversation}`;
 
-  const response = await client.messages.create({
+  const response = await callAnthropic({
     model: SUMMARY_MODEL,
     max_tokens: 400,
     messages: [{ role: 'user', content: userPrompt }],
@@ -145,7 +163,6 @@ export async function chat(
   history: ChatMessage[],
   opts: ChatOptions = {},
 ): Promise<string> {
-  if (!client) throw new MissingApiKeyError();
   const { onStatus, summary } = opts;
 
   const system = summary
@@ -189,7 +206,7 @@ export async function chat(
     // tool_use block), we discard its text and fall through to Sonnet so
     // the user always gets a Sonnet-quality, full-budget answer.
     onStatus?.({ phase: 'thinking' });
-    const decision = await client.messages.create({
+    const decision = await callAnthropic({
       model: DECISION_MODEL,
       max_tokens: 1024,
       system,
@@ -209,7 +226,7 @@ export async function chat(
     // additional tool_use rounds Sonnet may request.
     for (let i = 0; i < MAX_TOOL_ITERATIONS; i++) {
       onStatus?.({ phase: 'thinking' });
-      const response = await client.messages.create({
+      const response = await callAnthropic({
         model: ANSWER_MODEL,
         max_tokens: 1024,
         system,

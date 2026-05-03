@@ -18,6 +18,11 @@ import {
   saveLocalPageImageBlob,
 } from './localDocs';
 
+const PDFS_BASE_URL = (import.meta.env.VITE_PDFS_BASE_URL ?? '/pdfs').replace(/\/$/, '');
+const PDFS_RENDERED_BASE_URL = (
+  import.meta.env.VITE_PDFS_RENDERED_BASE_URL ?? '/pdfs-rendered'
+).replace(/\/$/, '');
+
 const BUNDLED_SOURCES: SourceMeta[] = [
   { doc: 'Skripta A1 ispravljena.pdf', label: 'Skripta A1', badge: 'A1', color: '#4a9eff' },
   { doc: 'Skripta A2 ispravljena.pdf', label: 'Skripta A2', badge: 'A2', color: '#7c5cff' },
@@ -37,11 +42,11 @@ const PDF_FILES: Record<string, string> = {
 };
 
 const PDF_URLS: Record<string, string> = {
-  'Skripta A1 ispravljena.pdf': '/pdfs/Skripta%20A1%20ispravljena.pdf',
-  'Skripta A2 ispravljena.pdf': '/pdfs/Skripta%20A2%20ispravljena.pdf',
-  'Skripta A3 ispravljena.pdf': '/pdfs/Skripta%20A3%20ispravljena.pdf',
-  'Hand-Out - A1 (Ivan Banovac).pdf': '/pdfs/Hand-Out%20-%20A1%20(Ivan%20Banovac).pdf',
-  'Duale Reihe_Searchable.pdf': '/pdfs/Duale%20Reihe_Searchable.pdf',
+  'Skripta A1 ispravljena.pdf': `${PDFS_BASE_URL}/Skripta%20A1%20ispravljena.pdf`,
+  'Skripta A2 ispravljena.pdf': `${PDFS_BASE_URL}/Skripta%20A2%20ispravljena.pdf`,
+  'Skripta A3 ispravljena.pdf': `${PDFS_BASE_URL}/Skripta%20A3%20ispravljena.pdf`,
+  'Hand-Out - A1 (Ivan Banovac).pdf': `${PDFS_BASE_URL}/Hand-Out%20-%20A1%20(Ivan%20Banovac).pdf`,
+  'Duale Reihe_Searchable.pdf': `${PDFS_BASE_URL}/Duale%20Reihe_Searchable.pdf`,
 };
 
 export function getPdfUrlForDoc(doc: string): string | undefined {
@@ -80,7 +85,7 @@ export async function loadRenderedMeta(slug: string): Promise<RenderedMeta> {
         renderedMetaCache[slug] = d;
         return d;
       })
-    : fetch(`/pdfs-rendered/${slug}/meta.json`)
+    : fetch(`${PDFS_RENDERED_BASE_URL}/${slug}/meta.json`)
         .then((r) => {
           if (!r.ok) throw new Error(`meta.json missing for ${slug}: ${r.status}`);
           return r.json();
@@ -132,7 +137,7 @@ export async function loadRenderedPageText(
       })()
     : (async () => {
         const padded = String(page).padStart(4, '0');
-        const r = await fetch(`/pdfs-rendered/${slug}/${padded}.json`);
+        const r = await fetch(`${PDFS_RENDERED_BASE_URL}/${slug}/${padded}.json`);
         if (!r.ok) throw new Error(`page text ${slug}/${page} missing: ${r.status}`);
         const data = (await r.json()) as RenderedPageText;
         renderedPageCache[key] = data;
@@ -142,9 +147,13 @@ export async function loadRenderedPageText(
   return p;
 }
 
+export function bundledPageImageUrl(slug: string, page: number): string {
+  return `${PDFS_RENDERED_BASE_URL}/${slug}/${String(page).padStart(4, '0')}.webp`;
+}
+
 export async function pageImageUrl(slug: string, page: number): Promise<string> {
   if (!isLocalSlug(slug)) {
-    return `/pdfs-rendered/${slug}/${String(page).padStart(4, '0')}.webp`;
+    return bundledPageImageUrl(slug, page);
   }
   const cached = await loadLocalPageImageBlob(slug, page);
   if (cached) return URL.createObjectURL(cached);

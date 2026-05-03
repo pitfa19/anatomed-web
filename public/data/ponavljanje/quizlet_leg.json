@@ -1,0 +1,82 @@
+{
+  "id": "quizlet_leg",
+  "name": "Tibia · Fibula",
+  "subtitle": "Goljenična i lisna kost",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Kako teku i što ograničavaju ligamenta cruciata u koljenom zglobu?",
+      "a": "Ligamenta cruciata su intrakapsularne sveze koljenog zgloba koje se nalaze ekstraartikularno jer ih stratum synoviale zaobilazi. Lig. cruciatum anterius pruža se od area intercondylaris anterior do unutrašnje strane condylus lat. femoris, spiralno je zavijena i ima tri snopa vlakana: anteromedijalni, intermedijarni i posterolateralni. Anteromedijalni dio ograničava fleksiju, a posterolateralni ekstenziju, a ligament dodatno ograničava i unutarnju rotaciju. Lig. cruciatum posterius tече od area intercondylaris posterior do unutrašnje strane condylus med. femoris, lepezastog je oblika s dva snopa, i snažnije je od prednjeg križnog ligamenta. Klinički, ruptura ovih ligamenata uzrokuje fenomen ladice, tj. patološko pomicanje tibije u odnosu na femur.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 12,
+        "snippet": "tijek: od area intercondylaris anterior do unutrašnje strane condylus lat. femoris; spiralno je zavijen, a ima 3 snopa vlakana (anteromedijalni, intermedijarni i posterolateralni)"
+      }
+    },
+    {
+      "q": "Koja je uloga i građa membrana interossea cruris u odnosu na goljeničnu i lisnu kost?",
+      "a": "Membrana interossea cruris je dvoslojna opna koja premošćuje prostor između tibije i fibule, slično kao i membrana interossea antebrachii na podlaktici. Proksimalna i središnja trećina membrane šire su od distalne trećine. U visini caput fibulae nalazi se otvor kroz koji prolaze vasa tibialia anteriora prema prednjoj loži potkoljenice, a iznad syndesmosis tibiofibularis prolaze rr. perforantes vasorum fibularium. Membrana ima dvojaku funkciju: stabilizira syndesmosis tibiofibularis i služi kao polazište za mišiće potkoljenice, čime je bitna i za mehaničku stabilnost i za mišićnu organizaciju potkoljenice.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 13,
+        "snippet": "dvoslojna, kao i membrana interossea antebrachii; proksimalna i središnja trećina su šire od distalne; u visini caput fibulae nalazi se otvor u membrani za prolazak vasa tibialia anteriora"
+      }
+    },
+    {
+      "q": "Kako tече arteria tibialis anterior i gdje se nastavlja distalno?",
+      "a": "Arterija a. tibialis anterior nastaje kao terminalna grana a. poplitea i odmah potom prolazi kroz otvor u membrana interossea cruris kojim dospijeva u prednju, ekstenzorsku ložu potkoljenice. U toj loži tece distalno između m. tibialis anterior i m. extensor digitorum longus. Dalje prolazi ispod retinaculum mm. extensorum inferius te se nastavlja na dorzumu stopala kao a. dorsalis pedis. Bočni ogranci arterije uključuju rr. musculares za ekstenzore potkoljenice, a. recurrens tibialis anterior et posterior te a. malleolaris anterior medialis et lateralis.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 73,
+        "snippet": "tijek: kroz otvor u membrana interossea cruris dospijeva u ekstenzorsku ložu potkoljenice te seže distalno između m. tibialis anterior i m. extensorum digg. longus"
+      }
+    },
+    {
+      "q": "Gdje prolazi arteria tibialis posterior i u što se ona završno grana?",
+      "a": "Arterija a. tibialis posterior počinje ispod arcus tendineus m. solei i tece zajedno s dubokim fleksorima potkoljenice prema stražnjem medijalnom području gležnja. Na razini gležnja leži između tetiva m. flexor digitorum longus i m. flexor hallucis longus. Ispod retinaculum mm. flexorum, koji tvori tarzalni kanal, arterija se dijeli u svoje terminalne ogranke: a. plantaris medialis et lateralis. Važni sporedni ogranci uključuju rr. musculares za fleksore, r. circumflexus peronealis, rr. malleolares mediales i a. nutricia tibiae kojom se opskrbljuje sama goljenična kost.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 73,
+        "snippet": "tijek: počinje ispod arcus tendineus m. solei i seže zajedno s dubokim fleksorima (medijalno od n. tibialis) prema stražnjem medijalnom području gležnja"
+      }
+    },
+    {
+      "q": "Koji su ishodišta i hvatišta mišića tibialis anterior te koja mu je funkcija?",
+      "a": "Mišić m. tibialis anterior polazi s facies lateralis tibiae, membrane interossea cruris i fasciae cruris, dakle s medijalne strane prednje lože potkoljenice. Njegova tetiva prolazi ispod retinacula mm. extensorum superius et inferius i hvata se na os cuneiforme mediale i bazu prve metatarzalne kosti. Inervira ga n. peroneus profundus, isti živac koji inervira sve ekstenzore potkoljenice. Funkcija mišića je ekstenzija stopala (dorzalna fleksija) i inverzija, odnosno unutarnja rotacija ili supinacija stopala, čime ima ključnu ulogu u kontroli hoda i prevenciji pada stopala.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 58,
+        "snippet": "P: facies lat. tibiae, membrana interossea cruris, fascia cruris; H: os cuneiforme mediale, os metatarsale I; F: ekstenzija i inverzija (unutarnja rotacija/supinacija) stopala"
+      }
+    },
+    {
+      "q": "Gdje su ishodišta i hvatišta m. soleus i što mu je specifičnost polazišta?",
+      "a": "Mišić m. soleus je dublja glava m. triceps surae i polazi s linea m. solei tibiae, margo medialis tibiae, caput fibulae i arcus tendineus m. solei, što znači da polazišta obuhvaćaju i goljeničnu i lisnu kost. Zajedno s m. gastrocnemius hvata se tetivom Achilova tetiva (tendo calcanei Achillis) za tuber calcanei, uz pratnju bursae tendinis calcanei. Inervira ga n. tibialis. Funkcija mu je fleksija i inverzija stopala, a za razliku od m. gastrocnemius, ne prelazi koljeni zglob i djeluje isključivo na stopalo. Klinički je iznimno važan jer je snažna mišićna pumpa venske cirkulacije potkoljenice.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 59,
+        "snippet": "P: linea m. solei tibiae, margo med. tibiae, caput fibulae, arcus tendineus m. solei"
+      }
+    },
+    {
+      "q": "Što je chiasma cruris i gdje se ono zbiva u odnosu na goljeničnu kost?",
+      "a": "Chiasma cruris je anatomski pojam koji označava križanje tetiva m. tibialis posterior i m. flexor digitorum longus u distalnom stražnjem dijelu potkoljenice. To se zbiva malo proksimalno od medijalnog maleolusa goljenične kosti. Tetiva m. tibialis posterior križa tetivu m. flexor digitorum longus s unutarnje strane te prema distalno dolazi njoj s medijalne strane, što je suprotno od rasporeda koji mišići imaju u proksimalnijem dijelu potkoljenice. Ovo križanje je topografski važno pri kirurškim zahvatima u tom području i pomaže razlikovanju pojedinih tetiva u medijalnom retromalealolarnom kanalu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 60,
+        "snippet": "Chiasma cruris = križanje tetiva m. tibialis posterior i m. flexor digitorum longus; u dist. stražnjem dijelu potkoljenice, malo proks. od med. maleola"
+      }
+    },
+    {
+      "q": "Koja je razlika u pokretljivosti između meniscus medialis i meniscus lateralis te koje su kliničke posljedice te razlike?",
+      "a": "Meniscus medialis i meniscus lateralis razlikuju se ponajprije u obliku i stupnju sraštenosti s fibroznom zglobnom čahurom. Meniscus medialis je srpastog oblika i u kontaktu je s lig. collaterale tibiale, a čvrsto je srastao s čahurom pa je slabije pokretljiv. Meniscus lateralis je kružnog oblika i manjeg polumjera, nema vezu s kolateralnim ligamentom te je samo djelomice srastao s čahurom pa je pokretljiviji. Upravo zbog veće pokretljivosti lateralni menisk se lakše izmakne pri naglim kretnjama, zbog čega na njega otpada čak 95% svih ozljeda meniskusa. Stanje degenerativnog ili traumatskog oštećenja meniskusa naziva se meniskopatija i često je uvjetovana zanimanjem, primjerice tzv. rudarskim koljenom.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 12,
+        "snippet": "meniscus lateralis: kružnog oblika, manjeg polumjera od meniscus med., nema vezu s kolateralnim lig. te je samo djelomice srastao s čahurom pa je pokretljiviji (i na njega zato otpada 95% ozljeda meniska)"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

@@ -1,0 +1,100 @@
+{
+  "id": "quizlet_shoulder",
+  "name": "Clavicula + Scapula",
+  "subtitle": "Ključna kost i lopatica",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Što prolazi ispod i što prolazi iznad ligamentum transversum scapulae superius?",
+      "a": "Incisura scapulae je urez smješten na gornjem rubu lopatice kojeg nadsvođuje lig. transversum scapulae superius. Topografski odnos struktura koje prolaze u tom području iznimno je važan: ispod samog ligamenta prolazi n. suprascapularis, dok iznad ligamenta prolaze a. et v. suprascapularis. Ova razlika u položaju klinički je relevantna jer ozljeda ili kompresija u tom području može selektivno zahvatiti živac bez istodobnog oštećenja krvnih žila. Vrijedi napomenuti da lig. transversum scapulae superius ponekad može osificirati i time tvoriti koštani foramen scapulae.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "incisura scapulae – nadsvođuje ju lig. transversum scapulae superius; ispod lig. prolazi n. suprascapularis, a iznad a. et v. suprascapularis"
+      }
+    },
+    {
+      "q": "Koje su posebnosti osifikacije clavicula u usporedbi s ostatkom postkranijalnog skeleta?",
+      "a": "Clavicula je po više obilježja iznimna kost u ljudskom tijelu. Jedina ima samo jednu epifizu, i to sternalnu, dok akromijalni kraj nema epifize. Još je važnija činjenica da corpus claviculae jedini je dio postkranijalnog skeleta koji osificira dezmalno, tj. izravnom osifikacijom vezivnog tkiva, a ne endohondralnim putem kao gotovo sve ostale kosti udova. Upravo to rano i specifično osifikacijsko porijeklo čini ključnu kost jednom od prvih kosti koje uopće počinju osificirati u prenatalnom razvoju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "corpus claviculae jedini je dio postkranijalnog skeleta koji osificira dezmalno"
+      }
+    },
+    {
+      "q": "Što je os acromiale i zašto je klinički važno?",
+      "a": "Os acromiale jest česta anatomska varijacija lopatice u kojoj akromion ostaje kao zasebna, odvojena kost umjesto da srasne s tijelom lopatice. Ova varijacija nastaje zbog izostanka fuzije apofize akromiona, koja bi u normalnom razvoju trebala srasnuti do ranog odraslog doba. Klinička važnost ove varijacije ogleda se u tome što rendgenski nalaz može lako oponašati svježu frakturu akromiona, čime se neiskusnom kliničaru nameće lažna dijagnoza traume. Ispravno prepoznavanje os acromiale kao varijante norme stoga je važno kako bi se izbjeglo nepotrebno liječenje ili kirurška intervencija.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "os acromiale – česta varijacija u kojoj je akromion odvojena kost koja može oponašati frakturu"
+      }
+    },
+    {
+      "q": "Kakav je oblik clavicula u svojem medijalnom i lateralnom dijelu te koje su njezine krajnje točke?",
+      "a": "Clavicula pokazuje karakteristično dvostruko zakrivljenje duž svoje osi. Medijalna dva trećine kosti konveksna su prema ventralno, dok je lateralna jedna trećina konkavna prema ventralno, što kosti daje tipičan oblik slova S pri pogledu odozgo. Na medijalnom kraju nalazi se extremitas sternalis kojom se ključna kost zglobljava s manubriumom sternuma u articulatio sternoclavicularis, a na lateralnom kraju nalazi se extremitas acromialis koja se zglobljava s akromionom lopatice u articulatio acromioclavicularis. Ovo zakrivljenje važno je i biomehanički jer povećava otpornost kosti na sile kompresije.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "2/3 medijalno konveksno prema ventralno, 1/3 lateralno konkavna prema ventralno; extremitas sternalis et acromialis"
+      }
+    },
+    {
+      "q": "Gdje se nalaze tuberculum conoideum i linea trapezoidea na claviculi te koje ligamentarne strukture ondje hvataju?",
+      "a": "Tuberositas ligamenti coracoclavicularis na lateralnoj trećini donje površine ključne kosti nosi dva jasno razlučiva hvatišta za istoimeni ligament koji se sastoji od dvaju pojedinih sveza. Tuberculum conoideum smješteno je dorzalno i hvatište je za lig. conoideum, dok se linea trapezoidea proteže ventralno od tuberculum conoideum i hvatište je za lig. trapezoideum. Zajedno ova dva ligamenta čine lig. coracoclaviculare koje je ključna komponenta syndesmosis coracoclavicularis i ima primarnu ulogu u suspenziji lopatice i gornjeg uda od ključne kosti. Ozljeda ovog ligamentarnog kompleksa tipična je posljedica akromioklavikularnih luksacija.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "tuberositas lig. coracoclavicularis\no tuberculum conoideum – dorzalno\no linea trapezoidea – ventralno"
+      }
+    },
+    {
+      "q": "Koja su hvatišta za tuberculum supraglenoidale i tuberculum infraglenoidale lopatice te razlikuju li se po smještaju u odnosu na zglob?",
+      "a": "Tuberculum supraglenoidale i tuberculum infraglenoidale dva su koštana ispupčenja smještena uz zglobnu površinu lopatice, no razlikuju se po položaju u odnosu na zglobnu čahuru. Tuberculum supraglenoidale je intraartikularno hvatište za caput longum musculi bicipitis brachii, što znači da tetiva tog dijela bicepsa prolazi unutar zgloba ramena. Nasuprot tomu, tuberculum infraglenoidale je ekstraartikularno i od njega polazi caput longum musculi tricipitis brachii, čija tetiva dakle ne prodire u zglobnu šupljinu. Ova topografska razlika ima praktično kliničko značenje jer upalna ili degenerativna patologija tetive caput longum bicepsa može zahvatiti i unutrašnjost ramenog zgloba.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 4,
+        "snippet": "tuberculum supraglenoidale – intraartikularni, polazište za caput longum m. bicipitis\ntuberculum infraglenoidale – ekstraartikularni, polazište za caput longum m. tricipitis"
+      }
+    },
+    {
+      "q": "Koja je funkcija m. subclavius i kakvu ulogu ima u održavanju venskog lumena?",
+      "a": "M. subclavius je mali mišić koji polazi od koštano-hrskavičane granice prvog rebra i hvata se na donju površinu ključne kosti, ležeći pritom u sulcus subclavius. Njegova primarna mehanička funkcija jest povlačenje ključne kosti prema sternumu čime osigurava čvrstoću articulatio sternoclavicularis. Posebno je važna njegova uloga u zategnutosti fasciae clavipectoralis koja ga obavija: zajedno s m. pectoralis minor mišić zateže tu fasciju i na taj način mehanički održava otvoren lumen v. subclavia, sprječavajući njezin kolaps pri naglim promjenama tlaka. Inervira ga n. subclavius koji je ogranak pars supraclavicularis plexusa brachialisa.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 34,
+        "snippet": "zateže fascia clavipectoralis (koja ga obavija) čime zajedno s m. pectoralis minor održava otvoren lumen v. subclavia"
+      }
+    },
+    {
+      "q": "Što je rotatorna manšeta, od kojih tetiva se sastoji i gdje se najčešće kida?",
+      "a": "Rotatorna manšeta jest tetivna ploča koja nastaje srastanjem tetiva kratkih ramenih mišića rotatora i leži u spatium subacromiale, prostoru između fornix humeri i caput humeri, pokrivena masnim tkivom zvanim corpus adiposum subacromiale. Četiri tetive koje je izgrađuju su tendo m. supraspinati, tendo m. infraspinati, tendo m. teretis minoris i tendo m. subcapularis, a u njezin sastav ubraja se i lig. coracohumerale. Klinički, puknuće rotatorne manšete najčešće se događa jedan do dva centimetra od mjesta koštane insercije tetiva, obično na strani supraspinatusa, i jedan je od najčešćih uzroka boli i disfunkcije ramena u odraslih.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 36,
+        "snippet": "Rotatorna manšeta = tetivna ploča nastala srastanje tetiva kratkih ramenih mišića rotatora, leži u spatium subacromiale (između fornix et caput humeri)"
+      }
+    },
+    {
+      "q": "Koji živac prolazi ispod ligamentum transversum scapulae superius te koje mišiće inervira?",
+      "a": "N. suprascapularis ogranak je pars supraclavicularis plexusa brachialisa koji potječe od korijena C4 do C6. On se pruža ispod lig. transversum scapulae superius prema fossa supraspinata i dalje kroz incisura spinoglenoidalis, uz koju ga može fiksirati lig. transversum scapulae inferius. Inervira m. supraspinatus i m. infraspinatus, oba ključna člana rotatorne manšete odgovorna ponajprije za vanjsku rotaciju i abdukciju u ramenom zglobu. Kompresija živca u incisuri scapulae, primjerice pri osifikaciji ligamenta, uzrokuje tipičan sindrom s atrofijom navedenih mišića i slabošću vanjske rotacije.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 67,
+        "snippet": "n. suprascapularis (C4 – C6) – pruža se ispod lig. transversum scapulae prema m. supraspinatus i m. infraspinatus koje inervira"
+      }
+    },
+    {
+      "q": "Gdje se nalaze i što dreniraju nodi lymphoidei axillares apicales?",
+      "a": "Nodi lymphoidei axillares apicales, poznati i kao infraklavikularni limfni čvorovi, smješteni su ispod ključne kosti, uz v. axillaris i iznad m. pectoralis minor, dakle u samom vrhu pazušne jame. Kao najdublja skupina profundnih aksilarnih čvorova, oni skupljaju limfu iz nlly. centrales koji su prethodno pokupili limfu od svih ostalih aksilarnih skupina. Uz to, apikalni čvorovi primaju i limfu izravno iz dojke te površinske limfne žile koje prate v. cephalica u sulcus deltoideopectoralis. Odvodne žile iz ove skupine čine truncus subclavius koji se na desnoj strani ulijeva u truncus lymphaticus dexter, a na lijevoj u ductus thoracicus.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 66,
+        "snippet": "nlly. axillares apicales (seu infraclaviculares)\no smještaj: ispod klavikule, uz v. axillaris i iznad m. pect. minor\no područje drenaže: limfa iz nlly. centrales, dojka, površinske limfne žile koje prate v. cephalica"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

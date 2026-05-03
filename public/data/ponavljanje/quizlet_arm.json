@@ -1,0 +1,109 @@
+{
+  "id": "quizlet_arm",
+  "name": "Humerus · Ulna · Radius",
+  "subtitle": "Kosti nadlaktice i podlaktice",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Koja je vrsta zgloba articulatio cubiti i koje su kretnje moguće u njemu?",
+      "a": "Articulatio cubiti je po vrsti trochoginglymus, što znači da je kombinacija šarnirskog i obrtnog zgloba. Zglobna čahura zatvara sva tri zgloba koji ulaze u sastav lakta, pri čemu su epikondili humerusa slobodni, a čahura je jača sprijeda. Moguće kretnje u ovom zglobu su fleksija, ekstenzija, pronacija i supinacija. Klinički je važno razlikovati cubitus valgus, koji označava radijalno odstupanje podlaktice, od cubitus varusa koji označava ulnarno odstupanje podlaktice.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 8,
+        "snippet": "vrsta zgloba: trochoginglymus kretnje: fleksija, ekstenzija, pronacija, supinacija cubitus valgus = radijalno odstupanje podlaktice cubitus varus = ulnarno odstupanje podlaktice"
+      }
+    },
+    {
+      "q": "Koja je funkcija membrana interossea antebrachii i što je chorda obliqua?",
+      "a": "Membrana interossea antebrachii je dvoslojna struktura čiji prednji sloj vlakana ide od gore lateralno prema dolje medijalno, a stražnji od gore medijalno prema dolje lateralno. Osnovna joj je funkcija sprječavanje uzdužnog pomicanja ulne i radijusa, no istodobno služi i kao polazište mišića podlaktice. Chorda obliqua je poseban snop smješten na proksimalnom dijelu membrane koji ograničava supinaciju. Ova interosealna membrana zajedno s kostima podlaktice čini osteofibrozni okvir koji prenosi sile između radijusa i ulne.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 8,
+        "snippet": "funkcija: sprječava uzdužni pomicanje ulne i radijusa služi kao polazište mišića podlaktice chorda obliqua – snop na proksimalnom dijelu membrane, ograničava supinaciju"
+      }
+    },
+    {
+      "q": "Koje je polazište, hvatište i inervacija m. flexor carpi ulnaris te koje je njegovo kliničko značenje?",
+      "a": "Musculus flexor carpi ulnaris ima dva polazišta: caput humerale polazi s epicondylus med. humeri i fascia antebrachii, dok caput ulnare polazi s olecranona i proksimalnih dviju trećina margo post. ulnae. Tetiva ovog mišića obuhvaća os pisiforme te se potom dijeli na dva dijela koji se hvataju na hamulus ossis hamati i na basis ossis metacarpi V. Inervira ga n. ulnaris, a funkcija mu je fleksija i ulnarna abdukcija šake uz slabu fleksiju u lakatnom zglobu. Između dvije glave ovog mišića prolazi kubitalni kanal koji vodi n. ulnaris, što ga čini predilekcijskim mjestom za periferni kompresijski sindrom tog živca.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 41,
+        "snippet": "između dvije glave ovog mišića nalazi se kubitalni kanal koji vodi n. ulnaris s ekstenzorne na fleksorsku stranu podlaktice te čini predilekcijsko mjesto za ozljedu n. ulnaris pritiskom (periferni kompresijski sindrom)"
+      }
+    },
+    {
+      "q": "Koji je tijek n. medianus u nadlaktici i podlaktici te što je pronatorni kanal?",
+      "a": "Nervus medianus nastaje spajanjem radix medialis et lateralis koji tvore vilicu obuhvaćajući a. axillaris. U nadlaktici leži u sulcus bicipitalis medialis, spiralno zavijaući oko a. brachialis — najprije je lateralno od arterije, u sredini nadlaktice ispred nje, a u pregibu lakta medijalno od nje. U pregibu lakta prolazi kroz pronatorni kanal, poznat i kao tunel medianusa, a zatim se pruža između m. flexor digitorum superficialis et profundus. Distalno prolazi ispod retinaculum flexorum kroz karpalni kanal i ulazi u palmarnu regiju šake.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 68,
+        "snippet": "u pregibu lakta prolazi kroz pronatorni kanal (tunel medianusa) i pruža se između m. flexor digg. superficialis et profundus; prolazi ispod retinaculum flexorum kroz karpalni kanal"
+      }
+    },
+    {
+      "q": "Koje kliničke posljedice ima potpuna kljenut n. medianus i što je majmunska šaka?",
+      "a": "Potpuna kljenut n. medianus dovodi do karakterističnog položaja šake koji se opisuje kao šaka u položaju zakletve: pri stiskanju šake tri radijalna prsta ostaju ispružena, dok su IV. i V. prst savinuti. Palac se ne može oponirati, proba s palcem i malim prstom je pozitivna, a palac je u adukciji i dorzalnoj fleksiji. Zbog atrofije mišića tenara, koja je posljedica gubitka inervacije, nastaje tzv. majmunska šaka s izravnatim tenarnim uzvisinom. Klinički je zanimljivo i to da r. thenaris može prolaziti kroz mali tenarni tunel u retinaculum flexorum pa je ugrožen pri operaciji sindroma karpalnog tunela.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 69,
+        "snippet": "potpuna kljenut n. medianus – šaka u položaju zakletve: pri stiskanju šake 3 radijalna prsta ostaju ispružena, dok su IV. i V. prst savinuti, palac se ne može oponirati"
+      }
+    },
+    {
+      "q": "Kojim putem n. ulnaris prolazi iz nadlaktice u podlakticu i gdje se nalazi sulcus n. ulnaris humeri?",
+      "a": "Nervus ulnaris izlazi iz fasciculus medialis brahijalnog spleta i u početku leži medijalno od a. brachialis. Potom probija septum intermusculare mediale i dolazi na stražnju stranu nadlaktice u sulcus n. ulnaris humeri, koji se nalazi na humerusu neposredno iza epicondylus medialis. Dalje se pruža iza epicondylus medialis, prolazi između obje glave m. flexor carpi ulnaris i dospijeva na fleksorsku stranu podlaktice gdje se proteže medijalno od a. ulnaris. Na zapešću prolazi izvan karpalnog kanala kroz Guyonovu ložu prema dlanu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 69,
+        "snippet": "kroz septum intermusculare mediale dolazi na stražnju stranu nadlaktice u sulcus n. ulnaris humeri; dalje se pruža iza epicondylus med., prolazi između obje glave m. flexor carpi ulnaris"
+      }
+    },
+    {
+      "q": "Što inervira r. profundus n. ulnaris u šaci?",
+      "a": "Ramus profundus n. ulnaris po ulasku u šaku inervira mišiće hipotenara, mm. lumbricales III et IV te sve mm. interossei. Osim toga, inervira i m. adductor pollicis te caput profundum m. flexoris pollicis brevis, dakle one mišiće tenara koje ne inervira n. medianus. Ovaj ogranakprobija mišiće hipotenara i zaobilazi duboki luk šake zajedno s arcus palmaris profundus. Motorička inervacija n. ulnarisa stoga obuhvaća većinu malih mišića šake, što objašnjava tešku funkcionalnu ispadu pri ozljedi ovog živca.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 69,
+        "snippet": "r. profundus – inervira mišiće hipotenara, mm. lumbricales III et IV, sve mm. interossei, m. adductor pollicis i caput profundum m. flexoris pollicis brevis"
+      }
+    },
+    {
+      "q": "Koji su ogranci a. brachialis i odakle se odvaja a. profunda brachii?",
+      "a": "Arteria brachialis proteže se od donjeg ruba m. pectoralis major do pregiba lakta, nalazeći se u sulcus bicipitalis medialis. Najvažniji ogranaka. profunda brachii odvaja se neposredno distalno od hvatišta m. teres major, pruža se između medijalne i lateralne glave m. tricipitis brachii te prolazi kroz sulcus n. radialis dajući aa. nutriciae humeri, r. deltoideus, a. collateralis media i a. collateralis radialis. Ostali ogranci su a. collateralis ulnaris superior i a. collateralis ulnaris inferior, a terminalni ogranci su a. radialis i a. ulnaris. Anastomoze ovih ogranaka s povratnim arterijama tvore rete articulare cubiti, što klinički omogućuje podvezivanje a. brachialis distalno od odvajanja a. profunda brachii bez ugrožavanja opskrbe podlaktice.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 62,
+        "snippet": "a. profunda brachii – odvaja se neposredno distalno od hvatišta m. teres major, pruža se između med. i lat. glave tricepsa, prolazi kroz sulcus n. radialis"
+      }
+    },
+    {
+      "q": "Koji je tijek a. radialis u podlaktici i što je njezin odnos s r. superficialis n. radialis?",
+      "a": "Arteria radialis cijelom dužinom podlaktice leži površinski: u proksimalnoj trećini smještena je između m. brachioradialis i m. pronator teres, a u distalnim dvjema trećinama između m. brachioradialis i m. flexor carpi radialis. Kroz cijeli taj put prati je r. superficialis n. radialis, što je važna topografska napomena. Arterija na podlaktici daje ogranke kao što su a. recurrens radialis, a. nutricia radii, r. carpalis palmaris, r. palmaris superficialis i r. carpalis dorsalis koji sudjeluju u tvorbi odgovarajućih mreža i lukova. Na šaci a. radialis osigurava glavni dotok krvi u arcus palmaris profundus.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 62,
+        "snippet": "A. radialis – cijelom dužinom podlaktice leži površinski (u proks. 1/3 između m. brachiorad. i m. pronator teres, a u dist. 2/3 između m. brachiorad. i m. flex. carpi rad.), prati je r. superfic. n. radialis"
+      }
+    },
+    {
+      "q": "Koje arterije tvore arcus palmaris superficialis i koje područje opskrbljuje?",
+      "a": "Arcus palmaris superficialis leži između palmarne aponeuroze i tetiva fleksora, nešto distalniji u odnosu na arcus palmaris profundus. Glavni doprinos dotoku krvi osigurava a. ulnaris, dok r. palmaris superficialis a. radialis sudjeluje kao manji doprinos. U čak 60 posto slučajeva luk je nepotpuno zatvoren, što je klinički relevantno pri planiranju vaskularnih zahvata. Iz luka polaze aa. digitales palmares communes koje se na razini basis phalangis proximalis dijele na aa. digitales palmares propriae i opskrbljuju III. do V. prst te ulnarnu stranu II. prsta.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 63,
+        "snippet": "a. ulnaris – osigurava glavni dotok krvi r. palmaris superficialis a. radialis u 60% slučajeva luk je nepotpuno zatvoren"
+      }
+    },
+    {
+      "q": "Kakva je građa lig. collaterale ulnare lakatnog zgloba i zašto je klinički važno?",
+      "a": "Ligamentum collaterale ulnare specifično je po tome što ima dva dijela spojena Cooperovim prugama, zbog čega je lepezastog oblika. Upravo ta građa osigurava da je ova sveza napeta u svim položajima lakatnog zgloba, bez obzira na kut fleksije ili ekstenzije, čime pruža stalnu medijalnu stabilnost. Ova sveza je posebno izložena preopterećenju pri ponavljanim bacačkim pokretima ruke, što je čest uzrok ozljeda u sportaša bacačke discipline. Njezino oštećenje može dovesti do nestabilnosti medijalnog dijela lakatnog zgloba te pojave cubitus valgus deformiteta.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 8,
+        "snippet": "lig. collaterale ulnare – ima dva dijela spojena Cooperovim prugama pa je lepezastog oblika => napet je u svim položajima zgloba"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

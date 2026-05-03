@@ -1,0 +1,100 @@
+{
+  "id": "quizlet_vertebrae",
+  "name": "Vertebrae Cervicales",
+  "subtitle": "Vratni kralješci · Atlas i Axis",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Koliko kralježaka ima kralježnica i kako su raspoređeni po odsjescima?",
+      "a": "Kralježnica se sastoji od ukupno 33 do 34 kralješka koji su raspoređeni u pet odsjeka. Cervikalni odsječak broji 7 kralježaka (C1–C7), torakalni 12 (Th1–Th12), lumbalni 5 (L1–L5), sakralni 5 (S1–S5) te kokcigealnih 3 do 6. Od svih nabrojenih, 24 se smatra slobodnim, odnosno presakralnim kralješcima, dok sakralna kost nastaje sinostozom čije sraštavanje završava tek u dobi od 17 do 20 godina.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 21,
+        "snippet": "24 je slobodnih (presakralnih kralježaka), sakralna kost je sinostoza čije sraštavanje završava tek u dobi 17-20 godina"
+      }
+    },
+    {
+      "q": "Koja je osobitost foramen vertebrale u cervikalnih kralježaka i čime je uvjetovana?",
+      "a": "Foramen vertebrale cervikalnih kralježaka je trokutastog oblika i velik u usporedbi s ostalim odsjescima kralježnice. Ta osobitost uvjetovana je prisutnošću intumescentia cervicalis medullae spinalis, proširenja cervikalnog dijela kralježnične moždine koje nastaje zbog izlazišta živaca za gornje ekstremitete. Upravo ova anatomska prilagodba osigurava dostatno prostora za navedeno proširenje moždine unutar spinalnog kanala.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 21,
+        "snippet": "foramen vertebrale: trokutast i velik (zbog intumescentia cervicalis medullae spinalis)"
+      }
+    },
+    {
+      "q": "Što prolazi kroz foramen transversarium cervikalnih kralježaka i koje strukture su još prisutne na processus transversum?",
+      "a": "Kroz foramen transversarium, koji je posebnost processus transversum cervikalnih kralježaka, prolazi arteria vertebralis. Na samom poprečnom nastavku razlikuju se još dvije dodatne tvorbe: sulcus n. spinalis, koji je udubina za prolaz odgovarajućeg spinalnog živca, te dva tuberkuluma. Tuberculum anterius predstavlja rudimentarno rebro, dok tuberculum posterius odgovara pravom processus transversum ostalih odsjeka. Na razini C6, tuberculum anterius posebno je istaknut te se naziva tuberculum caroticum, jer pritiskom na njega može se zaustaviti krvarenje iz račvišta arterije.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 21,
+        "snippet": "foramen transversarium (za prolaz a. vertebralis)"
+      }
+    },
+    {
+      "q": "Zašto tuberculum caroticum na C6 ima kliničko značenje i gdje se nalazi?",
+      "a": "Tuberculum caroticum je istaknuti prednji tuberkulums poprečnog nastavka šestog cervikalnog kralješka koji anatomski odgovara rudimentarnom rebru. Njegovo kliničko značenje leži u blizini račvišta arterije, a pritiskom na njega od strane liječnika može se privremeno zaustaviti krvarenje iz tog krvožilnog račvišta. Ova osobitost čini tuberculum caroticum važnom anatomskom orijentacijskom točkom u hitnoj medicinskoj praksi.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 21,
+        "snippet": "na C6 je istaknut kao tuberculum caroticum (pritiskom na njega može se zaustaviti krvarenje iz račvišta a. vertebralis)"
+      }
+    },
+    {
+      "q": "Koje su anatomske posebnosti atlasa (C1) u odnosu na tipičan cervikalni kralježak?",
+      "a": "Atlas je izrazito atipičan cervikalni kralježak jer nema corpus vertebrae — smatra se da dens axis zapravo predstavlja trup atlasa koji se embrionalno s njime stopilo. Umjesto trupa atlas posjeduje dva luka: arcus anterior, koji nosi fovea dentis za zglobljavanje s dens axis, te arcus posterior, koji sadrži sulcus seu canalis a. vertebralis. Oba luka se ujedinjuju u massae laterales s kojih se nastavljaju processus transversi, a processus spinosus je reduciran na tuberculum posterius. Zglobne ploštine nose isključivo massae laterales, pri čemu su facies articulares superiores ovalne i konkavne, a facies articulares inferiores ravne i okrugle.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "nema corpus (dens axis predstavlja zapravo trup atlasa)"
+      }
+    },
+    {
+      "q": "Koje su dvije zglobne površine dens axis i s kojim se strukturama svaka od njih uzglabljava?",
+      "a": "Dens axis, koštani nastavak na corpus axis koji embriološki odgovara trupu atlasa, nosi dvije zglobne površine. Facies articularis anterior uzglablja se s fovea dentis atlantis smještenom na arcus anterior atlasa, tvoreći tako prednji dio articulatio atlantoaxialis mediana. Facies articularis posterior uzglablja se s ligamentum transversum atlantis koje se proteže između massae laterales atlasa i čini stražnji konkavni element istog zgloba.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "facies articularis anterior – uzglaba se s fovea dentis\n facies articularis posterior – uzglaba se s lig. transversum atlantis"
+      }
+    },
+    {
+      "q": "Koje su kretnje i kakav je tip zgloba articulatio atlantooccipitalis?",
+      "a": "Articulatio atlantooccipitalis, poznat i kao gornji zglob glave, jest elipsoidni (jajoliki) zglob s dvije osi pokretanja. Zglobna tijela čine konveksni condylus occipitalis i konkavna fovea articularis superior atlantis. Kao elipsoidni zglob omogućuje poglavito naginjanje glave prema naprijed i natrag, tj. inklinaciju i reklinaciju, ukupno za oko 30 stupnjeva, kao i manja naginjanja u stranu, ukupno za 10 do 15 stupnjeva. Zglobovi glave nemaju intervertebralne ploče, što u velikoj mjeri doprinosi njihovoj izuzetnoj pokretljivosti.",
+      "source": {
+        "doc": "skripta_a1",
+        "page": 150,
+        "snippet": "Kao elipsoidni zglob (dvije osi pokretanja) omogućuje poglavito naginjanje glave prema naprijed i natrag (ukupno za oko 30°) kao i manja naginjanja u stranu (ukupno za 10-15°)."
+      }
+    },
+    {
+      "q": "Koje sveze sudjeluju u građi articulatio atlantoaxialis i kakva je topografija membrana te sveza između zatiljne kosti, atlasa i aksisa?",
+      "a": "Articulatio atlantoaxialis stabiliziran je nizom snažnih sveza raspoređenih u točno definiranom redoslijedu od naprijed prema straga. Najbliže ventralno leži membrana atlantooccipitalis anterior, iza nje se nalaze ligamentum apicis dentis i ligg. alaria, zatim ligamentum cruciforme atlantis koji se sastoji od vodoravnog ligamentum transversum atlantis i okomitih uzlaznih i silaznih dijelova, potom membrana tectoria između clivus ossis occipitalis i corpus axis, te najstražnje membrana atlantooccipitalis posterior. Ligg. alaria polaze od dens axis do rubova foramen magnum i zajedno s ligamentum transversum atlantis drže dens axis u normalnom položaju čak i pri frakturi, sprječavajući time po život opasnu luksaciju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 26,
+        "snippet": "membrana atlantooccipitalis anterior\n lig. apicis dentis i ligg. alaria\n lig. cruciforme atlantis\n membrana tectoria\n membrana atlantooccipitalis posterior"
+      }
+    },
+    {
+      "q": "Što je vertebra prominens i po čemu je prepoznatljiva?",
+      "a": "Vertebra prominens je uobičajeni naziv za sedmi cervikalni kralježak (C7), koji se ističe posebno dugačkim i najizraženijim trnastim nastavkom u cervikalnom odsjeku. Naziv je opravdan činjenicom da u 70 posto ljudi C7 ima najizbočeniji processus spinosus koji je lako opipljiv pri pregledu stražnje strane vrata. Ova osobitost čini C7 važnom i pouzdanom anatomskom orijentacijskom točkom pri kliničkom pregledu i vizualnoj inspekciji, posebice pri identifikaciji razine kralješca u raznim medicinskim postupcima.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 21,
+        "snippet": "vertebra prominens – naziv za C7, budući da u 70% ljudi ima najizbočeniji processus spinosus"
+      }
+    },
+    {
+      "q": "Koje kliničke posljedice može imati vratno rebro i na kojim se kralješcima najčešće javlja?",
+      "a": "Vratno rebro jest rudiment rebra koji najčešće izrasta iz C7, a rjeđe iz C5 ili C6, i spada u varijacije kostiju kralježnice. Klinički se može prezentirati kao sindrom vratnog rebra kada rudimentarno rebro pritišće krvne žile, ponajprije arteriju subclaviju, te živce plexusa brachialisa koji opskrbljuju gornje ekstremitete. Posljedice mogu biti različite, od boli i parestezija u ruci do vaskularnih smetnji, ovisno o stupnju kompresije neurovaskularnih struktura.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 23,
+        "snippet": "vratno rebro – rudiment rebra na C7 (rijetko C5 ili C6), može pritiskati krvne žile (a. subclavia) i živce (plexus brachialis) koji opskrbljuju gornje ekstremitete = sindrom vratnog rebra"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}
