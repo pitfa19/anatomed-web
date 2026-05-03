@@ -12,7 +12,13 @@ import Agent from './routes/Agent';
 import Revise from './routes/Revise';
 import ReviseTopic from './routes/ReviseTopic';
 import ReviseToday from './routes/ReviseToday';
+import MyDecks from './routes/MyDecks';
+import DeckStudy from './routes/DeckStudy';
+import DeckEditor from './routes/DeckEditor';
 import Viewer from './routes/Viewer';
+import Quiz from './routes/Quiz';
+import QuizGame from './routes/QuizGame';
+import QuizResults from './routes/QuizResults';
 import Login from './routes/Login';
 import Profile from './routes/Profile';
 import { AuthProvider } from './lib/AuthContext';
@@ -27,8 +33,14 @@ const router = createBrowserRouter([
       { path: 'agent', element: <Agent /> },
       { path: 'revise', element: <Revise /> },
       { path: 'revise/today', element: <ReviseToday /> },
+      { path: 'revise/my-decks', element: <MyDecks /> },
+      { path: 'revise/deck/:deckId', element: <DeckStudy /> },
+      { path: 'revise/deck/:deckId/edit', element: <DeckEditor /> },
       { path: 'revise/:topicId', element: <ReviseTopic /> },
       { path: 'viewer', element: <Viewer /> },
+      { path: 'quiz', element: <Quiz /> },
+      { path: 'quiz/play', element: <QuizGame /> },
+      { path: 'quiz/results', element: <QuizResults /> },
       { path: 'login', element: <Login /> },
       { path: 'profile', element: <Profile /> },
       { path: '*', element: <Navigate to="/" replace /> },

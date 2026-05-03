@@ -11,6 +11,7 @@ import {
   resetTopic,
   saveCard,
 } from '../../lib/srs';
+import { awardXP } from '../../lib/xp';
 import GradeButtons from './GradeButtons';
 
 interface Props {
@@ -71,6 +72,7 @@ export default function QuestionsTab({ topicId, questions }: Props) {
     const now = Date.now();
     const next = gradeCard(cards[i] ?? null, grade, now);
     saveCard(topicId, i, next);
+    awardXP(grade);
     setCards((prev) => ({ ...prev, [i]: next }));
     setExpanded((prev) => ({ ...prev, [i]: false }));
     setTick((t) => t + 1);

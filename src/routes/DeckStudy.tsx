@@ -1,56 +1,41 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, BookOpen, Flame, Loader2, Sparkles, Star } from 'lucide-react';
 import {
-  dueCardsForTopic,
-  gradeCard,
-  loadCard,
-  saveCard,
-  shuffle,
-  type DueCard,
-} from '../lib/srs';
-import type { Grade, Question, ReviseTopic } from '../lib/types';
-import { loadReviseIndex, loadReviseTopic } from '../lib/data';
+  ArrowLeft,
+  Flame,
+  Loader2,
+  Pencil,
+  RotateCcw,
+  Sparkles,
+  Star,
+} from 'lucide-react';
+import {
+  dueCardsForUserDeck,
+  getDeck,
+  gradeUserCard,
+  resetUserDeck,
+  type UserCard,
+  type UserDeck,
+} from '../lib/userDecks';
 import { awardXP, getLevelProgress, loadXP, type XPState } from '../lib/xp';
+import { shuffle } from '../lib/srs';
+import type { Grade } from '../lib/types';
 import GradeButtons from '../components/revise/GradeButtons';
 import { cn } from '../lib/cn';
 
-interface DeckItem {
-  topicId: string;
-  topicName: string;
-  qIndex: number;
-  question: Question;
+interface StudyItem {
+  card: UserCard;
 }
 
-const DOC_SLUG_TO_FULL: Record<string, string> = {
-  skripta_a1: 'Skripta A1 ispravljena.pdf',
-  skripta_a2: 'Skripta A2 ispravljena.pdf',
-  skripta_a3: 'Skripta A3 ispravljena.pdf',
-  handout_a1: 'Hand-Out - A1 (Ivan Banovac).pdf',
-  duale_reihe: 'Duale Reihe_Searchable.pdf',
-};
+export default function DeckStudy() {
+  const { deckId } = useParams<{ deckId: string }>();
+  const [searchParams] = useSearchParams();
+  const dueOnly = searchParams.get('due') !== '0';
+  const navigate = useNavigate();
 
-const DOC_SLUG_TO_LABEL: Record<string, string> = {
-  skripta_a1: 'Skripta A1',
-  skripta_a2: 'Skripta A2',
-  skripta_a3: 'Skripta A3',
-  handout_a1: 'Hand-Out A1',
-  duale_reihe: 'Duale Reihe',
-};
-
-function buildDocsLink(doc: string, page: number, q?: string): string {
-  const full = DOC_SLUG_TO_FULL[doc] ?? doc;
-  const params = new URLSearchParams();
-  if (q) params.set('q', q);
-  params.set('doc', full);
-  params.set('page', String(page));
-  return `/docs?${params.toString()}`;
-}
-
-export default function ReviseToday() {
-  const [deck, setDeck] = useState<DeckItem[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [deck, setDeck] = useState<UserDeck | null>(null);
+  const [items, setItems] = useState<StudyItem[] | null>(null);
   const [pos, setPos] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [graded, setGraded] = useState(0);
@@ -60,78 +45,52 @@ export default function ReviseToday() {
   const popupRef = useRef(0);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const index = await loadReviseIndex();
-        const topicIds = index
-          .flatMap((g) => g.topics)
-          .filter((t) => t.badge !== 'Quizlet')
-          .map((t) => t.id);
-        const topics: ReviseTopic[] = await Promise.all(
-          topicIds.map((id) => loadReviseTopic(id).catch(() => null as unknown as ReviseTopic)),
-        ).then((rs) => rs.filter(Boolean) as ReviseTopic[]);
+    if (!deckId) return;
+    const d = getDeck(deckId);
+    if (!d) { navigate('/revise/my-decks', { replace: true }); return; }
+    setDeck(d);
 
-        const now = Date.now();
-        const items: DeckItem[] = [];
-        for (const t of topics) {
-          const due: DueCard[] = dueCardsForTopic(t.id, t.questions.length, now);
-          for (const d of due) {
-            items.push({
-              topicId: t.id,
-              topicName: t.name,
-              qIndex: d.qIndex,
-              question: t.questions[d.qIndex],
-            });
-          }
-        }
-        const shuffled = shuffle(items, now);
-        if (!cancelled) {
-          setDeck(shuffled);
-          setPos(0);
-          setRevealed(false);
-        }
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    const now = Date.now();
+    const due = dueCardsForUserDeck(d, now);
+    const all = d.cards.map((card) => ({ card }));
+    const source = dueOnly ? due.map((dc) => ({ card: dc.card })) : all;
+    setItems(shuffle(source, now));
+    setPos(0);
+    setRevealed(false);
+    setGraded(0);
+  }, [deckId, dueOnly, navigate]);
 
-  const current = useMemo(() => (deck ? deck[pos] : null), [deck, pos]);
+  const current = useMemo(() => (items ? items[pos] : null), [items, pos]);
+  const total = items?.length ?? 0;
+  const done = pos >= total;
 
   function handleGrade(grade: Grade) {
-    if (!current) return;
-    const now = Date.now();
-    const prev = loadCard(current.topicId, current.qIndex);
-    const updated = gradeCard(prev, grade, now);
-    saveCard(current.topicId, current.qIndex, updated);
-
+    if (!current || !deck) return;
+    gradeUserCard(deck.id, current.card.id, grade);
     const { gained, newState, leveledUp } = awardXP(grade);
     setXPState(newState);
     setSessionXP((s) => s + gained);
     popupRef.current += 1;
     setXPPopups((prev) => [...prev, { id: popupRef.current, amount: gained, leveledUp }]);
-
     setGraded((g) => g + 1);
     setRevealed(false);
     setPos((p) => p + 1);
   }
 
-  if (error) {
-    return (
-      <div className="p-6 text-sm text-warn">
-        Greška: {error}{' '}
-        <Link to="/revise" className="underline">
-          natrag
-        </Link>
-      </div>
-    );
+  function handleReset() {
+    if (!deck) return;
+    resetUserDeck(deck);
+    const source = deck.cards.map((card) => ({ card }));
+    setItems(shuffle(source, Date.now()));
+    setPos(0);
+    setRevealed(false);
+    setGraded(0);
+    setSessionXP(0);
   }
 
-  if (!deck) {
+  const { level, pct } = getLevelProgress(xpState.xp);
+
+  if (!deck || !items) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
         <Loader2 size={16} className="animate-spin" /> Učitavam…
@@ -139,19 +98,15 @@ export default function ReviseToday() {
     );
   }
 
-  const total = deck.length;
-  const done = pos >= total;
-  const { level, pct } = getLevelProgress(xpState.xp);
-
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col">
       <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6">
         <div className="mb-2 flex items-center justify-between">
           <Link
-            to="/revise"
+            to="/revise/my-decks"
             className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
           >
-            <ArrowLeft size={12} /> Sve teme
+            <ArrowLeft size={12} /> Moji paketi
           </Link>
           <div className="flex items-center gap-2">
             {xpState.streak > 1 && (
@@ -162,32 +117,54 @@ export default function ReviseToday() {
             )}
             <span
               className="flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
-              title={`${xpState.xp} XP ukupno`}
+              title={`${xpState.xp} XP`}
             >
               <Star size={11} className="fill-accent" />
               Razina {level}
             </span>
+            <Link
+              to={`/revise/deck/${deck.id}/edit`}
+              className="flex size-6 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
+              title="Uredi paket"
+            >
+              <Pencil size={13} />
+            </Link>
           </div>
         </div>
 
-        <h1 className="text-xl font-semibold text-text-strong">Danas</h1>
-        <p className="mt-0.5 text-xs text-text-muted">
-          {total === 0
-            ? 'Trenutno nema pitanja na redu.'
-            : `${Math.min(pos, total)} / ${total} pitanja${sessionXP > 0 ? ` · +${sessionXP} XP` : ''}`}
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="truncate text-xl font-semibold text-text-strong">{deck.name}</h1>
+            <p className="mt-0.5 text-xs text-text-muted">
+              {total === 0
+                ? dueOnly
+                  ? 'Nema kartica na redu.'
+                  : 'Ovaj paket nema kartica.'
+                : `${Math.min(pos, total)} / ${total} kartica${graded > 0 ? ` · +${sessionXP} XP` : ''}`}
+            </p>
+          </div>
+          {total > 0 && !done && (
+            <button
+              onClick={handleReset}
+              title="Resetiraj napredak i počni ispočetka"
+              className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs text-text-muted hover:bg-surface-2 hover:text-text-strong"
+            >
+              <RotateCcw size={12} />
+            </button>
+          )}
+        </div>
 
         {total > 0 && (
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
             <div
               className="h-full rounded-full bg-accent-2 transition-all"
-              style={{ width: `${total === 0 ? 0 : (Math.min(pos, total) / total) * 100}%` }}
+              style={{ width: `${(Math.min(pos, total) / total) * 100}%` }}
             />
           </div>
         )}
 
         {/* XP level bar */}
-        <div className="mt-1.5 h-0.5 overflow-hidden rounded-full bg-surface-2">
+        <div className="mt-2 h-0.5 overflow-hidden rounded-full bg-surface-2">
           <div
             className="h-full rounded-full bg-accent/40 transition-all duration-500"
             style={{ width: `${pct}%` }}
@@ -210,7 +187,9 @@ export default function ReviseToday() {
                 }
                 className={cn(
                   'flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg',
-                  p.leveledUp ? 'bg-accent text-white' : 'bg-accent/15 text-accent',
+                  p.leveledUp
+                    ? 'bg-accent text-white'
+                    : 'bg-accent/15 text-accent',
                 )}
               >
                 <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
@@ -225,17 +204,28 @@ export default function ReviseToday() {
           <div className="mx-auto mt-12 flex max-w-md flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-8 text-center">
             <Sparkles size={28} className="text-accent-2" />
             <h2 className="text-lg font-semibold text-text-strong">
-              Sve si stigao za danas
+              {dueOnly ? 'Sve si stigao za danas' : 'Ovaj paket je prazan'}
             </h2>
             <p className="text-sm text-text-muted">
-              Kad ti se sljedeća kartica vrati na red, pojavit će se ovdje.
+              {dueOnly
+                ? 'Nema kartica na redu. Vrati se sutra!'
+                : 'Dodaj kartice u paket kako bi mogao vježbati.'}
             </p>
-            <Link
-              to="/revise"
-              className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
-            >
-              Pregledaj teme
-            </Link>
+            {dueOnly ? (
+              <Link
+                to={`/revise/deck/${deck.id}?due=0`}
+                className="mt-2 rounded-md border border-border px-4 py-2 text-sm text-text-muted hover:bg-surface-2"
+              >
+                Vježbaj sve kartice
+              </Link>
+            ) : (
+              <Link
+                to={`/revise/deck/${deck.id}/edit`}
+                className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
+              >
+                Dodaj kartice
+              </Link>
+            )}
           </div>
         )}
 
@@ -246,25 +236,21 @@ export default function ReviseToday() {
             <div className="flex w-full flex-col gap-2 rounded-xl border border-border bg-surface-2/60 p-4 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">Ocijenjeno</span>
-                <span className="font-semibold text-text-strong">
-                  {graded} {graded === 1 ? 'pitanje' : 'pitanja'}
+                <span className="font-semibold text-text-strong">{graded} kartica</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-muted">Zarađeno XP</span>
+                <span className="flex items-center gap-1 font-semibold text-accent">
+                  <Star size={13} className="fill-accent" />
+                  +{sessionXP} XP
                 </span>
               </div>
-              {sessionXP > 0 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">Zarađeno XP</span>
-                  <span className="flex items-center gap-1 font-semibold text-accent">
-                    <Star size={13} className="fill-accent" />
-                    +{sessionXP} XP
-                  </span>
-                </div>
-              )}
               {xpState.streak > 1 && (
                 <div className="flex items-center justify-between">
                   <span className="text-text-muted">Niz učenja</span>
                   <span className="flex items-center gap-1 font-semibold text-orange-400">
                     <Flame size={13} />
-                    {xpState.streak} dana
+                    {xpState.streak} {xpState.streak < 5 ? 'dana' : 'dana'}
                   </span>
                 </div>
               )}
@@ -273,30 +259,35 @@ export default function ReviseToday() {
                 <span className="font-semibold text-text-strong">{level}</span>
               </div>
             </div>
-            <Link
-              to="/revise"
-              className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
-            >
-              Natrag na teme
-            </Link>
+            <div className="flex gap-2">
+              <Link
+                to="/revise/my-decks"
+                className="rounded-md border border-border px-4 py-2 text-sm text-text-muted hover:bg-surface-2"
+              >
+                Moji paketi
+              </Link>
+              <button
+                onClick={handleReset}
+                className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
+              >
+                Vježbaj opet
+              </button>
+            </div>
           </div>
         )}
 
         {!done && current && (
           <article className="rounded-2xl border border-border bg-surface p-5">
             <div className="mb-3 flex items-center justify-between gap-3 text-xs text-text-muted">
-              <Link
-                to={`/revise/${current.topicId}`}
-                className="rounded-md border border-border bg-surface-2 px-2 py-0.5 hover:border-accent/40 hover:text-text-strong"
-              >
-                {current.topicName}
-              </Link>
+              <span className="rounded-md border border-border bg-surface-2 px-2 py-0.5">
+                {deck.name}
+              </span>
               <span>
                 {pos + 1} / {total}
               </span>
             </div>
             <h2 className="text-base font-semibold leading-snug text-text-strong">
-              {current.question.q}
+              {current.card.q}
             </h2>
             {!revealed ? (
               <button
@@ -308,25 +299,8 @@ export default function ReviseToday() {
             ) : (
               <div className="mt-4 flex flex-col gap-4">
                 <div className="rounded-lg border border-border bg-surface-2/60 p-3 text-sm leading-relaxed text-text">
-                  {current.question.a}
+                  {current.card.a}
                 </div>
-                {current.question.source && (
-                  <Link
-                    to={buildDocsLink(
-                      current.question.source.doc,
-                      current.question.source.page,
-                      current.question.source.snippet,
-                    )}
-                    className={cn(
-                      'inline-flex w-fit items-center gap-1.5 rounded-md border border-border bg-surface-2 px-2 py-1 text-xs text-text-muted hover:border-accent/40 hover:text-accent',
-                    )}
-                  >
-                    <BookOpen size={12} />
-                    {DOC_SLUG_TO_LABEL[current.question.source.doc] ??
-                      current.question.source.doc}
-                    , str. {current.question.source.page}
-                  </Link>
-                )}
                 <GradeButtons onGrade={handleGrade} />
               </div>
             )}
