@@ -15,9 +15,18 @@ dist-ssr
 # Vercel
 .vercel
 
-# Rendered PDF page images (~431 MB) — served from Vercel Blob in production.
-# Keep locally for dev; do not commit. See README for blob setup.
+# Rendered PDF page images (~431 MB) — served from Supabase Storage in production.
+# Keep locally for dev; do not commit. See tools/upload_to_supabase.ts.
 public/pdfs-rendered/
+
+# Source PDFs (~232 MB; Duale Reihe alone is 114 MB and exceeds GitHub's 100 MB
+# single-file limit). Used only by tools/upload_to_supabase.ts to push into the
+# `pdfs` bucket. Don't commit.
+files/
+
+# Local agent state — Claude Code session, MCP server config
+.claude/
+.mcp.json
 
 # Editor directories and files
 .vscode/*

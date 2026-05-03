@@ -28,7 +28,11 @@ npx tsc -b --noEmit                # type-check only
 
 Restart `npm run dev` after editing `.env.local` — Vite reads env vars only at server start.
 
-`public/pdfs` and `public/data` are **symlinks** into the sibling `../Anatom3d/` repo (`files/` and `Assets/StreamingAssets/`). They must resolve for `/docs`, `/agent`, `/revise`, `/viewer` to fetch any content. If `npm run dev` 404s `/data/...` or `/pdfs/...`, check the symlinks first.
+PDF + indexed-data sourcing:
+
+- `public/data/` and `public/models/` ship in-repo (committed). Bundled PDF index JSONs and `.glb` models load from there.
+- The 5 bundled source PDFs and rendered page WebPs come from **Supabase Storage public buckets** (`pdfs`, `pdfs-rendered`) when `VITE_PDFS_BASE_URL` / `VITE_PDFS_RENDERED_BASE_URL` are set — which is the default for both local dev and prod. Without those env vars, `src/lib/data.ts` falls back to `/pdfs` and `/pdfs-rendered` paths under `public/`, which are gitignored and won't exist on a fresh clone.
+- `public/pdfs-rendered/<slug>/` may exist locally as a development cache; `tools/upload_to_supabase.ts` reads from it to push to Supabase. `files/` (gitignored) holds the 5 source PDFs for the same uploader.
 
 ## Auth + credits (Supabase, hackathon-grade)
 
@@ -59,6 +63,24 @@ Plain username/password backed by a single Supabase table. **Not real auth** —
 ### Non-security note
 
 `SALT` is a fixed string. No per-user salt, no slow KDF, no rate limit. This stops *plaintext over the wire* and *trivial DB-dump-as-rainbow-table* — nothing else. Treat the credits balance as cosmetic state, not entitlement. Real auth = replace the shim with Supabase Auth and tighten RLS to `auth.uid()`.
+
+## Storage backend (Supabase)
+
+All PDFs live in the same Supabase project (`uafyfwyyqzunabpuftue`) but in different buckets with different access patterns.
+
+### Public buckets (bundled PDFs, served to every visitor)
+
+- `pdfs` — the 5 source PDFs as `<filename>.pdf`. Public read. 200 MB file limit, `application/pdf` only.
+- `pdfs-rendered` — `<slug>/0001.webp`, `<slug>/0001.json`, `<slug>/meta.json` for each of the 5 slugs (skripta_a1/a2/a3, handout_a1, duale_reihe). Public read. 10 MB file limit, `image/webp` + `application/json`.
+- Front-end reads via `VITE_PDFS_BASE_URL` / `VITE_PDFS_RENDERED_BASE_URL` (`src/lib/data.ts:21-24`). The values point at `https://<project>.supabase.co/storage/v1/object/public/<bucket>`.
+- Uploads go through `tools/upload_to_supabase.ts` (one-shot, idempotent, concurrency 8). Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` — never committed, never shipped to the browser. Reads source PDFs from `<repo>/files/` (gitignored) and rendered from `public/pdfs-rendered/` (gitignored).
+- `tools/upload_to_blob.ts` is the legacy Vercel Blob uploader, kept around for reference. Don't run it.
+
+### Private bucket (per-user uploads)
+
+- `user-pdfs` — keys `<user_id>/<slug>.pdf` and `<user_id>/<slug>.spans.json`. Private (no public URL). Anon RLS allows all CRUD scoped to `bucket_id = 'user-pdfs'`; the app filters by `user_id` on the client side.
+- `public.user_pdfs` table tracks each upload with `user_id, slug, doc_label, total_pages, payload jsonb, pdf_path, spans_path, created_at`, unique on `(user_id, slug)`. RLS permissive `using (true)` for `anon` — same hackathon-grade posture as `users`. With this RLS, any anon-key holder can read every user's row. Tightening to `auth.uid() = user_id` requires switching off the auth shim.
+- Wiring lives in `src/lib/cloudDocs.ts`: `cloudUploadDoc` fires from `UploadPdfButton.tsx` after `saveLocalDoc`; `cloudSyncToLocal` runs from `AuthContext.tsx` on login; `cloudDeleteDoc` mirrors local delete; `clearCloudScopedLocal` runs on logout.
 
 ## Home hero (`/`)
 
