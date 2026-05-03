@@ -185,7 +185,7 @@ export default function PdfViewer({
     const target = root.querySelector(`[data-page="${page}"]`) as HTMLElement | null;
     if (target) {
       lastScrolledPageRef.current = page;
-      // Instant scroll — smooth across hundreds of pages on a 1333-page PDF
+      // Instant scroll - smooth across hundreds of pages on a 1333-page PDF
       // is unusable, and the intermediate IO firings overshoot the target.
       target.scrollIntoView({ behavior: 'auto', block: 'start' });
     }

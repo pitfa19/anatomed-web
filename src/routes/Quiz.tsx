@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Loader2, ChevronRight, Target, Trophy } from 'lucide-react';
+import { ArrowLeft, Loader2, ChevronRight, Target, Trophy } from 'lucide-react';
 import { loadCatalog } from '../lib/viewer/catalog';
 import type { PartsCatalog, SystemId } from '../lib/viewer/types';
 import { QUIZ_SYSTEMS, buildDeck, loadBestScore } from '../lib/quiz';
@@ -40,7 +40,7 @@ export default function Quiz() {
     const questions = buildDeck(catalog, cfg);
     if (questions.length === 0) return;
     startQuizSession({ config: cfg, questions, answers: [], currentIdx: 0 });
-    navigate('/quiz/play');
+    navigate('/revise/praksa/play');
   }
 
   if (error) {
@@ -60,8 +60,14 @@ export default function Quiz() {
 
   return (
     <div className="mx-auto h-full w-full max-w-3xl overflow-y-auto px-4 py-6 sm:px-6">
+      <Link
+        to="/revise"
+        className="mb-3 inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-strong"
+      >
+        <ArrowLeft size={12} /> Natrag
+      </Link>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-text-strong">Kviz</h1>
+        <h1 className="text-2xl font-semibold text-text-strong">Praktično ponavljanje</h1>
         <p className="mt-1 text-sm text-text-muted">
           Pronađi naučenu strukturu na 3D modelu.
         </p>

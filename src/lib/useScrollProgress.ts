@@ -6,7 +6,7 @@ import { useEffect, useState, type RefObject } from 'react';
  * viewport top; 1 = element has scrolled up by `triggerHeight` (default =
  * window.innerHeight).
  *
- * Scrolls inside any ancestor — uses a capture-phase scroll listener on
+ * Scrolls inside any ancestor - uses a capture-phase scroll listener on
  * `document`, so it works whether the page itself scrolls or some inner
  * container does (e.g. `<main className="overflow-y-auto">` on the home
  * route).

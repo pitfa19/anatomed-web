@@ -35,7 +35,7 @@ CATALOG_PATH = os.path.join(REPO, "public/models/parts-catalog.json")
 GLB_DIR = os.path.join(REPO, "public/models/glb")
 THUMB_DIR = os.path.join(REPO, "public/models/thumbs")
 
-# Mirror src/lib/quiz.ts QUIZ_SYSTEMS — only systems we actually quiz on.
+# Mirror src/lib/quiz.ts QUIZ_SYSTEMS - only systems we actually quiz on.
 DEFAULT_SYSTEMS = ("skeleton", "muscles", "organs")
 
 SIZE = 512
@@ -68,7 +68,7 @@ def reset_scene() -> None:
 
 def setup_render() -> None:
     sc = bpy.context.scene
-    # Prefer EEVEE for speed. Naming changed across Blender versions — accept
+    # Prefer EEVEE for speed. Naming changed across Blender versions - accept
     # whichever string this build understands.
     eevee_choices = ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE")
     for engine in eevee_choices:
@@ -83,7 +83,7 @@ def setup_render() -> None:
     sc.render.film_transparent = True
     sc.render.image_settings.file_format = "PNG"
     sc.render.image_settings.color_mode = "RGBA"
-    # Standard view transform — runtime is Tailwind on neutral surface, so the
+    # Standard view transform - runtime is Tailwind on neutral surface, so the
     # filmic LUT washes out the system tint.
     sc.view_settings.view_transform = "Standard"
     sc.view_settings.look = "None"
@@ -130,7 +130,7 @@ def assign_tint(objs: Iterable[bpy.types.Object], hex_color: str) -> None:
     bsdf = mat.node_tree.nodes.get("Principled BSDF")
     if bsdf is not None:
         bsdf.inputs["Base Color"].default_value = (rgb[0], rgb[1], rgb[2], 1.0)
-        # Bone-ish surface — slightly rough, no metalness.
+        # Bone-ish surface - slightly rough, no metalness.
         bsdf.inputs["Roughness"].default_value = 0.55
         # Property name varies by Blender version.
         for k in ("Metallic", "Specular", "Specular IOR Level"):
@@ -279,7 +279,7 @@ def render_system(
     limit: Optional[int],
 ) -> tuple:
     glb_url: str = system["glb"]
-    # parts-catalog.json paths look like "/models/glb/skeleton.glb?v=…" — strip
+    # parts-catalog.json paths look like "/models/glb/skeleton.glb?v=…" - strip
     # the cache-buster and the leading slash so we resolve a real file.
     glb_path = glb_url.split("?", 1)[0]
     if glb_path.startswith("/"):

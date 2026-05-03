@@ -124,7 +124,7 @@ export default function ReviseToday() {
     return (
       <div className="p-6 text-sm text-warn">
         Greška: {error}{' '}
-        <Link to="/revise" className="underline">
+        <Link to="/revise/teorija" className="underline">
           natrag
         </Link>
       </div>
@@ -148,7 +148,7 @@ export default function ReviseToday() {
       <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6">
         <div className="mb-2 flex items-center justify-between">
           <Link
-            to="/revise"
+            to="/revise/teorija"
             className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
           >
             <ArrowLeft size={12} /> Sve teme
@@ -215,7 +215,7 @@ export default function ReviseToday() {
               >
                 <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
                 +{p.amount} XP
-                {p.leveledUp && ' — Razina gore!'}
+                {p.leveledUp && ' - Razina gore!'}
               </motion.div>
             ))}
           </AnimatePresence>
@@ -231,7 +231,7 @@ export default function ReviseToday() {
               Kad ti se sljedeća kartica vrati na red, pojavit će se ovdje.
             </p>
             <Link
-              to="/revise"
+              to="/revise/teorija"
               className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
             >
               Pregledaj teme
@@ -274,7 +274,7 @@ export default function ReviseToday() {
               </div>
             </div>
             <Link
-              to="/revise"
+              to="/revise/teorija"
               className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
             >
               Natrag na teme

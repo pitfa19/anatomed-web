@@ -30,7 +30,7 @@ export async function generateCards(topic: string, count = 8): Promise<Generated
       );
     }
     if (body.code === 'parse_failed') {
-      throw new Error('Nevažeći odgovor od AI-a — JSON niz nije pronađen.');
+      throw new Error('Nevažeći odgovor od AI-a - JSON niz nije pronađen.');
     }
     throw new Error(body.error ?? `HTTP ${res.status}`);
   }

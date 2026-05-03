@@ -84,7 +84,7 @@ export function resolvePartByQuery(
   const lc = trimmed.toLowerCase();
   const idx = buildIndex(catalog);
 
-  // Alias rewrite first — must hit an exact catalog name on the right side.
+  // Alias rewrite first - must hit an exact catalog name on the right side.
   const aliased = ALIASES[lc];
   if (aliased) {
     const bucket = idx.byTerm.get(aliased.toLowerCase());

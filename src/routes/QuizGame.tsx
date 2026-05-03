@@ -30,16 +30,16 @@ export default function QuizGame() {
     });
   }, []);
 
-  // No active session — bounce to lobby.
+  // No active session - bounce to lobby.
   useEffect(() => {
-    if (!session) navigate('/quiz', { replace: true });
+    if (!session) navigate('/revise/praksa', { replace: true });
   }, [session, navigate]);
 
   // When the active deck is exhausted, persist + go to results.
   useEffect(() => {
     if (!session) return;
     if (session.currentIdx < session.questions.length) return;
-    navigate('/quiz/results', { replace: true });
+    navigate('/revise/praksa/results', { replace: true });
   }, [session, navigate]);
 
   const advanceTimerRef = useRef<number | null>(null);
@@ -113,7 +113,7 @@ export default function QuizGame() {
 
   function handleQuit() {
     clearQuizSession();
-    navigate('/quiz', { replace: true });
+    navigate('/revise/praksa', { replace: true });
   }
 
   if (!session || !currentQ) {
@@ -189,7 +189,7 @@ export default function QuizGame() {
         </div>
       </div>
 
-      {/* 3D scene — fills the rest */}
+      {/* 3D scene - fills the rest */}
       <div className={cn('relative flex-1 overflow-hidden', flashTone)}>
         <QuizScene
           system={system}

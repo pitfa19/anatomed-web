@@ -53,7 +53,7 @@ export default function Docs() {
     loadCatalog()
       .then(setCatalog)
       .catch(() => {
-        /* 3D catalog is optional here — failure just hides the cross-link chip */
+        /* 3D catalog is optional here - failure just hides the cross-link chip */
       });
   }, []);
 
@@ -120,7 +120,7 @@ export default function Docs() {
   const slug = selectedDoc ? getRenderedSlug(selectedDoc) : null;
 
   // Reset totalPages when switching docs so the new doc re-reports it.
-  // Note: visiblePage is intentionally NOT reset here — every code path that
+  // Note: visiblePage is intentionally NOT reset here - every code path that
   // changes selectedDoc (pickDoc, URL-param effect) sets visiblePage itself,
   // and resetting here would clobber a deep-linked ?page= from the agent.
   useEffect(() => {
@@ -436,7 +436,7 @@ function ViewIn3DChip({ part, variant }: { part: Part; variant: 'hero' | 'sideba
         className="mx-auto flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
       >
         <Box size={14} />
-        Pogledaj u 3D — {part.name_en}
+        Pogledaj u 3D - {part.name_en}
       </Link>
     );
   }

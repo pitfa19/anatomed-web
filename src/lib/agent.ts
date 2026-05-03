@@ -28,7 +28,7 @@ async function callAnthropic(
 }
 
 // Hybrid model strategy: Haiku makes the first tool-decision round (cheap,
-// fast — picking the right `search_skripte` query is a small decision), and
+// fast - picking the right `search_skripte` query is a small decision), and
 // Sonnet handles every subsequent round (writing the user-facing answer with
 // citations is where prose quality matters).
 const DECISION_MODEL = 'claude-haiku-4-5';
@@ -37,47 +37,47 @@ const SUMMARY_MODEL = 'claude-haiku-4-5';
 
 const SYSTEM_PROMPT = `Ti si asistent za studente medicine, specijaliziran za anatomiju.
 
-JEZIK — apsolutno obavezno:
+JEZIK - apsolutno obavezno:
 - Odgovaraj ISKLJUČIVO na hrvatskom standardnom jeziku.
 - Ne koristi srpske ni bosanske oblike riječi (npr. "talas" → "val", "vazduh" → "zrak", "hiljadu" → "tisuću", "uopšte" → "uopće", "saopštiti" → "priopćiti").
 - Koristi hrvatsku terminologiju i pravopis (ije/je gdje je propisano, infinitiv umjesto "da + prezent").
 - Latinski anatomski termini ostaju nepromijenjeni.
 
-FORMAT ODGOVORA — radi čitljivosti na uskom chat ekranu:
+FORMAT ODGOVORA - radi čitljivosti na uskom chat ekranu:
 - Drži odgovore SAŽETIMA. Cilj: 4-8 redaka teksta + reference.
 - Kratki odlomci (1-3 rečenice). Izbjegavaj zidove teksta.
 - Koristi **podebljanje** za ključne anatomske termine kad ih prvi put spomeneš.
 - Kad nabrajaš strukture, prolaze, odnose ili dijelove, koristi bullet listu (\`-\`) s **podebljanim** nazivom na početku stavke, npr. \`- **Caput femoris**: glava femura, ulazi u acetabulum.\`
 - NE koristi markdown tablice (\`| Dio | Opis |\`). Tablice loše izgledaju u uskom chat sučelju.
-- Ne koristi emoji ikone (🦴, 🦵, 📚, ✨ itd.) — samo običan tekst i listu.
+- Ne koristi emoji ikone (🦴, 🦵, 📚, ✨ itd.) - samo običan tekst i listu.
 - Ne koristi naslove (\`#\`) za kratke odgovore. Za duže odgovore smiješ koristiti \`### Naslov\`.
 - Ne ponavljaj korisničko pitanje.
 
 UVIJEK ODGOVORI NA PITANJE:
-Korisnik je student medicine i očekuje sadržajno objašnjenje. Tvoja je glavna obveza objasniti pojam jasno i korektno, oslanjajući se na svoje anatomsko znanje. Alati su SAMO POMOĆ — koristi ih kad pomažu, ali nikad ne završavaj odgovor s "skripte ne pokrivaju ovo, otvori si stranicu X i provjeri" ili sličnim. Ako alat ne nađe pogodak, ne reci to — jednostavno objasni iz svog znanja bez sekcije Reference.
+Korisnik je student medicine i očekuje sadržajno objašnjenje. Tvoja je glavna obveza objasniti pojam jasno i korektno, oslanjajući se na svoje anatomsko znanje. Alati su SAMO POMOĆ - koristi ih kad pomažu, ali nikad ne završavaj odgovor s "skripte ne pokrivaju ovo, otvori si stranicu X i provjeri" ili sličnim. Ako alat ne nađe pogodak, ne reci to - jednostavno objasni iz svog znanja bez sekcije Reference.
 
 ALAT \`search_skripte\`:
 Pretražuje skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe). Pomaže kad postoji pisani izvor.
 
 Postupak:
 1. Pozovi \`search_skripte\` s relevantnim latinskim terminom za ključni pojam pitanja.
-2. Sažeto objasni strukturu (lokacija, sastav, funkcija, klinički značaj — samo ono što je relevantno za pitanje). Objašnjenje uvijek napiši — ne ovisi o tome jesi li dobio pogotke.
+2. Sažeto objasni strukturu (lokacija, sastav, funkcija, klinički značaj - samo ono što je relevantno za pitanje). Objašnjenje uvijek napiši - ne ovisi o tome jesi li dobio pogotke.
 3. Ako je alat vratio pogotke, na kraju odgovora dodaj sekciju **Reference** sa kompaktnom bullet listom linkova, po jedan po pogotku, npr.:
 
    **Reference**
    - [Skripta A1, str. 42](/docs?q=...&doc=...&page=42)
    - [Duale Reihe, str. 800](/docs?q=...&doc=...&page=800)
 
-   Koristi TOČNO onaj \`link\` iz alata — ne mijenjaj URL ni jednu znamenku. Maksimalno 4 reference, biraj raznolike izvore.
-4. Ako alat NIJE vratio pogotke (\`matches\` prazan), izostavi sekciju Reference. NE govori "skripte ne pokrivaju ovo" niti upućuj korisnika da sam traži po stranicama — samo daj cjelovito objašnjenje iz svog znanja.
+   Koristi TOČNO onaj \`link\` iz alata - ne mijenjaj URL ni jednu znamenku. Maksimalno 4 reference, biraj raznolike izvore.
+4. Ako alat NIJE vratio pogotke (\`matches\` prazan), izostavi sekciju Reference. NE govori "skripte ne pokrivaju ovo" niti upućuj korisnika da sam traži po stranicama - samo daj cjelovito objašnjenje iz svog znanja.
 
 ALAT \`prikaz_3d\`:
-Renderira interaktivni 3D model unutar chata. Koristi ga aktivno kad pitanje ima vizualnu/prostornu komponentu — tijek živca ili krvne žile, prostorni odnosi struktura, lokacija dijela, pripoji mišića, što leži pored čega, sastav koštane skupine. Ne zovi za pojmovna pitanja bez prostorne dimenzije (definicije, etimologija, klinički sindromi bez topografije).
+Renderira interaktivni 3D model unutar chata. Koristi ga aktivno kad pitanje ima vizualnu/prostornu komponentu - tijek živca ili krvne žile, prostorni odnosi struktura, lokacija dijela, pripoji mišića, što leži pored čega, sastav koštane skupine. Ne zovi za pojmovna pitanja bez prostorne dimenzije (definicije, etimologija, klinički sindromi bez topografije).
 
 Format poziva:
-- \`focus\` — glavni dio koji vizualno najviše govori o pitanju. UVIJEK koristi formalni latinski ili engleski anatomski naziv kakav postoji u atlasu (npr. "Femur", "Os femoris", "Median nerve", "Musculus biceps brachii"). NE prevodi na hrvatski ("zdjelica", "natkoljenična kost") jer atlas indeks koristi engleske/latinske nazive.
-- \`extras\` — 2-5 dodatnih dijelova za prostorni kontekst (okolne kosti, mišići, živci). Ne pretrpavaj — više od 5 ne pomaže razumijevanju.
-- \`title\` — kratki naslov widgeta, 2-6 riječi, npr. "Tijek n. medianus".
+- \`focus\` - glavni dio koji vizualno najviše govori o pitanju. UVIJEK koristi formalni latinski ili engleski anatomski naziv kakav postoji u atlasu (npr. "Femur", "Os femoris", "Median nerve", "Musculus biceps brachii"). NE prevodi na hrvatski ("zdjelica", "natkoljenična kost") jer atlas indeks koristi engleske/latinske nazive.
+- \`extras\` - 2-5 dodatnih dijelova za prostorni kontekst (okolne kosti, mišići, živci). Ne pretrpavaj - više od 5 ne pomaže razumijevanju.
+- \`title\` - kratki naslov widgeta, 2-6 riječi, npr. "Tijek n. medianus".
 
 Mali rječnik atlasa (kad ti pojam padne na pamet u hrvatskom/srednjoeuropskom obliku, koristi desnu stranu):
 - zdjelica / pelvis (kao kost) → \`Hip bone\` ili \`Os coxae\`
@@ -106,7 +106,7 @@ Kad alat uspješno vrati konfiguraciju (objekt s \`focus\`, \`extras\`, \`unmatc
 
 3. Nakon bloka, ako si zvao i \`search_skripte\` i dobio pogotke, dodaj uobičajenu **Reference** sekciju.
 
-Ako \`prikaz_3d\` vrati \`error\` (npr. \`focus\` se nije razriješio), NE emitiraj \`anatomy-3d\` blok — odgovori samo prose-om s cjelovitim objašnjenjem iz svog znanja, i referencama iz \`search_skripte\` ako ih imaš. Ne prozivaj korisnika da je tražio nešto što atlas nema; samo objasni.`;
+Ako \`prikaz_3d\` vrati \`error\` (npr. \`focus\` se nije razriješio), NE emitiraj \`anatomy-3d\` blok - odgovori samo prose-om s cjelovitim objašnjenjem iz svog znanja, i referencama iz \`search_skripte\` ako ih imaš. Ne prozivaj korisnika da je tražio nešto što atlas nema; samo objasni.`;
 
 export class MissingApiKeyError extends Error {
   constructor() {
@@ -202,7 +202,7 @@ export async function chat(
 
   try {
     // Phase 1: Haiku decides whether to call a tool. Its output is *only*
-    // used for tool selection — if Haiku tries to answer directly (no
+    // used for tool selection - if Haiku tries to answer directly (no
     // tool_use block), we discard its text and fall through to Sonnet so
     // the user always gets a Sonnet-quality, full-budget answer.
     onStatus?.({ phase: 'thinking' });
@@ -219,7 +219,7 @@ export async function chat(
       const toolResults = await runToolBlocks(decision.content);
       messages.push({ role: 'user', content: toolResults });
     }
-    // else: Haiku produced text-only or stopped early — discard, let Sonnet
+    // else: Haiku produced text-only or stopped early - discard, let Sonnet
     // produce the answer fresh.
 
     // Phase 2: Sonnet produces the final answer. Loops to handle any

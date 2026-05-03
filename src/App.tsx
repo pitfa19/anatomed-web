@@ -6,7 +6,6 @@ import {
   GraduationCap,
   Home as HomeIcon,
   Box,
-  Target,
   Sun,
   Moon,
   Menu,
@@ -32,7 +31,6 @@ const NAV: NavItem[] = [
   { to: '/agent', label: 'Agent', icon: MessagesSquare },
   { to: '/revise', label: 'Ponavljanje', icon: GraduationCap },
   { to: '/viewer', label: '3D', icon: Box },
-  { to: '/quiz', label: 'Kviz', icon: Target },
 ];
 
 export default function App() {

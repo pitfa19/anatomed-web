@@ -44,7 +44,7 @@ export default function ReviseTopic() {
     return (
       <div className="p-6 text-sm text-warn">
         Greška: {error}{' '}
-        <Link to="/revise" className="underline">
+        <Link to="/revise/teorija" className="underline">
           natrag
         </Link>
       </div>
@@ -62,7 +62,7 @@ export default function ReviseTopic() {
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col">
       <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6">
         <Link
-          to="/revise"
+          to="/revise/teorija"
           className="mb-2 inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
         >
           <ArrowLeft size={12} /> Sve teme

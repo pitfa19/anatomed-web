@@ -32,7 +32,7 @@ export interface IndexResult {
   pageSpans: Map<number, RenderedPageSpan[]>;
   pdfBlob: Blob;
   sourceMeta: SourceMeta;
-  /** Set when no terms were found at all and no spans had any text — likely a scanned PDF. */
+  /** Set when no terms were found at all and no spans had any text - likely a scanned PDF. */
   warning?: 'no_searchable_text';
 }
 
@@ -151,7 +151,7 @@ export async function indexAndExtractSpans(
 
   // Build the Blob NOW, while the buffer is still valid. pdfjs-dist transfers
   // ownership of the Uint8Array's underlying ArrayBuffer to its worker thread,
-  // which detaches it on the main side — so any later read (including
+  // which detaches it on the main side - so any later read (including
   // `new Blob([arrayBuffer])`) would see 0 bytes.
   const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
 

@@ -18,7 +18,7 @@ interface Props {
   catalog: PartsCatalog;
   extras: ReadonlySet<string>;
   /** Set of partIds whose landmark labels (and connector lines) should be
-   *  rendered. Anything not in this set is hidden — applies to active and
+   *  rendered. Anything not in this set is hidden - applies to active and
    *  every extra alike. */
   labelsByPartId: ReadonlySet<string>;
   /** Called when the user clicks a 3D part. Same semantics as clicking a
@@ -59,14 +59,14 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
 
   // Index parts by id so we can match an anchor's `text` against its owning
   // part's display name to drop the "whole-bone" label (e.g. a "Femur"
-  // anchor on the Femur part — we only want subpart labels).
+  // anchor on the Femur part - we only want subpart labels).
   const partsById = useMemo(() => {
     const m = new Map<string, Part>();
     for (const p of catalog.parts) m.set(p.id, p);
     return m;
   }, [catalog]);
 
-  // Aggregated anchor list — flattened from per-source slices, then filtered
+  // Aggregated anchor list - flattened from per-source slices, then filtered
   // per-part against `labelsByPartId`, with the whole-bone anchor dropped.
   const visibleAnchors = useMemo(() => {
     const flat: LandmarkAnchor[] = [];
@@ -86,7 +86,7 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
   // Cache per-srcKey handlers so the function identity passed to SystemModel /
   // ExtraPart is stable across renders. Without this, every render created a
   // fresh `onAnchors` function, which re-fired SystemModel's isolation effect,
-  // which called `fitOrthoToObject` (resetting zoom and pan to fit) — making
+  // which called `fitOrthoToObject` (resetting zoom and pan to fit) - making
   // it impossible for the user to zoom or move away from center.
   const handlersRef = useRef(new Map<string, (a: LandmarkAnchor[]) => void>());
   const getSrcAnchors = useCallback((srcKey: string) => {
@@ -103,7 +103,7 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
     return fn;
   }, []);
 
-  // Stable onFit handler — same reasoning as above. The inline arrow form was
+  // Stable onFit handler - same reasoning as above. The inline arrow form was
   // a fresh ref every render, also re-firing the isolation/fit effect.
   const handleFit = useCallback((info: FitInfo | null) => {
     fitInfoRef.current = info;
@@ -117,7 +117,7 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
     return m;
   }, [catalog]);
 
-  // Sanitized names of every "whole-bone" connector mesh — the `-line` mesh
+  // Sanitized names of every "whole-bone" connector mesh - the `-line` mesh
   // paired with the part's own labelText (e.g. "Femur-line" on the Femur).
   // We never want to render these: the whole-bone label is filtered out of
   // `visibleAnchors`, so the connector would dangle into empty space.
@@ -132,7 +132,7 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
 
   // Walk the clicked object's parents until we find a node whose name matches
   // a catalog Part. Only act if the part is currently rendered (active or
-  // toggled on as an extra) — three.js raycaster hits hidden meshes too, so
+  // toggled on as an extra) - three.js raycaster hits hidden meshes too, so
   // without this gate the user could focus parts that aren't visible.
   const handleObjectClick = useCallback((obj: THREE.Object3D) => {
     let cur: THREE.Object3D | null = obj;
@@ -234,7 +234,7 @@ export default AnatomyScene;
 
 /** Subscribes to OrbitControls 'change' and clamps `controls.target` to a
  *  sphere around the fit center. The radius is `fit.panRadius / camera.zoom`,
- *  so as the user zooms in the allowed pan distance shrinks proportionally —
+ *  so as the user zooms in the allowed pan distance shrinks proportionally -
  *  the part body always stays at least partially in view. */
 function PanClamp({ fitInfoRef }: { fitInfoRef: React.MutableRefObject<FitInfo | null> }) {
   const { controls } = useThree();

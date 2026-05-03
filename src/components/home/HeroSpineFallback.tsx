@@ -1,5 +1,5 @@
 /**
- * Static SVG sketch of a vertebral column — used as Suspense fallback for
+ * Static SVG sketch of a vertebral column - used as Suspense fallback for
  * HeroSpineCanvas and as the reduced-motion replacement.
  */
 export default function HeroSpineFallback() {
