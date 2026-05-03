@@ -55,7 +55,7 @@ export default function HeroHeadline({ eyebrow, line1, line2, subhead }: Props) 
       </motion.span>
 
       <h1 className="text-4xl font-semibold tracking-tight text-text-strong sm:text-5xl lg:text-6xl xl:text-7xl">
-        <span className="block leading-[1.05]">{renderWords(line1)}</span>
+        {line1 && <span className="block leading-[1.05]">{renderWords(line1)}</span>}
         <span className="block leading-[1.05] text-accent">
           {line2.split(' ').map((w, i, arr) => (
             <motion.span

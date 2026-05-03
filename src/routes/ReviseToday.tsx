@@ -64,10 +64,7 @@ export default function ReviseToday() {
     (async () => {
       try {
         const index = await loadReviseIndex();
-        const topicIds = index
-          .flatMap((g) => g.topics)
-          .filter((t) => t.badge !== 'Quizlet')
-          .map((t) => t.id);
+        const topicIds = index.flatMap((g) => g.topics).map((t) => t.id);
         const topics: ReviseTopic[] = await Promise.all(
           topicIds.map((id) => loadReviseTopic(id).catch(() => null as unknown as ReviseTopic)),
         ).then((rs) => rs.filter(Boolean) as ReviseTopic[]);

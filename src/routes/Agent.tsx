@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ChatLog from '../components/agent/ChatLog';
 import Composer from '../components/agent/Composer';
+import OutOfTokensModal from '../components/ai/OutOfTokensModal';
+import LowBalanceBanner from '../components/ai/LowBalanceBanner';
 import {
   chat,
   MissingApiKeyError,
@@ -9,6 +11,8 @@ import {
   type ToolStatus,
 } from '../lib/agent';
 import type { ChatMessage } from '../lib/types';
+import { useAuth } from '../lib/AuthContext';
+import { LOW_BALANCE_THRESHOLD, FEATURE_LABEL } from '../lib/packages';
 import { Sparkles } from 'lucide-react';
 
 const SUGGESTED = [
@@ -66,6 +70,8 @@ export default function Agent() {
   const [status, setStatus] = useState<ToolStatus>(null);
   const [seed, setSeed] = useState<string | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user, consumeTokens } = useAuth();
+  const [showBuyModal, setShowBuyModal] = useState(false);
 
   // Pre-fill the composer when navigated to with `?prompt=...` (e.g. from
   // the home page agent bento tile). Strip the param after consuming so a
@@ -94,11 +100,44 @@ export default function Agent() {
   }, [messages, summary, summarizedThrough]);
 
   async function send(text: string) {
+    // Add the user message first so it's always visible — without this,
+    // an early return below (out-of-tokens, RPC error) makes the typed
+    // message look like it silently vanished.
     const userMsg: ChatMessage = { id: uid(), role: 'user', text, ts: Date.now() };
     const nextHistory = [...messages, userMsg];
     setMessages(nextHistory);
-    setPending(true);
     setSeed(undefined);
+
+    // Token gate. Signed-out users keep the existing free-prototype path
+    // (no balance attached) so the agent stays usable without an account.
+    if (user) {
+      let result;
+      try {
+        result = await consumeTokens('agent_chat');
+      } catch (err) {
+        const errText = `Greška pri provjeri kredita: ${err instanceof Error ? err.message : String(err)}`;
+        setMessages((m) => [
+          ...m,
+          { id: uid(), role: 'assistant', text: errText, ts: Date.now() },
+        ]);
+        return;
+      }
+      if (!result.ok) {
+        setShowBuyModal(true);
+        setMessages((m) => [
+          ...m,
+          {
+            id: uid(),
+            role: 'assistant',
+            text: 'Nemaš dovoljno kredita za AI razgovor. Otvori prozor za kupnju ili idi na Profil.',
+            ts: Date.now(),
+          },
+        ]);
+        return;
+      }
+    }
+
+    setPending(true);
 
     let activeSummary = summary;
     let activeSummarizedThrough = summarizedThrough;
@@ -173,7 +212,15 @@ export default function Agent() {
           <ChatLog messages={messages} pending={pending} status={status} />
         )}
       </div>
+      {user && user.credits > 0 && user.credits <= LOW_BALANCE_THRESHOLD && (
+        <LowBalanceBanner credits={user.credits} onBuy={() => setShowBuyModal(true)} />
+      )}
       <Composer onSend={send} pending={pending} initial={seed} />
+      <OutOfTokensModal
+        open={showBuyModal}
+        onClose={() => setShowBuyModal(false)}
+        featureLabel={FEATURE_LABEL.agent_chat}
+      />
     </div>
   );
 }

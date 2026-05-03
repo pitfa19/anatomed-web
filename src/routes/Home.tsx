@@ -50,9 +50,9 @@ export default function Home() {
           <div className="flex flex-col gap-8 lg:col-span-7 lg:justify-center">
             <HeroHeadline
               eyebrow="Anatom3d · za studente medicine"
-              line1="Tvoj"
-              line2="atlas."
-              subhead="Pet skripti, hrvatski agent, 3D viewer - preko istog indeksa. Otvori, traži, izoliraj. Sve u browseru."
+              line1=""
+              line2="Anatom3D"
+              subhead="Pet skripti, hrvatski agent i 3D viewer dijele isti indeks - sve radi u browseru, bez instalacije."
             />
 
             <div className="flex flex-wrap gap-3">
@@ -117,7 +117,7 @@ export default function Home() {
               Što imaš
             </span>
             <h2 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-              Četiri alata. Iste podatke.
+              Četiri alata nad istim podacima
             </h2>
           </div>
         </SectionReveal>
@@ -176,10 +176,10 @@ export default function Home() {
                 Pretraga koja pamti
               </div>
               <h3 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-                Skoči na stranicu, ne na rezultate.
+                Klik na rezultat te vodi ravno na stranicu skripte
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Svaki pogodak otvori cijelu stranicu skripte - žuto označen pojam u kontekstu. Strelice te šalju na sljedeću pojavu bez gubljenja položaja.
+                Umjesto liste rezultata, otvara se cijela stranica sa žuto označenim pojmom u kontekstu. Strelicama prelaziš na sljedeću pojavu bez gubljenja mjesta na stranici.
               </p>
             </div>
           </div>
@@ -196,10 +196,10 @@ export default function Home() {
                 Tvoji PDF-ovi
               </div>
               <h3 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-                Učitaj svoju skriptu. Ostane lokalno.
+                Učitaj vlastitu skriptu - ostaje u browseru
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Indeksiranje radi u browseru, ništa ne ide na server. Pretraga, agent, deep linkovi - sve radi za uploadane datoteke kao i za bundleove. Tvoje datoteke u tvom browseru.
+                Indeksiranje se odvija lokalno; ništa od tvoje skripte ne završava na serveru. Pretraga, agent i deep linkovi rade jednako za učitane PDF-ove kao i za priložene skripte.
               </p>
             </div>
             <div className="relative flex items-center justify-center lg:col-span-7">
@@ -251,7 +251,7 @@ export default function Home() {
             </div>
             <h2 className="text-xl font-semibold text-text-strong">Dobro došao</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
-              Ovo je prototip. Četiri alata: pretraga skripti, agent, ponavljanje i 3D viewer. Otvori bilo koji da vidiš novi UI prije integracije u Unity.
+              Prototip s četiri alata - pretragom skripti, agentom, ponavljanjem i 3D viewerom - prije nego što UI prijeđe u Unity. Slobodno klikaj okolo.
             </p>
             <button
               onClick={dismissWelcome}

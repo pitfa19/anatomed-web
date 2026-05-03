@@ -33,10 +33,7 @@ export default function ReviseTheory() {
   useEffect(() => {
     if (!groups) return;
     let cancelled = false;
-    const ids = groups
-      .flatMap((g) => g.topics)
-      .filter((t) => t.badge !== 'Quizlet')
-      .map((t) => t.id);
+    const ids = groups.flatMap((g) => g.topics).map((t) => t.id);
     Promise.all(
       ids.map((id) =>
         loadReviseTopic(id)
@@ -90,7 +87,7 @@ export default function ReviseTheory() {
       <header className="mb-6">
         <h1 className="text-2xl font-semibold text-text-strong">Teorijsko ponavljanje</h1>
         <p className="mt-1 text-sm text-text-muted">
-          Pitanja, kratke skripte i Quizlet po temama.
+          Pitanja i kratke skripte po temama.
         </p>
       </header>
 
@@ -182,52 +179,37 @@ export default function ReviseTheory() {
             </h2>
             <ul className="flex flex-col gap-2">
               {g.topics.map((t) => {
-                const isQuizletOnly = t.badge === 'Quizlet';
                 const due = dueCounts[t.id] ?? 0;
-                const Inner = (
-                  <div
-                    className={cn(
-                      'flex items-center justify-between gap-3 rounded-xl border p-3 transition-colors',
-                      isQuizletOnly
-                        ? 'cursor-not-allowed border-border bg-surface opacity-50'
-                        : 'border-border bg-surface hover:border-accent/40 hover:bg-surface-2',
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={cn(
-                          'flex size-9 items-center justify-center rounded-lg text-[10px] font-semibold text-white',
-                          t.badge === 'A1'
-                            ? 'bg-accent'
-                            : t.badge === 'A1-Auto'
-                              ? 'bg-accent/80'
-                              : 'bg-accent-2/40',
-                        )}
-                      >
-                        {t.badge}
-                      </span>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-text-strong">
-                            {t.name}
-                          </span>
-                          {!isQuizletOnly && due > 0 && <DueBadge count={due} />}
-                        </div>
-                        <div className="text-xs text-text-muted">{t.subtitle}</div>
-                      </div>
-                    </div>
-                    {!isQuizletOnly && (
-                      <ChevronRight size={16} className="text-text-muted" />
-                    )}
-                  </div>
-                );
                 return (
                   <li key={t.id}>
-                    {isQuizletOnly ? (
-                      Inner
-                    ) : (
-                      <Link to={`/revise/${t.id}`}>{Inner}</Link>
-                    )}
+                    <Link to={`/revise/${t.id}`}>
+                      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-accent/40 hover:bg-surface-2">
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={cn(
+                              'flex size-9 items-center justify-center rounded-lg text-[10px] font-semibold text-white',
+                              t.badge === 'A1'
+                                ? 'bg-accent'
+                                : t.badge === 'A1-Auto'
+                                  ? 'bg-accent/80'
+                                  : 'bg-accent-2/40',
+                            )}
+                          >
+                            {t.badge}
+                          </span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-text-strong">
+                                {t.name}
+                              </span>
+                              {due > 0 && <DueBadge count={due} />}
+                            </div>
+                            <div className="text-xs text-text-muted">{t.subtitle}</div>
+                          </div>
+                        </div>
+                        <ChevronRight size={16} className="text-text-muted" />
+                      </div>
+                    </Link>
                   </li>
                 );
               })}

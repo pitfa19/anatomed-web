@@ -5,17 +5,15 @@ import { loadReviseTopic } from '../lib/data';
 import type { ReviseTopic as Topic } from '../lib/types';
 import QuestionsTab from '../components/revise/QuestionsTab';
 import NotesTab from '../components/revise/NotesTab';
-import LinksTab from '../components/revise/LinksTab';
 import DueBadge from '../components/revise/DueBadge';
 import { dueCountForTopic } from '../lib/srs';
 import { cn } from '../lib/cn';
 
-type Tab = 'questions' | 'notes' | 'links';
+type Tab = 'questions' | 'notes';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'questions', label: 'Pitanja' },
   { id: 'notes', label: 'Skripta' },
-  { id: 'links', label: 'Quizlet' },
 ];
 
 export default function ReviseTopic() {
@@ -104,7 +102,6 @@ export default function ReviseTopic() {
           <QuestionsTab topicId={topic.id} questions={topic.questions} />
         )}
         {tab === 'notes' && <NotesTab notes={topic.notes} />}
-        {tab === 'links' && <LinksTab links={topic.links} />}
       </div>
     </div>
   );
