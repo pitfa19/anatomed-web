@@ -48,9 +48,9 @@ export default function BentoViewerTile({ className }: { className?: string }) {
       </div>
 
       <div>
-        <h3 className="text-base font-semibold text-text-strong">Izoliraj. Rotiraj. Uči.</h3>
+        <h3 className="text-base font-semibold text-text-strong">Izoliraj i rotiraj traženi dio</h3>
         <p className="mt-0.5 text-xs leading-relaxed text-text-muted">
-          Učitaj sustav, traži dio, izoliraj samo njega. Kao u Unityju, ali u browseru.
+          Učitaj cijeli sustav i izdvoji samo dio koji te zanima - kao u Unityju, ali u browseru.
         </p>
       </div>
     </Link>

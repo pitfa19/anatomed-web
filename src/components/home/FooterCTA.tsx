@@ -26,7 +26,7 @@ export default function FooterCTA() {
             Spremno za prvu skriptu?
           </h2>
           <p className="text-sm leading-relaxed text-text-muted sm:text-base">
-            Bez registracije, bez upitnika. Otvori, pretraži, čitaj. Sve što treba je već tu.
+            Bez registracije i upitnika - sve što ti treba već je tu, dovoljno je otvoriti skriptu.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

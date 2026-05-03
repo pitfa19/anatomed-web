@@ -34,7 +34,7 @@ export interface ReviseTopicSummary {
   id: string;
   name: string;
   subtitle: string;
-  badge: 'A1' | 'Quizlet' | string;
+  badge: 'A1' | 'A1-Auto' | string;
 }
 
 export interface ReviseGroup {
@@ -78,16 +78,6 @@ export interface NotesEntry {
   bullets: NotesBullet[];
 }
 
-export interface LinkItem {
-  name: string;
-  url: string;
-}
-
-export interface LinksGroup {
-  group: string;
-  items: LinkItem[];
-}
-
 export interface ReviseTopic {
   id: string;
   name: string;
@@ -95,7 +85,6 @@ export interface ReviseTopic {
   badge: string;
   questions: Question[];
   notes: NotesEntry[];
-  links: LinksGroup[];
 }
 
 export type ChatRole = 'user' | 'assistant';
