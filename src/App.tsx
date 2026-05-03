@@ -86,7 +86,6 @@ export default function App() {
             height={32}
           />
           <span className="text-sm font-semibold tracking-tight text-text-strong">Anatom3d</span>
-          <span className="hidden text-xs text-text-muted sm:inline">/ prototype</span>
         </NavLink>
 
         {/* Desktop inline nav */}
