@@ -82,9 +82,9 @@ export default function BentoAgentTile({ className }: { className?: string }) {
       </div>
 
       <div className="mt-auto">
-        <h3 className="text-sm font-semibold text-text-strong">Pitaj. Dobiješ izvor.</h3>
+        <h3 className="text-sm font-semibold text-text-strong">Postavi pitanje, dobiješ izvor</h3>
         <p className="mt-0.5 text-[11px] leading-relaxed text-text-muted">
-          Hrvatski. Anatomija only. Linkovi na stranicu skripte.
+          Hrvatski jezik, samo anatomija, s linkovima na točnu stranicu skripte.
         </p>
       </div>
 

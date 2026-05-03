@@ -25,7 +25,7 @@ export default function Revise() {
                 Teorijsko ponavljanje
               </div>
               <div className="mt-0.5 text-xs text-text-muted">
-                Pitanja, kratke skripte i Quizlet po temama. SRS s razmaknutim ponavljanjem.
+                Pitanja i kratke skripte po temama, sa SRS-om za razmaknuto ponavljanje.
               </div>
             </div>
           </div>

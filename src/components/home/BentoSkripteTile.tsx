@@ -116,9 +116,9 @@ export default function BentoSkripteTile({ className }: { className?: string }) 
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-text-strong">Pretraži. Otvori. Označi.</h3>
+        <h3 className="text-lg font-semibold text-text-strong">Pretraga skripti</h3>
         <p className="mt-1 text-sm leading-relaxed text-text-muted">
-          Pet skripti, više od stotinu termina po stranici. Pretraga ti pokaže gdje, viewer ti otvori stranicu, žuto označi pojam.
+          Pet skripti i više od stotinu termina po stranici - pretraga te odvodi ravno na mjesto gdje se pojam pojavljuje, sa žuto označenim kontekstom.
         </p>
       </div>
     </Link>

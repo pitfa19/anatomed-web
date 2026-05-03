@@ -85,9 +85,9 @@ export default function BentoReviseTile({ className }: { className?: string }) {
       </div>
 
       <div>
-        <h3 className="text-base font-semibold text-text-strong">Pitanja koja te love.</h3>
+        <h3 className="text-base font-semibold text-text-strong">Pitanja koja te love</h3>
         <p className="mt-0.5 text-xs leading-relaxed text-text-muted">
-          Mali setovi po temama. Quizlet kartice. Tvoje napredovanje, lokalno.
+          Mali setovi pitanja po temama, s napredovanjem koje se pamti lokalno.
         </p>
       </div>
     </Link>

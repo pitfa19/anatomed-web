@@ -34,7 +34,7 @@ export interface ReviseTopicSummary {
   id: string;
   name: string;
   subtitle: string;
-  badge: 'A1' | 'Quizlet' | string;
+  badge: 'A1' | 'A1-Auto' | string;
 }
 
 export interface ReviseGroup {
@@ -78,16 +78,6 @@ export interface NotesEntry {
   bullets: NotesBullet[];
 }
 
-export interface LinkItem {
-  name: string;
-  url: string;
-}
-
-export interface LinksGroup {
-  group: string;
-  items: LinkItem[];
-}
-
 export interface ReviseTopic {
   id: string;
   name: string;
@@ -95,7 +85,6 @@ export interface ReviseTopic {
   badge: string;
   questions: Question[];
   notes: NotesEntry[];
-  links: LinksGroup[];
 }
 
 export type ChatRole = 'user' | 'assistant';
@@ -119,4 +108,9 @@ export interface Anatomy3DConfig {
   focus: Anatomy3DPartRef;
   extras: Anatomy3DPartRef[];
   unmatched: string[];
+  /** Diagnostics for collective queries: each entry records that one of the
+   *  caller-supplied `parts` was a group alias that expanded to multiple
+   *  catalog parts (e.g. "Kosti stopala" → 27 parts). Informational; the
+   *  agent uses this to phrase its prose, the renderer ignores it. */
+  expanded?: { query: string; label: string; count: number }[];
 }
