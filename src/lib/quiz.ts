@@ -1,19 +1,78 @@
-import type { Part, PartsCatalog, SystemId, SystemMeta } from './viewer/types';
-import { getSystem } from './viewer/catalog';
-
-export type QuizMode = 'name-part' | 'find-model' | 'which-system' | 'speed';
+import type { Part, PartsCatalog, SystemId } from './viewer/types';
 
 export interface QuizQuestion {
-  mode: QuizMode;
-  correct: Part;
-  system: SystemMeta;
-  /** 4 shuffled parts (includes correct). Used for name-part / find-model / speed. */
-  partOptions: Part[];
-  /** 4 shuffled systems (includes correct's system). Used for which-system. */
-  systemChoices: SystemMeta[];
+  /** Stable key for React lists. */
+  key: string;
+  /** Display name shown in the prompt. Latin if available, else English. */
+  prompt: string;
+  /** Secondary line (English when prompt is Latin, else empty). */
+  promptSecondary: string;
+  /** Every catalog id that's an acceptable answer (e.g. both `.l` and `.r`).
+   *  We accept either side because the user is asked for the bone, not the
+   *  laterality. A future "side" mode would split these. */
+  acceptableIds: ReadonlySet<string>;
+  /** Single id used to render the thumbnail / illustrate the answer in the
+   *  results screen. Prefers the `.r` side. */
+  canonicalId: string;
 }
 
-function mulberry32(seed: number) {
+export interface QuizConfig {
+  systemId: SystemId;
+  count: number;
+  /** Stable random seed for the deck (reset on retry). */
+  seed: number;
+}
+
+export interface QuizAnswer {
+  questionKey: string;
+  /** Catalog id the user clicked, or null if they skipped. */
+  pickedId: string | null;
+  correct: boolean;
+}
+
+/** Build a deck of `cfg.count` questions for the chosen system, deterministic
+ *  in (seed, system, catalog). Each question groups parts that share an
+ *  English+Latin name pair so left/right counterparts collapse into one
+ *  acceptable-ids set — the user is asked for the bone, not the laterality. */
+export function buildDeck(catalog: PartsCatalog, cfg: QuizConfig): QuizQuestion[] {
+  const inSystem = catalog.parts.filter((p) => p.system === cfg.systemId);
+  const groups = new Map<string, Part[]>();
+  for (const p of inSystem) {
+    if (!hasUsableName(p)) continue;
+    const groupKey = `${p.name_en}|${p.name_lat ?? ''}`;
+    const arr = groups.get(groupKey);
+    if (arr) arr.push(p);
+    else groups.set(groupKey, [p]);
+  }
+  const questions: QuizQuestion[] = [];
+  for (const [groupKey, parts] of groups) {
+    const canonical = parts.find((p) => p.side === 'r') ?? parts[0]!;
+    const lat = canonical.name_lat?.trim();
+    const en = canonical.name_en.trim();
+    const useLat = !!lat && lat.length > 0;
+    questions.push({
+      key: groupKey,
+      prompt: useLat ? lat! : en,
+      promptSecondary: useLat && lat !== en ? en : '',
+      acceptableIds: new Set(parts.map((p) => p.id)),
+      canonicalId: canonical.id,
+    });
+  }
+  shuffleInPlace(questions, cfg.seed);
+  return questions.slice(0, cfg.count);
+}
+
+/** Drop parts whose names are auto-generated suffixes (e.g. `Axis (C2).001`)
+ *  or empty. Without this the deck includes a handful of garbled prompts. */
+function hasUsableName(p: Part): boolean {
+  const en = p.name_en.trim();
+  if (en.length === 0) return false;
+  if (/\.\d{3}$/.test(en)) return false;
+  return true;
+}
+
+/** Mulberry32 — small, deterministic, good enough for shuffling a quiz deck. */
+function rng(seed: number): () => number {
   let s = seed >>> 0;
   return () => {
     s = (s + 0x6d2b79f5) >>> 0;
@@ -24,86 +83,61 @@ function mulberry32(seed: number) {
   };
 }
 
-function shuffle<T>(arr: T[], rand: () => number): T[] {
-  const out = arr.slice();
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
+function shuffleInPlace<T>(arr: T[], seed: number): void {
+  const r = rng(seed);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
   }
-  return out;
 }
 
-// Good systems for 3D visual recognition
-const VISUAL_SYSTEMS: SystemId[] = ['skeleton', 'muscles', 'organs', 'joints'];
-// Systems with readable names for the "which system?" mode
-const ALL_QUIZ_SYSTEMS: SystemId[] = ['skeleton', 'muscles', 'nerves', 'vessels', 'organs', 'joints'];
-
-function buildPool(catalog: PartsCatalog, systems: SystemId[]): Part[] {
-  // Deduplicate by name_en, preferring .r side (labeled side in viewer)
-  const byName = new Map<string, Part>();
-  for (const p of catalog.parts) {
-    if (!systems.includes(p.system)) continue;
-    if (!p.name_en) continue;
-    const existing = byName.get(p.name_en);
-    if (!existing) {
-      byName.set(p.name_en, p);
-    } else if (p.side === 'r' && existing.side !== 'r') {
-      byName.set(p.name_en, p);
-    }
-  }
-  return Array.from(byName.values());
+export function gradeAnswer(q: QuizQuestion, pickedId: string | null): QuizAnswer {
+  return {
+    questionKey: q.key,
+    pickedId,
+    correct: pickedId !== null && q.acceptableIds.has(pickedId),
+  };
 }
 
-export function generateQuestions(
-  catalog: PartsCatalog,
-  mode: QuizMode,
-  count = 10,
-  seed = Date.now(),
-): QuizQuestion[] {
-  if (catalog.parts.length === 0) return [];
-  const rand = mulberry32(seed);
-
-  const systems = mode === 'which-system' ? ALL_QUIZ_SYSTEMS : VISUAL_SYSTEMS;
-  const pool = buildPool(catalog, systems);
-  if (pool.length < 4) return [];
-
-  const questions: QuizQuestion[] = [];
-  const shuffled = shuffle(pool, rand);
-
-  for (const correct of shuffled) {
-    if (questions.length >= count) break;
-
-    const system = getSystem(catalog, correct.system);
-    if (!system) continue;
-
-    let partOptions: Part[] = [];
-    let systemChoices: SystemMeta[] = [];
-
-    if (mode === 'which-system') {
-      const others = catalog.systems.filter(
-        (s) => s.id !== correct.system && ALL_QUIZ_SYSTEMS.includes(s.id as SystemId),
-      );
-      const wrong = shuffle(others, rand).slice(0, 3);
-      if (wrong.length < 3) continue;
-      systemChoices = shuffle([system, ...wrong], rand);
-    } else {
-      // Wrong options from the SAME system so only 1 GLB loads per question
-      const sameSys = pool.filter((p) => p.system === correct.system && p.id !== correct.id);
-      const wrong = shuffle(sameSys, rand).slice(0, 3);
-      if (wrong.length < 3) {
-        // Fallback to other systems
-        const fallback = shuffle(
-          pool.filter((p) => p.id !== correct.id && !wrong.includes(p)),
-          rand,
-        ).slice(0, 3 - wrong.length);
-        wrong.push(...fallback);
-      }
-      if (wrong.length < 3) continue;
-      partOptions = shuffle([correct, ...wrong], rand);
-    }
-
-    questions.push({ mode, correct, system, partOptions, systemChoices });
-  }
-
-  return questions;
+function bestScoreKey(systemId: SystemId, count: number): string {
+  return `anatomed.quiz.identify.${systemId}.${count}.best`;
 }
+
+export function loadBestScore(systemId: SystemId, count: number): number {
+  try {
+    const v = localStorage.getItem(bestScoreKey(systemId, count));
+    if (!v) return 0;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) && n >= 0 && n <= count ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function saveBestScore(systemId: SystemId, count: number, score: number): boolean {
+  const prev = loadBestScore(systemId, count);
+  if (score <= prev) return false;
+  try {
+    localStorage.setItem(bestScoreKey(systemId, count), String(score));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Path to the precomputed thumbnail rendered by tools/render_part_thumbnails.py.
+ *  Filename mirrors three.js's `PropertyBinding.sanitizeNodeName` so it lines
+ *  up with the GLB node name. Missing renders surface as a broken `<img>` —
+ *  callers should provide a fallback (e.g. <PartPreview>). */
+export function thumbnailUrl(canonicalId: string): string {
+  return `/models/thumbs/${sanitizeId(canonicalId)}.png`;
+}
+
+function sanitizeId(id: string): string {
+  return id.replace(/\s/g, '_').replace(/[^\w-]/g, '');
+}
+
+/** Systems that have enough distinct, visually-recognizable parts for an
+ *  identify-style quiz. Excludes overlapping/dense systems where clicking the
+ *  exact part is luck. */
+export const QUIZ_SYSTEMS: readonly SystemId[] = ['skeleton', 'muscles', 'organs'] as const;
