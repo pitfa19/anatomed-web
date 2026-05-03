@@ -108,4 +108,9 @@ export interface Anatomy3DConfig {
   focus: Anatomy3DPartRef;
   extras: Anatomy3DPartRef[];
   unmatched: string[];
+  /** Diagnostics for collective queries: each entry records that one of the
+   *  caller-supplied `parts` was a group alias that expanded to multiple
+   *  catalog parts (e.g. "Kosti stopala" → 27 parts). Informational; the
+   *  agent uses this to phrase its prose, the renderer ignores it. */
+  expanded?: { query: string; label: string; count: number }[];
 }

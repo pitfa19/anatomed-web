@@ -17,6 +17,7 @@ import {
 import { cn } from './lib/cn';
 import { useTheme } from './lib/theme';
 import { useAuth } from './lib/AuthContext';
+import { LOW_BALANCE_THRESHOLD } from './lib/packages';
 
 type NavItem = {
   to: string;
@@ -170,11 +171,18 @@ export default function App() {
                   isActive ? 'text-accent' : 'text-text',
                 )
               }
-              title={`${user.username} · ${user.credits} kredita`}
+              title={`${user.username} · ${user.credits} AI tokena`}
             >
               <UserIcon size={13} />
               <span className="hidden max-w-[110px] truncate sm:inline">{user.username}</span>
-              <span className="flex items-center gap-1 rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium text-accent">
+              <span
+                className={cn(
+                  'flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium',
+                  user.credits <= LOW_BALANCE_THRESHOLD
+                    ? 'bg-warn/15 text-warn'
+                    : 'bg-accent/15 text-accent',
+                )}
+              >
                 <Coins size={10} />
                 {user.credits}
               </span>

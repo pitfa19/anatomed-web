@@ -1,20 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LogOut, Sparkles, User } from 'lucide-react';
+import { Coins, History, LogOut, Sparkles, User } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
-
-type Packet = { euros: number; credits: number };
-
-const PACKETS: Packet[] = [
-  { euros: 2, credits: 20 },
-  { euros: 5, credits: 60 },
-  { euros: 10, credits: 150 },
-];
+import { PACKAGES, FEATURE_LABEL, type PackageId } from '../lib/packages';
+import type { TokenTransaction } from '../lib/transactions';
+import PackageCard from '../components/ai/PackageCard';
 
 export default function Profile() {
-  const { user, loading, logout, addCredits } = useAuth();
+  const { user, loading, logout, purchasePackage, transactions } = useAuth();
   const navigate = useNavigate();
-  const [busyEuros, setBusyEuros] = useState<number | null>(null);
+  const [busyId, setBusyId] = useState<PackageId | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,16 +18,17 @@ export default function Profile() {
 
   if (loading || !user) return null;
 
-  const buy = async (p: Packet) => {
-    setBusyEuros(p.euros);
+  const buy = async (id: PackageId) => {
+    setBusyId(id);
     try {
-      await addCredits(p.credits);
-      setToast(`Dodano ${p.credits} kredita.`);
+      await purchasePackage(id);
+      const pkg = PACKAGES.find((p) => p.id === id)!;
+      setToast(`Dodano ${pkg.tokens} AI tokena.`);
       window.setTimeout(() => setToast(null), 2200);
     } catch (e) {
       setToast(e instanceof Error ? e.message : 'Greška prilikom kupnje.');
     } finally {
-      setBusyEuros(null);
+      setBusyId(null);
     }
   };
 
@@ -66,41 +62,30 @@ export default function Profile() {
           <div>
             <div className="text-xs text-text-muted">Trenutno stanje</div>
             <div className="text-2xl font-semibold text-text-strong">
-              {user.credits} <span className="text-sm font-normal text-text-muted">kredita</span>
+              {user.credits}{' '}
+              <span className="text-sm font-normal text-text-muted">AI tokena</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Buy credits */}
+      {/* Buy tokens */}
       <section className="mt-6 rounded-2xl border border-border bg-surface p-5">
         <div className="flex items-center gap-2 text-text-strong">
           <Sparkles size={16} className="text-accent" />
-          <h2 className="text-sm font-semibold">Kupi kredite za AI</h2>
+          <h2 className="text-sm font-semibold">Kupi AI tokene</h2>
         </div>
-        <p className="mt-1 text-xs text-text-muted">
-          Krediti se troše za pitanja AI agentu. Demo - klik = uplata.
-        </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {PACKETS.map((p) => (
-            <button
-              key={p.euros}
-              onClick={() => buy(p)}
-              disabled={busyEuros !== null}
-              className="group flex flex-col items-stretch overflow-hidden rounded-xl border border-border bg-surface-2 text-left transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <div className="flex items-baseline gap-1 px-4 pt-4 text-text-strong">
-                <span className="text-2xl font-semibold">{p.euros}</span>
-                <span className="text-base">€</span>
-              </div>
-              <div className="px-4 pb-4 text-sm text-text-muted">
-                <span className="text-accent-2">+{p.credits}</span> kredita
-              </div>
-              <div className="bg-accent/10 px-4 py-2 text-center text-xs font-medium text-accent transition-colors group-hover:bg-accent group-hover:text-white">
-                {busyEuros === p.euros ? '…' : 'Kupi'}
-              </div>
-            </button>
+          {PACKAGES.map((p) => (
+            <PackageCard
+              key={p.id}
+              pkg={p}
+              busy={busyId !== null}
+              busyThis={busyId === p.id}
+              onBuy={buy}
+              recommended={p.id === 'standard'}
+            />
           ))}
         </div>
 
@@ -110,6 +95,67 @@ export default function Profile() {
           </div>
         )}
       </section>
+
+      {/* Transaction history */}
+      <section className="mt-6 rounded-2xl border border-border bg-surface p-5">
+        <div className="flex items-center gap-2 text-text-strong">
+          <History size={16} className="text-accent-2" />
+          <h2 className="text-sm font-semibold">Moje kupnje i potrošnja</h2>
+        </div>
+        {transactions.length === 0 ? (
+          <p className="mt-2 text-xs text-text-muted">Nema zapisa još.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface-2">
+            {transactions.slice(0, 20).map((t) => (
+              <TransactionRow key={t.id} tx={t} />
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
+}
+
+function TransactionRow({ tx }: { tx: TokenTransaction }) {
+  const ts = new Date(tx.created_at).toLocaleString('hr-HR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+  const positive = tx.delta > 0;
+  const label = labelForKind(tx);
+  return (
+    <li className="flex items-center gap-3 px-3 py-2 text-xs">
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-medium text-text">{label}</div>
+        <div className="text-[11px] text-text-muted">{ts}</div>
+      </div>
+      <div
+        className={`shrink-0 font-semibold ${positive ? 'text-accent-2' : 'text-text-muted'}`}
+      >
+        {positive ? '+' : ''}
+        {tx.delta}
+      </div>
+      <div className="w-14 shrink-0 text-right text-[11px] text-text-muted">
+        = {tx.balance_after}
+      </div>
+    </li>
+  );
+}
+
+function labelForKind(tx: TokenTransaction): string {
+  switch (tx.kind) {
+    case 'signup_grant':
+      return 'Besplatni početni paket';
+    case 'purchase': {
+      const pkg = tx.package_id ? PACKAGES.find((p) => p.id === tx.package_id) : null;
+      const price = tx.price_eur != null ? ` · ${tx.price_eur} €` : '';
+      return `Kupnja${pkg ? ` (${pkg.label})` : ''}${price}`;
+    }
+    case 'consumption':
+      return tx.feature ? FEATURE_LABEL[tx.feature] : 'Potrošnja';
+    case 'refund':
+      return 'Povrat';
+    case 'manual_adjust':
+      return 'Ručna prilagodba';
+  }
 }
