@@ -12,6 +12,9 @@ import Agent from './routes/Agent';
 import Revise from './routes/Revise';
 import ReviseTopic from './routes/ReviseTopic';
 import ReviseToday from './routes/ReviseToday';
+import MyDecks from './routes/MyDecks';
+import DeckStudy from './routes/DeckStudy';
+import DeckEditor from './routes/DeckEditor';
 import Viewer from './routes/Viewer';
 import Login from './routes/Login';
 import Profile from './routes/Profile';
@@ -27,6 +30,9 @@ const router = createBrowserRouter([
       { path: 'agent', element: <Agent /> },
       { path: 'revise', element: <Revise /> },
       { path: 'revise/today', element: <ReviseToday /> },
+      { path: 'revise/my-decks', element: <MyDecks /> },
+      { path: 'revise/deck/:deckId', element: <DeckStudy /> },
+      { path: 'revise/deck/:deckId/edit', element: <DeckEditor /> },
       { path: 'revise/:topicId', element: <ReviseTopic /> },
       { path: 'viewer', element: <Viewer /> },
       { path: 'login', element: <Login /> },
