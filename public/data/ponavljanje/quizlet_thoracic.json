@@ -1,0 +1,82 @@
+{
+  "id": "quizlet_thoracic",
+  "name": "Vertebrae Thoracicae",
+  "subtitle": "Prsni kralješci",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Kakav je oblik foramen vertebrale kod prsnih kralježaka i čime je uvjetovan?",
+      "a": "Foramen vertebrale prsnih kralježaka je okrugao i malen, što ga jasno razlikuje od cervikalnih i lumbalnih kralježaka. Cervikalni kralješci imaju trokutast i velik foramen vertebrale jer je ondje smještena intumescentia cervicalis medullae spinalis, dok je lumbalni foramen visok i velik zbog intumescentia lumbalis. Prsna leđna moždina zauzima relativno manji prostor u usporedbi s cervikalnim i lumbalnim proširenjima, pa je samim time i foramen vertebrale kod prsnih kralježaka uži i okrugao. Ova osobitost ima kliničko značenje jer svaki upalni ili tumorski proces koji dodatno sužava taj već maleni foramen lako može komprimirati medulla spinalis.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "foramen vertebrale: okrugao i malen"
+      }
+    },
+    {
+      "q": "Kako je usmjeren processus spinosus prsnih kralježaka i kakva je posljedica toga za kliničku palpaciju?",
+      "a": "Processus spinosus prsnih kralježaka je dug i usmjeren prema dolje, što ima važnu posljedicu za palpatornu anatomiju. Naime, vrh trnastog nastavka pri palpaciji leži u razini trupa kralješka ispod, a ne u razini vlastitog trupa. To znači da palpacijom i pronalaskom određenog nastavka zapravo lociramo trup nižeg kralješka, što valja imati na umu pri procedurama poput punkcije ili epiduralne anestezije. Ovakva kosa usmjerenost nastavaka čini prsni dio kralježnice bitno različitim od lumbalnog dijela, gdje su processus spinosi spljošteni i horizontalno usmjereni.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "processus spinosus: dug i usmjeren prema dolje => vrh trnastog nastavka pri palpaciji leži u razini trupa kralješka ispod"
+      }
+    },
+    {
+      "q": "Na kojim prsnim kralješcima se nalazi fovea costalis transversalis i za što služi?",
+      "a": "Fovea costalis transversalis smještena je na processus transversi prsnih kralježaka od Th1 do Th10 i služi kao zglobna udubina za spoj s tuberculum costae odgovarajućeg rebra. Ovaj se spoj ostvaruje unutar articulatio costotransversaria, koja je po vrsti obrtni zglob s kretnjom klizanja. Na Th11 i Th12 fovea costalis transversalis nedostaje jer ta rebra (jedanaesto i dvanaesto) nemaju tuberculum costae koji bi se uzglobio s poprečnim nastavkom. Prisutnost ove zglobne udubine na poprečnom nastavku bitno doprinosi čvrstoći i koordiniranosti kretnji rebara pri disanju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "na Th1 – Th10 na processus transversi se nalazi fovea costalis transversalis za spoj s tuberculum costae"
+      }
+    },
+    {
+      "q": "Kako su raspoređene fovea costalis na lateralnim stranama trupova prsnih kralježaka od Th2 do Th9?",
+      "a": "Prsni kralješci od Th2 do Th9 imaju na lateralnim stranama svog trupa po dvije polovične zglobne udubine (fovea costalis). Jedna je smještena na gornjem rubu trupa i prima donju polovicu glave istobrojnog rebra, dok se druga nalazi na donjem rubu i prima gornju polovicu glave sljedećeg, niže postavljenog rebra. Ovakav raspored znači da svaka glava rebra od 2. do 9. rebra (crista capitis costae) artikulira istovremeno s dvama susjednim prsnim kralješcima i intervertebralnim diskom između njih unutar articulatio capitis costae. Krajnji prsni kralješci, Th1, Th10, Th11 i Th12, pokazuju odstupanja od ovog obrasca jer njihova rebra imaju cjelovite ili samo jednu polovičnu zglobnu udubinu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "Th2 – Th9 imaju po dvije polovične zglobne udubine – jedna na gornjem rubu za donju polovicu istobrojnog rebra te jedna na donjem rubu za gornju polovicu sljedećeg rebra"
+      }
+    },
+    {
+      "q": "Što je posebnost rasporeda fovea costalis na Th1, Th10, Th11 i Th12?",
+      "a": "Prsni kralježak Th1 odstupa od tipičnog obrasca jer ima cijelu zglobnu udubinu za glavu 1. rebra i dodatno još polovičnu zglobnu udubinu za gornju polovicu glave 2. rebra. Th10 ima samo jednu polovičnu zglobnu udubinu namijenjenu donjoj polovici glave 10. rebra, a ne posjeduje udubinu na gornjem rubu. Nasuprot tome, Th11 i Th12 imaju cjelovite zglobne udubine za glavu odgovarajućeg rebra, što je u skladu s činjenicom da 11. i 12. rebro artikuliraju samo s jednim kralješkom. Ova rasporedba zglobnih površina izravno je povezana s razlikama u građi caput costae, jer rebra 2.–10. imaju crista capitis costae koja im omogućuje artikulaciju s dvama susjednim trupovima.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "Th1 ima cijelu zglobnu udubinu za 1. rebro i pola za 2. rebro"
+      }
+    },
+    {
+      "q": "Kako se razlikuje visina corpus vertebrae prsnih kralježaka s obzirom na ventralnu i dorzalnu stranu, i koje je funkcionalno značenje te razlike?",
+      "a": "Corpus vertebrae prsnih kralježaka je ventralno niži nego dorzalno, što znači da tijelo trupa ima klinast oblik s manjom visinom sprijeda. Ova klinasta morfologija trupova izravno doprinosi nastanku fiziološke prsne kifoze, koja je jedna od normalnih sagitalnih zakrivljenosti kralježnice. Nasuprot tome, lumbalni diskovi su sprijeda viši nego straga, čime kompenziraju i oblikuju lumbalnu lordozu. U kliničkom kontekstu, kompresivne frakture prsnih trupova (npr. u osteoporozi) još više naglašavaju klinast oblik i mogu pogoršati kifotično držanje.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "corpus vertebrae: ventralno niži nego dorzalno"
+      }
+    },
+    {
+      "q": "Koje su kretnje moguće u torakalnom dijelu kralježnice unutar articulationes zygapophysiales?",
+      "a": "U articulationes zygapophysiales torakalnog dijela kralježnice moguće su laterofleksija i ekstenzija, dok je antefleksija i retrofleksija u punom opsegu ograničena u usporedbi s cervikalnim i lumbalnim dijelom. Ograničenost kretnji u prsnom dijelu uvjetovana je više čimbenika: specifičnim kutom postavljenosti zglobnih nastavaka, prisutnošću rebarnog okvira koji mehanički stabilizira prsni koš te dugim koso usmjerenim processus spinosi koji se međusobno preklapaju. Cervikalni dio kralježnice, za razliku od torakalnog, dopušta antefleksiju, retrofleksiju, laterofleksiju i ekstenziju, dok lumbalni dio omogućuje antefleksiju i retrofleksiju. Ove razlike u biomehanici izravno su određene morfologijom zglobnih nastavaka u svakom odsječku.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 24,
+        "snippet": "torakalni dio kralježnice: laterofleksija i ekstenzija"
+      }
+    },
+    {
+      "q": "Koja je uloga ligamentum capitis costae intraarticulare u articulatio capitis costae i kod kojih prsnih kralježaka taj ligament nedostaje?",
+      "a": "Ligamentum capitis costae intraarticulare polazi od crista capitis costae i pruža se prema intervertebralnom disku, dijeleći time articulatio capitis costae na dva odjeljka te osiguravajući stabilnost zgloba pri kretnjama rebara. Budući da crista capitis costae postoji samo na rebrima 2.–10., ovaj ligament logično nedostaje kod 1., 11. i 12. rebra, koja imaju cjelovitu zglobnu površinu i artikuliraju s jednim kralješkom bez unutarzglobne sveze. Odsutnost ligamenta na tim rebrima znači da je articulatio capitis costae kod 1., 11. i 12. rebra jedinstven, nepodijeljen zglob. Uz ovaj ligament, stabilizaciju glave rebra osigurava i ligamentum capitis costae radiatum koji se širi ventrolateralno od glave rebra prema susjednim trupovima i intervertebralnom disku.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 16,
+        "snippet": "lig. capitis costae intraarticulare – polazi od crista capitis costae prema intervertebralnom disku, pa nedostaje kod 1., 11. i 12. rebra"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

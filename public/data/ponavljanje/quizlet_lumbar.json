@@ -1,0 +1,82 @@
+{
+  "id": "quizlet_lumbar",
+  "name": "Vertebrae Lumbales",
+  "subtitle": "Slabinski kralješci",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Kakav je oblik corpus vertebrae slabinskih kralježaka?",
+      "a": "Corpus vertebrae lumbalnih kralježaka opisuje se kao ovalan, što ih razlikuje od prsnih kralježaka čiji su trupovi srcolikog oblika te od cervikalnih čiji su trupovi niski i straga viši nego sprijeda. Ovakav oblik trupa odraz je mehaničkog opterećenja kojemu je izložen lumbalni dio kralježnice pri uspravnom stajanju i hodu. Masivnost i širina lumbalnih trupova proporcionalno raste od L1 prema L5, jer svaki niži segment nosi veće opterećenje ukupne težine trupa.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "corpus vertebrae: ovalnog oblika"
+      }
+    },
+    {
+      "q": "Zašto je foramen vertebrale lumbalnih kralježaka visok i velik?",
+      "a": "Foramen vertebrale slabinskih kralježaka visok je i velik zbog prolaska intumescentia lumbalis medullae spinalis, proširenja leđne moždine koje nastaje zbog velikog broja živčanih vlakana koja odlaze prema donjim ekstremitetima i zdjeličnim organima. Analogna situacija postoji u cervikalnom dijelu gdje foramen vertebrale postaje trokutast i velik zbog intumescentia cervicalis. Dovoljno prostrano vertebralno foramen ključno je klinički jer stenoza lumbalne kralježnice, uzrokovana npr. hipertrofijom ligg. flava ili osteofitima, može komprimirati sadržaj kanala i uzrokovati karakteristični sindrom neuroloških ispada donjih udova.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "foramen vertebrale: visok i velik (zbog intumescentia lumbalis medullae spinalis)"
+      }
+    },
+    {
+      "q": "Kako su usmjereni i oblikovani processus spinosi slabinskih kralježaka, i po čemu se razlikuju od prsnih?",
+      "a": "Processus spinosi lumbalnih kralježaka spljošteni su i usmjereni horizontalno i straga, za razliku od prsnih kralježaka gdje su dugi i usmjereni prema dolje, zbog čega pri palpaciji vrh trnastog nastavka prsnog kralješka odgovara razini trupa idućeg, nižeg kralješka. Spljoštena i horizontalna orijentacija lumbalnih processus spinosi čini ih lako palpabilnima te pruža površinu za hvatište jakih leđnih mišića i ligamenata. Ova morfološka razlika ujedno uvjetuje raspon mogućih kretnji: lumbalni dio dopušta antefleksiju i retrofleksiju, ali rotacija je u njemu znatno ograničenija nego u torakalnom dijelu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "processus spinosus: splošten, usmjerene horizontalno i straga"
+      }
+    },
+    {
+      "q": "Što je processus costalis slabinskih kralježaka i kakvo je njegovo embrionalno porijeklo?",
+      "a": "Processus costalis lumbalnoga kralješka rudiment je rebra koji se nalazi na lateralnom nastavku, što znači da ne odgovara pravom poprečnom nastavku kao u ostalim dijelovima kralježnice. Pravi processus transversum lumbalnog kralješka anatomski je reduciran u neupadljivi processus accessorius, koji se navodi zasebno kao distinktivna osobitost lumbalnih kralježaka. Klinički relevantna varijacija ovog rudimentarnog rebra jest slabinsko rebro, koje nastaje kada processus costalis kralješka L1 bude posebno razvijen, a rjeđa je i varijacija s potpuno razvijenim rebrom na L1.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "processus costalis – rudimenta rebara, nalazi se na laterlnom nastavku"
+      }
+    },
+    {
+      "q": "Kako su orijentirane zglobne ploštine lumbalnih kralježaka i što iz toga slijedi funkcionalno?",
+      "a": "Gornje zglobne ploštine lumbalnih kralježaka usmjerene su medijalno, postavljene okomito, nagnute dorzalno te konkavne od ventralno prema dorzalno, dok su donje ploštine usmjerene lateralno, postavljene jedna pokraj druge i konveksne. Ovakva konfiguracija zglobnih nastavaka, tipična za lumbalni segment, osigurava stabilnost pri aksijalnom opterećenju i sprječava prekomjernu rotaciju, ali ujedno dopušta relativno slobodnu antefleksiju i retrofleksiju. Upravo stoga su kretnje lumbalnog dijela kralježnice ograničene na antefleksiju i retrofleksiju, bez značajne rotacije koja je karakteristična za cervikalni dio.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 22,
+        "snippet": "gornje – usmjerene medijalno, postavljene okomito, nagnute dorzalno, konkavne od ventralno prema dorzalno"
+      }
+    },
+    {
+      "q": "Kakvi su intervertebralni diskovi u lumbalnom dijelu u odnosu na njihov oblik u sagitalnom presjeku?",
+      "a": "Intervertebralni diskovi klinastog su oblika u sagitalnom smjeru kako bi kompenzirali prirodni zavoj kralježnice, a u lumbalnom dijelu specifično su sprijeda viši nego straga. Ta razlika u visini prednjeg i stražnjeg dijela diska izravno pridonosi stvaranju i održavanju lumbalne lordoze, jedne od dviju fizioloških lordoza uz vratnu. Klinički, upravo u lumbalnom dijelu učestalije dolazi do hernijacije nucleus pulposusa, što je dijelom uvjetovano i naglašenim mehaničkim opterećenjem te konfigurацijom diska.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 24,
+        "snippet": "u lumbalnom dijelu su sprijeda viši nego straga"
+      }
+    },
+    {
+      "q": "Što je spondilolisteza i s kojim lumbalnim razinama se najčešće dovodi u vezu?",
+      "a": "Spondilolisteza je klizanje među susjednim kralješcima, a najčešće se javlja između L4 i L5 zbog velikih opterećenja i/ili naglašene lumbalne lordoze. Lumbalni segment nosi najveći dio težine trupa te je izložen kompleksnim silama smicanja, osobito pri naglašenoj lordozi, što predisponira klizanje kralješka prema ventralno. Klinički se očituje bolovima u donjem dijelu leđa, a može uzrokovati i kompresiju spinalnih živčanih korijena s neurološkim simptomima u donjim ekstremitetima.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 26,
+        "snippet": "spondilolisteza – klizanje među kralješcima, često između L4 i L5 zbog velikih opterećenja i/ili naglašene lumbalne lordoze"
+      }
+    },
+    {
+      "q": "Što je lumbalizacija i sakralizacija i koje kliničke posljedice mogu imati?",
+      "a": "Lumbalizacija označava stanje u kojemu S1 nije srastao s os sacrum, već funkcionira kao zaseban slobodan kralježak koji se označuje kao L6, dok sakralizacija označava srastanje L5 ili Co1 s križnom kosti, čime se smanjuje broj slobodnih lumbalnih segmenata. Asimetrična sakralizacija L5 osobito je klinički važna jer može inducirati skoliozu i neurološke poremećaje uslijed nejednakog raspoređivanja opterećenja na lijevi i desni zglob. Obje varijacije primjeri su čestih varijacija u prijelaznom lumbosakralnom segmentu te imaju značajan utjecaj na biomehaniku i simptomatologiju bolova u donjem dijelu leđa.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 23,
+        "snippet": "sakralizacija – L5 ili Co1 je srastao s os sacrum; asimetrična sakralizacija L5 može inducirati skoliozu i neurološke poremećaje"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

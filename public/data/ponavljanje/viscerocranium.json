@@ -1,0 +1,838 @@
+{
+  "id": "viscerocranium",
+  "name": "Viscerocranium",
+  "subtitle": "Kosti viscerokranija",
+  "badge": "A1",
+  "questions": [
+    {
+      "q": "Koje prostore spaja fissura orbitalis inferior?",
+      "a": "Fissura orbitalis inferior je rupica koja se nalazi, gledajući frontalno na anteriornu stranu očne šupljine, pri dnu iste šupljine. Ona je struktura koja spaja: prostor cavitas orbitalis (na anteriornoj strani), prostor fosse infratemporalis (na lateralnoj strani; fossa je smještena ispod fosse temporalis (iza zigomatične kosti) te je gore omeđena sa facies infratemporalis na klinastoj kosti), te prostor fosse pterygopalatine (locirana na mediialnoj strani lubanjske baze/ šupljine, medijalno od fosse infratemporalis, s kojom na laterlanoj strani uspostavlja komunikaciju)."
+    },
+    {
+      "q": "Koliko postoji sinusa u kostima glave i gdje se otvaraju?",
+      "a": "*gornje i srednje nosne školjke i šupljine pripadaju etmoidalnoj kosti U ossa cranii postoje sljedeći sinusi (od kranijalnih prema kaudalnim): SINUS FRONTALIS – paran sinus koji se nalazi u čeonoj kosti; ulijeva se u srednji nosni hodnik (put otvoranja sinusa teče preko hiatusa semilunaris na etmoidnoj kosti gdje se također nalazi kanal, ductus nasofrontalis) CELLULAE ETHMOIDALIS -  zračne komorice koje se nalaze na etmoidalnoj kosti te su lateralno pokrivene izrazito tankom pločicom (lamina papyracea) te međusobno odijeljene udibinama, foramina ethmoidales anterior et posterior; dijele se na PREDNJE, MEDIJALNE i STRAŽNJE komorice, gdje se PREDNJA i MEDIJALNA ulijevaju u srednji nosni hodnik te se STRAŽNJA ulijeva u gornji nosni hodnik SINUS SPHENOIDALIS – neparni sinus koji se nalazi u klinastoj kosti (prednji dio corpusa); sinus se ulijeva u gornji nosni hodnik (put otvaranja sinusa teče od zatona lociranoj iza cochne nasalis superior, recessus sphenoethmoidalis) SINUS MAXILLARIS – paran sinus koji se nalazi u kostima gornje čeljusti (po jedan u svakoj kosti, sa unutarnje strane); maksilarni sinus se ulijeva u srednji nosni hodnik"
+    },
+    {
+      "q": "Što spaja foramen rotundum?",
+      "a": "Foramen rotundum je udubina koja se nalazi na velikome krilu klinaste kosti, lateralno od sulcusa caroticusa. Nadalje, pošto se lubanjska baza dijeli na tri dijela (PREDNJI, MEDIJALNI i STRAŽNI), ako se diferencira da u srednja/medijalna lubanjska jama proteže od optičkih kanala (sella turcica i dorsum sellae ulaze u prednju crtu) pa sve do prednje strane partis petrosae na temporalnoj kosti, ona se može reći da FORAMEN ROTUNDUM spaja SREDNJU LUBANJSKU JAMU zajedno sa fossom pterygopalatinom (locirana na mediialnoj strani lubanjske baze/ šupljine; medijalno je omeđena laminom perpendicularis nepčane kosti te je straga omeđena krilnim nastavnom klinaste kosti)."
+    },
+    {
+      "q": "Koja struktura (kako se naziva) se nalazi odmah iznad foramena laceruma gdje se a. carotis interna naslanja na kost čim izađe iz otvora?",
+      "a": "Foramen lacerum je udubina koja se nalazi na klinastoj kosti. Struktura u upitu, na koju se naslanja a. carotis interna, koja ulazi u samu strukturu prednjeg dijela udubine je lingula sphenoidalis, koja je na lateralnoj strani sulcusa spomenute arterije."
+    },
+    {
+      "q": "Kako se naziva otvor na prednjoj strani tvrdog nepca s donje strane?",
+      "a": "Tvrdo nepce (palatum durum) čine dvije kosti: maxilla sa proc. palatinus te lamina horizontalis od nepčane kosti. Udubina u pitanju se nalazi na mjestu šava koji spaja dva proc. palatinusa od maksile, sutura palatina mediana te se naziva FORAMEN INCISIVUM (unutar fosse incisive)."
+    }
+  ],
+  "notes": [
+    {
+      "heading": "Kosti viscerokranija/ Viscerocranium",
+      "bullets": []
+    },
+    {
+      "heading": "Rešetnica/ Os ethmoidale",
+      "bullets": [
+        {
+          "text": "smještena između obiju očnih šupljina",
+          "indent": 0
+        },
+        {
+          "text": "sastoji se od okomite koštane ploče/ lamina perpendicularis (lamina mediana) s gornje strane leži vodoravna rešetasta ploča/ lamina cribrosa ima velik broj sitnih otvora za prolaz niti njušnog živca foramina cribrosa",
+          "indent": 0
+        },
+        {
+          "text": "frontalni dio ploče strši iznad rešetaste ploče u lubanjsku šupljinu i tvori pijetlovu krijestu/ crista galii veže se falx cerebri sprijeda krijeste je malo koštano krilo/ ala cristae galii",
+          "indent": 1
+        },
+        {
+          "text": "sa obje strane ima jedan etmoidni labirint/ labyrinthus ethomidalis tvore ga stražnje, srednje i prednje etmoiden zračne komorice cellulae ethmoidales anteriores, mediae et posteriores",
+          "indent": 1
+        },
+        {
+          "text": "s lateralne strane labirint zatvara tanka koštana ploča/ lamina orbitalis (lamina papyracea) čini i medijalnu stijenku očne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "prednji dio labirinta poklapa os lacrimale, a stražnji dio os sphenoidale i os palatinum",
+          "indent": 1
+        },
+        {
+          "text": "uz gornju rub je priključena os frontale, a uz donji maxilla",
+          "indent": 1
+        },
+        {
+          "text": "pripada joj gornja i srednja nosna školjka/ concha nasalis superior i concha nasalis media, a razvijena je i concha nasalis suprema",
+          "indent": 0
+        },
+        {
+          "text": "ispod nosnih školjki se nalaze gornji i srednji nosni hodnik/ meatus nasi superior i meatus nasi medius",
+          "indent": 0
+        },
+        {
+          "text": "ispod najgornje nosne školjke se nalazi najgornji nosni hodnik/ meatus nasi supremus",
+          "indent": 0
+        },
+        {
+          "text": "iznad i iza concha nasalis superior je smješten zaton/ recessus sphenoethmoidalis otvara se sinus sphenoidalis",
+          "indent": 0
+        },
+        {
+          "text": "u meatus nasi medius nalazi se etmoidna zračna komorica/ bulla ethmoidalis ispred i ispod je smješten izdanak/ processus uncinatus započinje sprijeda zadebljanjem/ agger nasi može biti pneumatizirano rudiment concha nasalis superior",
+          "indent": 0
+        },
+        {
+          "text": "između bulla ethmoidalis i processus uncinatus se nalazi procijep/ hiatus semilunaris vodi lateralno u čeljusnu šupljinu",
+          "indent": 0
+        },
+        {
+          "text": "u prednji dio procijepa se preko valjkastog kanala/ ductus nasofrontalis otvara sinus frontalis",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Suzna kost/ Os lacrimale",
+      "bullets": [
+        {
+          "text": "nastaje kao obložna kost od primitivne nosne čahure",
+          "indent": 0
+        },
+        {
+          "text": "četverokutasta je i ima vertikalni greben/ crista lacrimalis posterior sa stražnje strane omeđuje udubinu za suznu vreću/ fossa sacci lacrimalis",
+          "indent": 0
+        },
+        {
+          "text": "straga se spaja s facies orbitalis, sprijeda s processus frontalis maxillae, gore s os frontalis, a dolje s corpus maxillae",
+          "indent": 0
+        },
+        {
+          "text": "od donjeg kraja crista lacrimalis posterior se pruža izdanak/ hamulus lacrimalis sudjeluje u omeđenju udubine za suznu vrećicu",
+          "indent": 0
+        },
+        {
+          "text": "suzni nastavak concha nasalis inferior zatvara suznu brazdu na maxilli i pretvara ju u koštanu cijev/ canalis nasolacrimalis",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Gornja čeljust/ Maxilla",
+      "bullets": [
+        {
+          "text": "središnja i najveća kost gornjeg dijela viscerocraniuma spaja se sa svim kostima lica, sudjeluje u omeđenju svih prostora koji se nalaze u tom području i nosi gornje zube",
+          "indent": 0
+        },
+        {
+          "text": "šuplja je i izgleda krhka može odolijevati golemom tlaku",
+          "indent": 0
+        },
+        {
+          "text": "corpus maxillae",
+          "indent": 0
+        },
+        {
+          "text": "ima oblik četverokuta",
+          "indent": 1
+        },
+        {
+          "text": "najveći dio zaprema veliki zračni prostor čeljusna šupljina/ sinus maxillaris",
+          "indent": 1
+        },
+        {
+          "text": "gornja strana/ facies orbitalis dno očne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "medijalni dio je u kontaktu s processus orbitalisom os palatinum, u sredini s facies orbitalis os ethmoidale, a sprijeda s os lacrimale",
+          "indent": 2
+        },
+        {
+          "text": "stražnji rub je zaobljen i s donjim dijelom alae majoris os sphenoidale omeđuje donju orbitalnu pukotinu/ fissura orbitalis inferior",
+          "indent": 2
+        },
+        {
+          "text": "prednji rub čini donje omeđenje ruba orbite/ margo infraorbitalis",
+          "indent": 2
+        },
+        {
+          "text": "u stražnjem dijelu započinje brazda/ sulcus infraorbitalis u donjem toku prema naprijed bude pretvorena u kanal/ canalis infraorbitalis na prednjoj strani gornje čeljusti se otvara orbitalnim otvorom/ foramen infraorbitale od kanala se odvajaju kratke cjevčice/ canaliculi alveolares anteriores",
+          "indent": 2
+        },
+        {
+          "text": "medijalna strana/ facies nasalis dio lateralne stijenke nosne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "ima veliki otvor/ hiatus maxillaris vodi u čeljusnu šupljinu",
+          "indent": 2
+        },
+        {
+          "text": "otvor je velik samo na maceriranoj izdvojenoj gornjoj čeljusti, inače je sužen okolnim kostima",
+          "indent": 2
+        },
+        {
+          "text": "odozgo ga sužava donja školjka/ concha nasalis inferior svojim izdankom/ processus maxillaris",
+          "indent": 2
+        },
+        {
+          "text": "os palatinum maxilarnom stranom okomite ploče/ facies maxillaris laminae perpendicularis zatvara ulaz u maksilarni sinus sa stražnje strane",
+          "indent": 2
+        },
+        {
+          "text": "od processusa nasalisa se nastavlja processus maxillaris ulazi u maxilarni sinus",
+          "indent": 2
+        },
+        {
+          "text": "processus uncinatus i bulla ethomoidalis suzuju hiatus maxillaris odozgo",
+          "indent": 2
+        },
+        {
+          "text": "u gornjem stražnjem kutu se nalazi trigonum palatinum oslanja se processus orbitalis",
+          "indent": 2
+        },
+        {
+          "text": "na stražnjem rubu se vidi brazda/ sulcus palatinum major spušta se između 2. i 3. kutnjaka priključuju se analogne brazde nalaze se na os palatinum i na processusu pterygoideusu os sphenoideum",
+          "indent": 2
+        },
+        {
+          "text": "sve tri brazde oblikuju krilonepčani kanal/ canalis palatinus major",
+          "indent": 2
+        },
+        {
+          "text": "ispred hiatusa maxillarisa leži široka i duboka suzna brazda/ sulcus lacrimalis uz rubove se u gornjem dijelu priključuje os lacrimale, a u donjem dijelu suzni izdanak donje nosne školjke/ processus lacrimalis",
+          "indent": 2
+        },
+        {
+          "text": "sulcus lacrimalis se pretvara u koštani kanal/ canalis nasolacrimalis ispred se nalazi pruga/ crista conchalis iznad je druga hrapavost uz koju se priključuje prednji kraj srednje nosne školjke crista ethmoidalis",
+          "indent": 2
+        },
+        {
+          "text": "prednja strana/ facies anterior sudjeluje u oblikovanju udubine/ fossa canina",
+          "indent": 1
+        },
+        {
+          "text": "ima urez/ incisura nasalis s urezom sa suprotne strane i donjim rubom os nasale omeđuje kruškoliki koštani ulaz u nosnu šupljinu/ apertura piriformis",
+          "indent": 2
+        },
+        {
+          "text": "sprijeda i medijalno do incisure nasalis se nalazi koštani trn/ spina nasalis anterior sudjeluje u omeđenju kruškolikog otvora",
+          "indent": 2
+        },
+        {
+          "text": "stražnja strana/ facies infratemporalis omeđuje djelomično fossa infratemporalis",
+          "indent": 1
+        },
+        {
+          "text": "na granici facies anterior i facies infratemporalis se nalazi jagodični izdanak/ processus zygomaticus prema dolje seže čvrsti greben",
+          "indent": 2
+        },
+        {
+          "text": "ima izbočinu/ tuber maxillae s mnogo sitnih otvora za prolaz živčanih ogranaka i krvnih žila za molarne zube foramina alveolaria nastavljaju se u cjevčice/ canales alveolares",
+          "indent": 2
+        },
+        {
+          "text": "čeoni nastavak gornje čeljusti/ processus frontalis maxillae",
+          "indent": 0
+        },
+        {
+          "text": "čvrst, okomito usmjeren izdanak spaja se s os frontale prenosi pritisak zuba na snažne orbitalne lukove",
+          "indent": 1
+        },
+        {
+          "text": "na vanjskoj strani ima greben/ crista lacrimalis anterior dijeli izdanak na prednji i stražnji dio",
+          "indent": 1
+        },
+        {
+          "text": "processus alveolaris",
+          "indent": 0
+        },
+        {
+          "text": "juga alveolaria vertikalni grebeni koji nastaju na vanjskoj strani nastavka korijeni zuba izboče vanjsku koštanu lamelu",
+          "indent": 1
+        },
+        {
+          "text": "processus palatinus",
+          "indent": 0
+        },
+        {
+          "text": "položen je vodoravno i spaja se s nepčanim izdankom suprotne strane u šavu/ sutura palatina mediana, a s vodoranom pločom os palatinum u poprječnom šavu/ sutura palatina transversa",
+          "indent": 1
+        },
+        {
+          "text": "medijalni šav nepca seže naprijed do poprječno položenog šava/ sutura incisiva označuje mjesto gdje se maxilla spaja s posebnom kosti što nosi sjekutiće premaksila/ os incisivum prema gore ima greben/ crista incisiva prema natrag se nastavlja u malo niži nosni greben/ crista nasalis na njega se naslanja vomer",
+          "indent": 1
+        },
+        {
+          "text": "na mjestu gdje se sastaju sutura platina mediana i sutura incisiva nastaje foramen incisivum vodi u kanal/ canalis incisivus otvara se u nosnu šupljinu, uz donji rub septuma",
+          "indent": 1
+        },
+        {
+          "text": "processus zygomaticus",
+          "indent": 0
+        },
+        {
+          "text": "čvrst, trokutast i spaja se s os zygomaticum",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Jagodična kost/ Os zygomaticum",
+      "bullets": [
+        {
+          "text": "mala, čvrsta kost koja čini podlogu jagodice",
+          "indent": 0
+        },
+        {
+          "text": "ima 3 strane i 2 izdanka",
+          "indent": 0
+        },
+        {
+          "text": "lateralna strana/ facies lateralis",
+          "indent": 0
+        },
+        {
+          "text": "neravna i izbočena",
+          "indent": 1
+        },
+        {
+          "text": "okomito na nju je postavljena facies orbitalis prednji rub je zadebljan i s maxillom oblikuje donji rub očne šupljine/ margo infraorbitalis",
+          "indent": 1
+        },
+        {
+          "text": "spaja se sa processusom zygomaticusom maxille opterećenje pri žvakanju se prenosi na koštana pojačanja lubanje",
+          "indent": 1
+        },
+        {
+          "text": "facies temporalis",
+          "indent": 0
+        },
+        {
+          "text": "tvori prednje omeđenje fossa temporalis",
+          "indent": 1
+        },
+        {
+          "text": "prema natrag ima jak sljepoočni izdanak/ processus temporalis spaja se s processusom zygomaticusom oblikuje zigomatični luk/ arcus zygomaticus",
+          "indent": 1
+        },
+        {
+          "text": "processus frontalis",
+          "indent": 0
+        },
+        {
+          "text": "usmjeren je prema gore i spaja se s os frontale i os sphenoideum u šavu/ sutura frontozygomatica i sutura sphenozygomatica",
+          "indent": 1
+        },
+        {
+          "text": "živac na orbitalnoj strani ulazi kroz otvor/ foramen zygomaticoorbitale kanalić se dijeli u 2 ogranka foramen zygomaticofaciale i foramen zygomaticotemporale",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Nosna kost/ Os nasale",
+      "bullets": [
+        {
+          "text": "parna kost koja tvori koštanu podlogu nosnoga hrpta",
+          "indent": 0
+        },
+        {
+          "text": "gore se spaja s os frontale, lateralno s processusom frontalis maxillae, a medijalno s os nasale suprotne strane",
+          "indent": 0
+        },
+        {
+          "text": "donji rub je kos jer je lateralni rub duži, a medijalni kraći",
+          "indent": 0
+        },
+        {
+          "text": "donji rub sudjeluje u omeđenju kruškolikog otvora/ apertura piriformis",
+          "indent": 0
+        },
+        {
+          "text": "unutarnja strana je konkavna i ima brazdu/ sulcus ethmoidalis za prolaz vanjskog nosnog ogranka etmoidalnog živca i arterije",
+          "indent": 0
+        },
+        {
+          "text": "uz donji rub priliježe nosna hrskavica/ cartilago nasi lateralis",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Nepčana kost/ Os palatinum",
+      "bullets": [
+        {
+          "text": "parna kost i prislanja se na stražnji dio maxille",
+          "indent": 0
+        },
+        {
+          "text": "vodoravna ploča/ lamina horizontalis",
+          "indent": 0
+        },
+        {
+          "text": "ima dvije strane facies nasalis i facies palatina",
+          "indent": 1
+        },
+        {
+          "text": "oblikuje stražnji dio tvrdog nepca i spaja se s nepčanim nastavkom maxille u šavu/ sutura palatina transversa",
+          "indent": 1
+        },
+        {
+          "text": "stražnji rub je konkavan medijalno završava koštanim izdankom koji s onim na suprotnoj strani tvori stražnji nosni šiljak/ spina nasalis posterior",
+          "indent": 1
+        },
+        {
+          "text": "na donjoj strani se nalazi otvor/ foramen palatinum majus",
+          "indent": 1
+        },
+        {
+          "text": "okomita ploča/ lamina perpendicularis",
+          "indent": 0
+        },
+        {
+          "text": "vrlo tanka i prislanja se naprijed uz nosnu stranu maxille, a straga uz medijalnu ploču processusa pterygoideusa",
+          "indent": 1
+        },
+        {
+          "text": "ima dvije strane facies nasalis i facies maxillaris",
+          "indent": 1
+        },
+        {
+          "text": "ima otvore i kanaliće canales palatini minores",
+          "indent": 1
+        },
+        {
+          "text": "sprijeda ima koštani izdanak/ processus nasalis iz njega izlazi izdanak/ processus maxillaris",
+          "indent": 1
+        },
+        {
+          "text": "na gornjem rubu se nalazi usjeklina/ incisura sphenopalatina zajedno s os sphenoidale omeđuje otvor/ foramen sphenopalatinum",
+          "indent": 1
+        },
+        {
+          "text": "incisuru sphenopalatinu straga omeđuje sfenoidni izdanak/ processus sphenoidalis prislanja se na donju stranu corpusa os sphenoidale, a sprijeda je omeđuje orbitalni izdanak/ processus orbitalis prislanja se na trokutasto polje u gornjem dijelu corpusa maxillae dijelom ulazi u sastav donje stražnje stijenke očne šupljine, a dijelom omeđuje fossa infratemporalis i fossa pterygopalatina",
+          "indent": 1
+        },
+        {
+          "text": "medijalnom stranom (pneumatizirana) zatvara processus orbitalis stražnje bulla ethmoidalis",
+          "indent": 1
+        },
+        {
+          "text": "na prijelazu lamina perpendicularis u lamina horizontalis izrasta koštani izdanak/ processus pyramidalis spaja se medijalnom i lateralnom pločom processusa pterygoidei nastaje krilna udubina/ fossa pterygoidea",
+          "indent": 0
+        },
+        {
+          "text": "na medijalnoj strani processusa pyramidalisa ima nekoliko otvora/ foramina palatina minora i koštani kanalići/ canales palatini minories",
+          "indent": 0
+        },
+        {
+          "text": "na unutarnjoj strani lamina perpendicularis se nalaze jedan ispred drugoga dva grebena:",
+          "indent": 1
+        },
+        {
+          "text": "gornji greben/ crista ethmoidalis veže se concha nasalis media",
+          "indent": 2
+        },
+        {
+          "text": "donji greben/ crista conchalis veže se stražnji kraj concha nasalis inferior",
+          "indent": 2
+        },
+        {
+          "text": "lateralna strana lamine s processusom pterygoideusom i maxillom omeđuje krilonepčanu udubinu/ fossa pteygopalatina otvara se gore i medijalno u otvor/ foramen sphenopalatinum, a dolje se nastavlja u brazdu/ sulcus pterygopalatinus priključkom uz maxillu bude pretvorena u kanal/ canalis palatinus major",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Donja nosna školjka/ Concha nasalis inferior",
+      "bullets": [
+        {
+          "text": "razvija se enkondralnom osifikacijom primitivne nosne čahure",
+          "indent": 0
+        },
+        {
+          "text": "ima 2 nejednaka kraja:",
+          "indent": 0
+        },
+        {
+          "text": "prednji kraj širi i pričvršćen je uz koštanu prugu na korijenu processusa frontalisa maxillae crista conchalis",
+          "indent": 1
+        },
+        {
+          "text": "stražnji kraj zašiljen i veže se uz greben os palatinum",
+          "indent": 1
+        },
+        {
+          "text": "na gornjem rubu se nalazi nekoliko izdanaka:",
+          "indent": 0
+        },
+        {
+          "text": "processus maxillaris preklopljen i ulazi u prostor čeljusne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "processus ethmoidalis mali izdanak koji se spaja sa processusom uncinatusom os ethmoidale",
+          "indent": 1
+        },
+        {
+          "text": "processus lacrimalis izdanak koji se spaja s donjim rubom os lacrimale",
+          "indent": 1
+        },
+        {
+          "text": "ispod concha nasalis inferior i između nje i lateralne stijenke nosne šupljine se nalazi donji nosni hodnik/ meatus nasi inferior",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Raonik/ Vomer",
+      "bullets": [
+        {
+          "text": "tanka sagitalna ploča smještena u medijalnoj ravnini čini donji dio koštane nosne pregrade",
+          "indent": 0
+        },
+        {
+          "text": "žlijeba gotovo i nema, osim u najgornjem dijelu gdje ostaje brazda/ sulcus vomeris ulaže se septalna hrskavica",
+          "indent": 0
+        },
+        {
+          "text": "na gornjem rubu koji je kratak i zadebljan nalaze se parni koštani izdanci/ alae vomeris prislanjaju se na rostrum sphenoidale i dosežu do processusa sphenoidalisa os palatinum, odnosno do vaginalnog izdanka processusa pterygoidei",
+          "indent": 0
+        },
+        {
+          "text": "stražnji rub je oštar i konkavan",
+          "indent": 0
+        },
+        {
+          "text": "donji rub se spaja s nazalnim grebenom maxille i os palatinum tvori stubu na mjestu gdje započinje os incisivum",
+          "indent": 0
+        },
+        {
+          "text": "prednji rub se spaja u stražnjem dijelu s lamina perpendicularis, a sprijeda s hrskavičnim dijelom nosne pregrade",
+          "indent": 0
+        },
+        {
+          "text": "crista choanalis vomeris",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Donja čeljust/ Mandibula",
+      "bullets": [
+        {
+          "text": "jedina kost koja tvori pravi zglob s lubanjskim kostima",
+          "indent": 0
+        },
+        {
+          "text": "corpus mandibulae",
+          "indent": 0
+        },
+        {
+          "text": "nalik na potkovu i tvore ga 2 luka idu prema naprijed i sastaju se pod kutom od 60 do 70 iz luka straga izrasta na obje polovice po jedna grana/ ramus mandibulae",
+          "indent": 1
+        },
+        {
+          "text": "angulus mandibulae kut koji se nalazi na prijelazu trupa u granu od 90 do 140",
+          "indent": 1
+        },
+        {
+          "text": "na vanjskoj strani ispod drugog pretkutnjaka se nalazi otvor/ foramen mentale otvor se nastavlja u kanal/ canalis mandibulae",
+          "indent": 1
+        },
+        {
+          "text": "na prednjoj strani se nalazi trokutasta izbočina/ trigonum mentale tvori podlogu brade",
+          "indent": 1
+        },
+        {
+          "text": "na bazi trokuta se s obje strane vidi jedna izbočina/ tuberculum mentale",
+          "indent": 2
+        },
+        {
+          "text": "na unutarnjoj strani se nalaze po dvije kvržice/ spina mentalis polazište mišića",
+          "indent": 1
+        },
+        {
+          "text": "gornja kvržica spina mentalis superior",
+          "indent": 2
+        },
+        {
+          "text": "donja kvržica spina mentalis inferior",
+          "indent": 2
+        },
+        {
+          "text": "ispod kvržice se na svakoj strani vidi po jedna udubina/ fossa digastrica polazište mandibularnog trbuha dvotrbušnog mišića",
+          "indent": 2
+        },
+        {
+          "text": "s vanjske strane se od trupa prema grani uspinje koštani greben linea obliqua",
+          "indent": 1
+        },
+        {
+          "text": "s unutarnje strane se nalazi drugi greben linea mylohyoidea razdvaja gornju udubinu/ fovea sublingualis od donje fovea submandibularis ulaže se glandula sublingualis",
+          "indent": 1
+        },
+        {
+          "text": "na vanjskoj strani ugla mandibule je hrapavost/ tuberositas masseterica",
+          "indent": 1
+        },
+        {
+          "text": "na unutrašnjoj strani ugla se nalazi hrapavo polje/ tuberositas pterygoidea",
+          "indent": 1
+        },
+        {
+          "text": "na trupu se razvija alveolarni nastavak/ arcus alveolaris nosi zube",
+          "indent": 1
+        },
+        {
+          "text": "uži je od trupa i usmjeren je prema unutra",
+          "indent": 2
+        },
+        {
+          "text": "ima udubine/ alveoli dentales omeđene interalveolarnim pregradama/ septa interalveolaria",
+          "indent": 2
+        },
+        {
+          "text": "alveoli su podijeljeni pregradama koje se nalaze između zubnih korjenova septa interradicularia",
+          "indent": 2
+        },
+        {
+          "text": "korijeni zuba izdižu kost alveolarnog nastavka u grebene/ juga alveolaria",
+          "indent": 2
+        },
+        {
+          "text": "grana/ ramus mandibulae",
+          "indent": 0
+        },
+        {
+          "text": "plosnata koštana ploča",
+          "indent": 1
+        },
+        {
+          "text": "prema gore završava s 2 izdanka:",
+          "indent": 1
+        },
+        {
+          "text": "processus coronoideus trokutast i zašiljen",
+          "indent": 2
+        },
+        {
+          "text": "na unutrašnjoj strani ima greben/ crista buccinatoria prema dolje se dijeli u 2 kraka iza posljednjeg kutnjaka omeđuje trokutasto polje/ tirgonum retromolare",
+          "indent": 3
+        },
+        {
+          "text": "ispod se nalazi koštani jezičac/ lingula mandibulae s medijalne strane omeđuje otvor/ foramen mandibulae od njega se spušta uski žlijeb/ sulcus mylohyoideus",
+          "indent": 3
+        },
+        {
+          "text": "processus condylaris deblji i prema gore se proširuje u zglobni nastavak zglaba se sa zglobnom plohom na os temporale",
+          "indent": 2
+        },
+        {
+          "text": "ima sužen vrat/ collum mandibulae i proširenu glavicu/ caput mandibulae",
+          "indent": 3
+        },
+        {
+          "text": "na prednjoj strani vrata je udubina/ fovea pterygoidea",
+          "indent": 3
+        },
+        {
+          "text": "između obaju nastavaka se nalazi urez/ incisura mandibulae",
+          "indent": 2
+        }
+      ]
+    },
+    {
+      "heading": "Jezična kost/ Os hyoideum",
+      "bullets": [
+        {
+          "text": "nalazi se u visini 4. vertebrae cervicales",
+          "indent": 0
+        },
+        {
+          "text": "pri gutanju i govoru se pomiče",
+          "indent": 0
+        },
+        {
+          "text": "ligamentima je vezana uz processuse styloideuse koji srastu s piramidom os temporale",
+          "indent": 0
+        },
+        {
+          "text": "od corpus ossis hyoidei odlaze na svakoj strani po dva roga:",
+          "indent": 0
+        },
+        {
+          "text": "gornji rogovi/ cornua minora u početku su s trupom spojeni hrskavicom, a kasnije spoj okošta",
+          "indent": 1
+        },
+        {
+          "text": "donji rogovi/ cornua majora spojen je uz processus styloideus kasnije okošta i sraste uz trup",
+          "indent": 1
+        },
+        {
+          "text": "trup je sprijeda hrapav služi kao hvatište mišića",
+          "indent": 0
+        },
+        {
+          "text": "straga je gladak jer ima sluznu vreću",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Otvori i šupljine na lubanji",
+      "bullets": []
+    },
+    {
+      "heading": "Sljepoočna udubina/ Fossa temporalis",
+      "bullets": [
+        {
+          "text": "prostor smješten iza os zygomaticum i medijalno od arcus zygomaticus",
+          "indent": 0
+        },
+        {
+          "text": "medijalnu stijenku tvore alae majores os sphenoidale i ljuska os temporale",
+          "indent": 0
+        },
+        {
+          "text": "lateralno je samo djelomično omeđena arcus zygomaticusom",
+          "indent": 0
+        },
+        {
+          "text": "u nju strši processus coronoideus mandibulae",
+          "indent": 0
+        },
+        {
+          "text": "prema dolje je odijeljena grebenom/ crista infratemporalis od fossa infratemporalis",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Infratemporalna udubina/ Fossa infratemporalis",
+      "bullets": [
+        {
+          "text": "prostor smješten ispod fossa temporalis",
+          "indent": 0
+        },
+        {
+          "text": "gore je omeđena infratemporalnom stranom alae majores os sphenoidale",
+          "indent": 0
+        },
+        {
+          "text": "sprijeda je omeđena infratemporalnom stranom maxille",
+          "indent": 0
+        },
+        {
+          "text": "lateralno je omeđena os zygomaticum i djelomično ramus mandibulae",
+          "indent": 0
+        },
+        {
+          "text": "medijalno je omeđena lateralnom pločom processus pterygoideus",
+          "indent": 0
+        },
+        {
+          "text": "ispunjava ju musculus pterygoideus lateralis",
+          "indent": 0
+        },
+        {
+          "text": "izravno je povezana s lubanjskom šupljinom na dva mjesta:",
+          "indent": 0
+        },
+        {
+          "text": "na jajolikom otvoru/ foramen ovale",
+          "indent": 1
+        },
+        {
+          "text": "u području trnastog otvora/ foramen spinosum",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Krilnonepčana udubina/ Fossa pterygopalatina",
+      "bullets": [
+        {
+          "text": "leži dublje i medijalno od fossa infratemporalis",
+          "indent": 0
+        },
+        {
+          "text": "medijalno je omeđena lamina perpendicularis os palatinum",
+          "indent": 0
+        },
+        {
+          "text": "sprijeda je omeđena maxillom",
+          "indent": 0
+        },
+        {
+          "text": "straga processusom pterygoideusom",
+          "indent": 0
+        },
+        {
+          "text": "lateralno komunicira s fossom infratemporalis",
+          "indent": 0
+        },
+        {
+          "text": "u vrhu je smješten ganglion pterygopalatinum",
+          "indent": 0
+        },
+        {
+          "text": "na medijalnoj stijenci pri vrhu postoji otvor/ foramen sphenopalatinum vodi žile i krvne živce u nosnu šupljinu",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Retromandibularna udubina/ Fossa retromandibularis",
+      "bullets": [
+        {
+          "text": "sprijeda je omeđuje ramus mandibularis",
+          "indent": 0
+        },
+        {
+          "text": "straga je omeđuje porus et meatus acusticus externus i processusom mastoideusom",
+          "indent": 0
+        },
+        {
+          "text": "medijalno ju ograničuje processus styloideus s mišićima koji polaze s nastavka",
+          "indent": 0
+        },
+        {
+          "text": "uložena je glandula parotis",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "PARANAZALNI SINUSI",
+      "bullets": [
+        {
+          "text": "šuplje komore s otvorima za izlijevanje u nosnu šupljinu",
+          "indent": 1
+        },
+        {
+          "text": "pneumatizirani (ispunjeni zrakom)",
+          "indent": 1
+        },
+        {
+          "text": "os frontalis sinus frontalis",
+          "indent": 0
+        },
+        {
+          "text": "os ethmoidalis labyrinthus ethomidalis",
+          "indent": 0
+        },
+        {
+          "text": "maxilla sinus maxillaris",
+          "indent": 0
+        },
+        {
+          "text": "os sphenoidale sinus sphenoidalis",
+          "indent": 0
+        }
+      ]
+    }
+  ],
+  "links": []
+}

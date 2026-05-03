@@ -1,0 +1,1236 @@
+{
+  "id": "neurocranium",
+  "name": "Neurocranium",
+  "subtitle": "Kosti neurokranija",
+  "badge": "A1",
+  "questions": [
+    {
+      "q": "Koje prostore spaja fissura orbitalis superior?",
+      "a": "Fissura orbitalis superior je rupica koja je prisutna na os sphenoidale te se nalazi ispod malog krila spomenute kosti. Vidljiva je na frontalnom pogledu na očne šupljine. Ona spaja veliko i malo krilo (ala major et mala minor) od klinaste kosti, a samim time što je funkcionalni dio i očne šuljine (zbog prolaska živaca i žila radi krvne opskrbe i inervacije orbite i samog oka) spaja cavitas orbitae i bazu lubanje, središnji dio fosse cranii."
+    },
+    {
+      "q": "Gdje se nalazi sulcus sinus sigmoidei?",
+      "a": "Sulcus sinus sigmoidei je tvorba koja se proteže kroz dvije kosti neurokranija. Nalazi se na unutarnoj strain proc. mastoideus sljepoočne kosti (na mjestu gdje se nalazi i foramen mastoideum). također se nalazi in a lateralnome dijelu zatiljne kosti (uz proc. jugularis)."
+    },
+    {
+      "q": "S kojim sve kostima graniči os parietale?",
+      "a": "Os parietale (tjemena kost) se sastoji od četiri ruba, četiri kuta, a samim time i dva lica. Stoga, uz odgovarajuće rubove se nadovezuju šavovima kosti uz koje se nalazi tjemena kost. Prvotno, na margo sagittalis će se spojiti sa drugom tjemenom kosti (sutura sagittalis). Naprijed će na margo frontalis graničiti sa frontalnom kosti (sutura coronalis). Uz donji rub prednjeg margo frontalis, angulus sphenoidalis, graničit će sa klinastom kosti. Na stražnjem dijelu će se u margo occipitalis stvoriti suture lambdoideu sa okcipitalnom kosti. Na kraju, na donjem kraju središnjem dijelu graničiti sa temporalnom kosti na mjestu margo squamosa."
+    },
+    {
+      "q": "Gdje se nalazi foramen stylomastoideum?",
+      "a": "Foramen stylomastoideum je rupica koaj je locirana na temporalnoj kosti. Preciznije, gledajući kost na donjoj vanjskoj strani, nalazi se iza stiloidnog nastavka."
+    },
+    {
+      "q": "Koja je razlika između porus acusticus internus i meatus acusticus internus?",
+      "a": "Porus acusticus internus označava ulaz u sluhovod (unutarnjo otvor), dok meatus acusticus internus označava slušni kanal. Oni su dio jedne velike cjeline, cavitas tympani (bubnjište)."
+    }
+  ],
+  "notes": [
+    {
+      "heading": "KOSTI GLAVE/ OSSA CRANII",
+      "bullets": [
+        {
+          "text": "neurocranium se dijeli u 2 dijela:",
+          "indent": 0
+        },
+        {
+          "text": "basis cranii",
+          "indent": 1
+        },
+        {
+          "text": "pregiba se na mjestu os sphenoidale pregib je nazvan kifoza lubanjske baze",
+          "indent": 2
+        },
+        {
+          "text": "prednji dio baze/ planum sphenoideum i stražnji dio/ clivus",
+          "indent": 2
+        },
+        {
+          "text": "Basis cranii externa",
+          "indent": 0
+        },
+        {
+          "text": "na svakoj polovici se nalaze po 2 oštra grebena dijele bazu na 3 jame",
+          "indent": 0
+        },
+        {
+          "text": "fossa cranii anterior et media čine ih ossa sphenoidalia i odjeljuju fossa cranii anterior od fossa cranii media",
+          "indent": 0
+        },
+        {
+          "text": "margo superior partis petrosae odjeljuje fossa cranii media od stražnje/ fossa cranii posterior",
+          "indent": 0
+        },
+        {
+          "text": "kod fossa cranii anterior se nalazi izdanak/ crista galli služi za hvatiše za dio dure mater falx cerebri s obiju strana ima niz rupica za prolazak niti njušnog živca lamina cibrosa",
+          "indent": 0
+        },
+        {
+          "text": "kod fossa cranii media se nalazi tursko sedlo/ sella turcica s udubinom za hipofizu/ fossa hypophysialis",
+          "indent": 0
+        },
+        {
+          "text": "u fossa cranii posterior se nalazi zatiljni otvor/ foramen magnum",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Basis cranii interna",
+      "bullets": [
+        {
+          "text": "na stražnjem dijelu s obiju strana zatiljnog otvora se nalaze zatiljni kondili/ condyli occipitales",
+          "indent": 0
+        },
+        {
+          "text": "lateralno od njih na svakoj strani se nalazi processus styloideus, a još lateralnije mastoidni nastavak/ processus mastoideus ispred se nalazi vanjski slušni otvor i hodnik/ porus et meatus acusticus externus, a ispred njega mandibularna udubina/ fossa mandibularis",
+          "indent": 0
+        },
+        {
+          "text": "lateralno od fosse mandibularis na svakoj strani započinje koštani luk/ arcus zygomaticus",
+          "indent": 0
+        },
+        {
+          "text": "u sredini basis cranii sa svake strane se nalazi po jedan krilni nastavak/ processus pterygoideus pripada os sphenoidale",
+          "indent": 0
+        },
+        {
+          "text": "parne očne šupljine/ orbitae",
+          "indent": 0
+        },
+        {
+          "text": "gore ju omeđuje os frontale i ala minoris os sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "medijalno ju omeđuje processus frontalis maxillae, os lacrimale, lamina papyracea i corpus os sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "dolje ju omeđuje corpus maxillae, processus orbitalis ossis palatini i facies orbitalis os zygomaticum",
+          "indent": 1
+        },
+        {
+          "text": "lateralno ju omeđuje os zygomaticum i alae majores os sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "kroz fissura orbitalis superior je povezana s kranijalnom šupljinom, a kroz fissura orbitalis inferior s fossa infratemporalis i fossa pterygopalatina",
+          "indent": 1
+        },
+        {
+          "text": "iznad donjeg orbitalnog ruba se nalazi koštani ulaz za nosnu šupljinu apertura piriformis omeđuju je ossa nasalis i desna i lijeva maxilla s processusom frontalisom maxillae",
+          "indent": 1
+        },
+        {
+          "text": "krov lubanje/ calvaria",
+          "indent": 1
+        },
+        {
+          "text": "tvore vanjske i unutarnje kompaktne koštane ploče/ lamina externa et interna između njih se nalazi spongiozna kost/ diploe",
+          "indent": 2
+        },
+        {
+          "text": "na medijalnoj crti na unutarnjoj strani uzduž cijelog lubanjskog krova se nalazi žlijeb u koji je između dvaju listova tvrde moždane ovojnice/ dura mater uložen gornji sagitalni venski sinus/ sinus sagitalis superior",
+          "indent": 2
+        },
+        {
+          "text": "s obiju strana brazde vidi se mnogo sitnijih udubljenja/ foveolae granulares u kojima leže vrećice paučinaste moždane ovojnice/ granulationes arachnoideae",
+          "indent": 2
+        },
+        {
+          "text": "lateralno od sagitalnog žlijeba se nalaze brazde koje potječu od ogranaka srednje meningealne arterije i vene sulci arteriosi et venosi",
+          "indent": 2
+        }
+      ]
+    },
+    {
+      "heading": "Kosti neurokranija/ Neurocranium",
+      "bullets": []
+    },
+    {
+      "heading": "Zatiljna kost/ Os occipitale",
+      "bullets": [
+        {
+          "text": "bazalni dio/ pars basilaris",
+          "indent": 0
+        },
+        {
+          "text": "s unutarnje strane ima kosinu/ clivus",
+          "indent": 1
+        },
+        {
+          "text": "s obje strane brazde se nalaze uski žljebovi/ sulcus sinus petrosi inferioris s odgovarajućim žljebovima na os temporale tvore brazdu za donji petrozni venski sinus",
+          "indent": 1
+        },
+        {
+          "text": "na vanjskoj donjoj strani se nalazi kvržica/ tuberculum pharyngeum na koju se vežu raphe pharyngis i prednja uzdužna sveza kralježnice",
+          "indent": 1
+        },
+        {
+          "text": "bočni dijelovi/ partes laterales",
+          "indent": 0
+        },
+        {
+          "text": "s vanjske strane se nalaze okcipitalni kondili/ condyli occipitales",
+          "indent": 1
+        },
+        {
+          "text": "uz rub na vanjskoj strani se nalazi po jedan urez/ incisura jungularis s urezom na os temporale omeđuje foramen jungulare",
+          "indent": 1
+        },
+        {
+          "text": "može biti s jednim ili s dva grebna podijeljen u dva ili tri manja otvora foramen jungulare nipartitum et tripartitum",
+          "indent": 2
+        },
+        {
+          "text": "iza incisura jungularis se izbočuje koštani izdanak/ processus jungularis okružen završnim dijelom brazde sigmoidnog sinusa/ sulcus sinus sigmoidei",
+          "indent": 1
+        },
+        {
+          "text": "u tu brazdu se otvara koštani kanalić/ canalis condylaris započinje u udubini fossa condylaris",
+          "indent": 1
+        },
+        {
+          "text": "pars basilaris koji okružuje foramen magnum ima na gornjoj strani izbočinu/ tuberculum jungulare ispod koje prolazi kanal za n. hypoglossus canalis hypoglossi",
+          "indent": 1
+        },
+        {
+          "text": "zatiljna ljuska/ squama occipitalis",
+          "indent": 0
+        },
+        {
+          "text": "gornji dio ima oblik trokuta, njezin rub nalikuje na  šav gdje se ljuska spaja s ossa pariteale sutura lambdoidea",
+          "indent": 1
+        },
+        {
+          "text": "gornji rub ljuske/ margo lambdoideus u tupom kutu prelazi u donji rub/ margo mastoideus u dodiru jer s mastoidnim dijelom os temporale",
+          "indent": 1
+        },
+        {
+          "text": "na mjestu prijelaza iz jednog ruba u drugi se kod novorođenčeta nalazi postranična fontamela/ fonticulus mastoideus (asterion)",
+          "indent": 1
+        },
+        {
+          "text": "na unutrašnjoj strani u sredini ima izbočinu/ protuberantia occipitalis interna prema dolje se spušta greben/ crista occipitalis interna za greben se veže falx cerebelli",
+          "indent": 1
+        },
+        {
+          "text": "prema gore od protuberantia occipitalis interna se pruža brazda/ sulcus sinus sagittalis superioris u koju je uložen sinus sagittalis superior brazda se nastavlja u visinu u dvije brazde sulci sinus transversi ima sinus transversus prelazi kao sulci sinus sigmoidei na mastoidni dio os temporale vraćaju se u os occipitale okružuju processus jungularis",
+          "indent": 1
+        },
+        {
+          "text": "sigmoidne brazde završavaju u foramen jungularis",
+          "indent": 1
+        },
+        {
+          "text": "venske brazde i unutarnji zatiljni greben oblikuju eminentia cruciformis",
+          "indent": 1
+        },
+        {
+          "text": "udubine za zatiljne režnjeve velikog mozga leže iznad poprječne brazde/ fossae cerebrales occipitales",
+          "indent": 2
+        },
+        {
+          "text": "udubine za hemisfere malog mozga leže ispod poprječne brazde/ fossae cerebellares occipitales",
+          "indent": 2
+        },
+        {
+          "text": "u području gornjih udubina se vide grebeni i udubine koji potječu od vijuga i brazda velikog mozga impressiones gyrorum cerebri i juga cerebralia",
+          "indent": 0
+        },
+        {
+          "text": "u donjim se udubinama na svakoj strani nalazi kosi koštani greben koji odgovara vodoravnoj brazdi na malom mozgu jungum cerebellare intersemilunare",
+          "indent": 0
+        },
+        {
+          "text": "vanjska strana os occipitale je u gornjem dijelu glatka/ planum occipitale, a u donjem dijelu ima izbočinu/ protuberantia occipitalis externa od koje se spušta koštani greben/ crista occipitalis externa za koji se hvata septum nuchae",
+          "indent": 0
+        },
+        {
+          "text": "s donje strane se nalaze 2 koštane pruge/ linea nuchalis superior i linea nuchalis inferior polazište mišića",
+          "indent": 0
+        },
+        {
+          "text": "mjesto sastajanja lijeve i desne gornje koštane pruge inion",
+          "indent": 0
+        },
+        {
+          "text": "u okciptalnom području se nalazi treća, slabije izražena koštana pruga/ linea nuchalis suprema",
+          "indent": 0
+        },
+        {
+          "text": "foramen magnum omeđuje sva 4 dijela os occipitale",
+          "indent": 0
+        },
+        {
+          "text": "sredina prednjeg ruba basion",
+          "indent": 1
+        },
+        {
+          "text": "sredina stražnjeg ruba opisthion",
+          "indent": 1
+        },
+        {
+          "text": "do 16. ili 18. godine je spojena s trupom klinaste kosti sinkondrotskim spojem/ synchondrosis sphenooccipitalis kasnije okoštava i nastaje os basilare",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Klinasta kost/ Os sphenoidale",
+      "bullets": [
+        {
+          "text": "središnja kost lubanjske baze",
+          "indent": 0
+        },
+        {
+          "text": "trup/ corpus",
+          "indent": 0
+        },
+        {
+          "text": "ima oblik kocke i pneumatiziran je",
+          "indent": 1
+        },
+        {
+          "text": "u njemu se nalazi sfenoidni sinus/ sinus sphenoidalis",
+          "indent": 1
+        },
+        {
+          "text": "stražnji dio je spojen hrskavičnim spojem s pars basilaris os occipitale do 16. ili 18. godine života okošta nema više granice među kostima clivus se sa os occipitale neprekinut nastavlja na corpus os sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "na gornjoj strani se nalazi malo sedlo/ sella turcica uložena je hipofiza",
+          "indent": 1
+        },
+        {
+          "text": "stražnji dio sedla omeđuje uzvisina/ dorsum sellae sa svake strane ima koštani izdanak/ processus clinoideus posterior",
+          "indent": 1
+        },
+        {
+          "text": "ispred dorsum sellae se nalazi udubina za neurohipofizu/ fossa hypophysialis",
+          "indent": 1
+        },
+        {
+          "text": "lateralno od sella turcica sa svake strane na stražnjem dijelu se nalazi žlijeb/ sulcus caroticus s lateralne strane omeđuje koštani jezičac/ lingula sphenoidalis ulazi u sastav razdrtog otvora/ foramen lacerum nastavlja se prema natrag u pukotine/ fissura sphenopetrosa i fissura petrooccipitalis ispunjava ih hrskavica",
+          "indent": 1
+        },
+        {
+          "text": "u sulcus caroticus je uložena unutarnja karotidna arterija u jednom dijelu se prekida i nastavlja se kao udubina/ impressio carotica",
+          "indent": 1
+        },
+        {
+          "text": "na prednjem dijelu sella turcica se nalazi izbočina/ tuberculum sellae ispred je smještena poprječna brazda/ sulcus prechiasmaticus pruža se prema lijevom i desnom optičkom kanalu prolaze vidni živci i očna arterija",
+          "indent": 1
+        },
+        {
+          "text": "koštani rub/ limbus sphenoidalis može biti slabije i jače izražen i odjeljuje interoptičku brazdu od ravnog polja planum sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "prednji dio sudjeluje u tvorbi stijenke nosne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "donji dio čini krov gornjeg dijela ždrijela",
+          "indent": 1
+        },
+        {
+          "text": "mjesto srastanja sluznice je maleni okrugao otvor/ apertura sinus sphenoidalis",
+          "indent": 1
+        },
+        {
+          "text": "između oba sfenoidna sinusa postoji pregrada/ septum sinuum sphenoidalium",
+          "indent": 1
+        },
+        {
+          "text": "na prednjoj strani u medijalnoj crti se nalazi greben/ crista sphenoidalis prema dolje se proširuje u sagitalno smješten izdanak/ rostrum sphenoidale ulaže se između krila vomera/ alae vomeris",
+          "indent": 1
+        },
+        {
+          "text": "veže se lamina perpendicularis os ethmoidale",
+          "indent": 2
+        },
+        {
+          "text": "velika krila/ alae majores",
+          "indent": 0
+        },
+        {
+          "text": "polazi s 3 korijena omeđuju 2 otvora",
+          "indent": 1
+        },
+        {
+          "text": "foramen rotundum",
+          "indent": 2
+        },
+        {
+          "text": "vodi u fossa pterygopalatina preko fissura orbitalis inferior se spaja s očnom šupljinom",
+          "indent": 3
+        },
+        {
+          "text": "unutarnja strana/ facies cerebralis",
+          "indent": 3
+        },
+        {
+          "text": "vide se otisci vijuga i brazda velikog mozga imperssiones digitatae i juga cerebralia",
+          "indent": 4
+        },
+        {
+          "text": "vanjska strana/ facies temporalis",
+          "indent": 3
+        },
+        {
+          "text": "u donjem dijelu se nalazi greben/ crista infratemporalis",
+          "indent": 4
+        },
+        {
+          "text": "orbitalna ploha/ facies orbitalis",
+          "indent": 3
+        },
+        {
+          "text": "medijalni dio je gladak i omeđuje fissura orbitalis superior",
+          "indent": 3
+        },
+        {
+          "text": "donji rub maxillom omeđuje fissuru orbitalis inferior",
+          "indent": 3
+        },
+        {
+          "text": "lateralni dio je strastao s širokom plohom os temporale",
+          "indent": 3
+        },
+        {
+          "text": "prednji rub se nalazi na granici facies temporalis i facies orbitalis spaja se s os zygomaticum",
+          "indent": 3
+        },
+        {
+          "text": "stražnji rub se spaja s os temporalis",
+          "indent": 3
+        },
+        {
+          "text": "stražnji rub završava šiljkom/ spina ossis sphenoidalis ima otvor/ foramen spinosum",
+          "indent": 3
+        },
+        {
+          "text": "medijalno se nalazi žlijeb/ sulcus tubae auditivae potječe od hrskavičnog dijela slušne cijevi",
+          "indent": 4
+        },
+        {
+          "text": "foramen ovale",
+          "indent": 2
+        },
+        {
+          "text": "prema dolje se sa svake strane spušta po jedan krilni nastavak/ processus pterygoideus oblikuju ga uža medijalna i šira lateralna ploča:",
+          "indent": 1
+        },
+        {
+          "text": "lamina medialis processus pterygoidei",
+          "indent": 2
+        },
+        {
+          "text": "nastavlja se prema dolje u tanki, zavijeni koštani izdanak/ hamulus pterygoideus",
+          "indent": 3
+        },
+        {
+          "text": "prislanja se hrskavica slušne cijevi impressio tubaria",
+          "indent": 3
+        },
+        {
+          "text": "na gornjem dijelu stražnjeg ruba se nalazi udubina/ fossa scaphoidea",
+          "indent": 3
+        },
+        {
+          "text": "lamina lateralis processus pterygoidei",
+          "indent": 2
+        },
+        {
+          "text": "obje ploče se razilaze prema natrag i dolje i omeđuju urez/ incisura pterygoidea pirimidni nastavak os palatinum upotpunjuje i pretvara u udubinu/ fossa pterygoidea",
+          "indent": 1
+        },
+        {
+          "text": "na gornjem dijelu sprijeda su obje ploče srasle i oblikuju široko ravno trokutasto polje/ facies maxillaris zajedno s lamina perpendicularis os palatinum i kvrgom maxille omeđuje pukotinu/ fossa pterygoplatina",
+          "indent": 1
+        },
+        {
+          "text": "mala krila/ alae minores",
+          "indent": 0
+        },
+        {
+          "text": "polazi s 2 korijena koji obuhvaćaju vidni kanal/ canalis opticus",
+          "indent": 1
+        },
+        {
+          "text": "prednji rub se spaja s os frontale",
+          "indent": 1
+        },
+        {
+          "text": "gornja strana se nastavlja u jungum sphenoidale",
+          "indent": 1
+        },
+        {
+          "text": "stražnji rub crista alaris oštar je i čini granicu između fossa cranii anterior et media",
+          "indent": 1
+        },
+        {
+          "text": "medijalno završava koštanim izdankom/ processus clinoideus anterior",
+          "indent": 2
+        },
+        {
+          "text": "donja strana omeđuje gornju orbitalnu pukotinu/ fissura orbitalis superior prolaze živcu koji ulaze u očnu šupljinu i izlazi vena ophthalmica",
+          "indent": 1
+        },
+        {
+          "text": "krilni nastavci/ processus pterygoidei",
+          "indent": 0
+        },
+        {
+          "text": "kroz korijen prolazi kanal/ canalis pterygoideus",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Čeona kost/ Os frontale",
+      "bullets": [
+        {
+          "text": "čeona ljuska/ squama frontalis",
+          "indent": 0
+        },
+        {
+          "text": "pripada lubanjskom svodu",
+          "indent": 1
+        },
+        {
+          "text": "facies externa nalazimo izbočinu/ tuber frontale",
+          "indent": 1
+        },
+        {
+          "text": "gornji rub je nazubljen i spaja se s os perietale nazubljenim vjenčanim šavom/ sutura coronalis vrh šava/ bregma",
+          "indent": 1
+        },
+        {
+          "text": "facies interna nalazi se koštani greben/ crista frontalis koji započinje slijepim otvorom/ foramen caecum prema natrag se račva i obuhvaća brazdu gornjeg sagitalnog sinusa/ sulcus sinus sagittalis superioris s obje strane brazde se nalaze foveolae granulares",
+          "indent": 1
+        },
+        {
+          "text": "parni orbitalni dijelovi/ partes orbitales",
+          "indent": 0
+        },
+        {
+          "text": "pripada bazi lubanje",
+          "indent": 1
+        },
+        {
+          "text": "odijeljeni su urezom/ incisura ethmoidalis ulaže se lamina cribrosa os ethmoidale ispred se nalazi pars nasalis",
+          "indent": 1
+        },
+        {
+          "text": "iznad sa svake strane se nalazi izbočeni luk/ arcus superciliaris lukovi omeđuju plitku udubinu glabella",
+          "indent": 1
+        },
+        {
+          "text": "lukovi se mogu spojiti s gornjim orbitalnim rubom u koštanu izbočinu/ torus supraorbitalis",
+          "indent": 2
+        },
+        {
+          "text": "oblikuju ih 2 koštane ploče između je uložen zaton sinus frontalis",
+          "indent": 1
+        },
+        {
+          "text": "gornja ploča/ lamina cerebralis u doticaju s donjom stranom moždanog čeonog režnja ima izražene impressiones digitatae i juga cerebralia",
+          "indent": 1
+        },
+        {
+          "text": "donja ploča/ facies orbitalis oblikuje krov očne šupljine",
+          "indent": 1
+        },
+        {
+          "text": "margo supraorbitalis rub koji odozgo omeđuje ulaz u očnu šupljinu",
+          "indent": 2
+        },
+        {
+          "text": "lateralno se nastavlja u koštani izdanak/ processus zygomaticus spaja se s gornjim izdankom os zygomaticum",
+          "indent": 3
+        },
+        {
+          "text": "s donje strane na lateralnom dijelu se nalazi udubina za suznu žlijezdu/ fossa glandulae lacrimalis",
+          "indent": 2
+        },
+        {
+          "text": "na medijalnom dijelu se nalazi plitka udubina/ fovea trochlearis i maleni šiljak/ spina trochlearis",
+          "indent": 2
+        },
+        {
+          "text": "na margo supraorbitalis se nalaze 2 otvora ili ureza:",
+          "indent": 2
+        },
+        {
+          "text": "medijalno incisura frontalis ili foramen frontalis",
+          "indent": 3
+        },
+        {
+          "text": "lateralno incisura supraorbitalis ili foramen supraorbitale",
+          "indent": 3
+        },
+        {
+          "text": "u području incisura ethmoidalis lamina cerebralis i facies orbitalis su razmaknute i na nekoliko mjesta su spojene sukoštanim pregradama omeđuju foveolae ethmoidales odozgo zatvaraju labyrinthus ethomidalis",
+          "indent": 1
+        },
+        {
+          "text": "između prolaze 2 žlijeba budu pretvoreni u kanale kada se priključi os ethmoidale",
+          "indent": 2
+        },
+        {
+          "text": "foramen ethmoidale anterius",
+          "indent": 3
+        },
+        {
+          "text": "foramen ethmoidale posterius",
+          "indent": 3
+        },
+        {
+          "text": "sprijeda se nalazi otvor/ apertura sinus frontalis vodi iz nosne šupljine u čeoni sinus",
+          "indent": 2
+        },
+        {
+          "text": "nosni dio/ pars nasalis",
+          "indent": 0
+        },
+        {
+          "text": "čeoni sinus/ sinus frontalis",
+          "indent": 0
+        },
+        {
+          "text": "trokutast je na sagitalnom presjeku, vrh trokuta je usmjeren prema gore",
+          "indent": 1
+        },
+        {
+          "text": "zapremina varira od 5 do 30 mL",
+          "indent": 1
+        },
+        {
+          "text": "desni i lijevi sinus ne moraju biti simetrični i jednako razvijeni",
+          "indent": 1
+        },
+        {
+          "text": "ima vlastitu koštanu stijenku od kompaktne koštane tvari",
+          "indent": 1
+        },
+        {
+          "text": "sinusi su odijeljeni koštanom pregradom/ septum sinuum frontalium prema dolje se nastavlja u šiljak/ spina nasalis može biti pneumatiziran",
+          "indent": 1
+        },
+        {
+          "text": "može sezati duboko u područje nosne pregrade/ sinus septi nasi",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Tjemena kost/ Os parietale",
+      "bullets": [
+        {
+          "text": "četverokutna savijena koštana ploča ima 4 ruba, 4 kuta i 2 strane",
+          "indent": 0
+        },
+        {
+          "text": "gornji rub/ margo sagittalis",
+          "indent": 0
+        },
+        {
+          "text": "nazubljen je i spaja se s os perietale suprotne strane spoj se naziva sagitalni šav/ sutura sagittalis seže do bregme i lambde sadrži najvišu točku lubanje vertex",
+          "indent": 1
+        },
+        {
+          "text": "kod novorođenčeta su rubovi razmaknuti nalazi se vezivno tkivo prednje i stražnje fontanele/ fonticulus anterior et posterior",
+          "indent": 1
+        },
+        {
+          "text": "prednji rub/ margo frontalis",
+          "indent": 0
+        },
+        {
+          "text": "sastaje se sa margo sagittalis u čeonom kutu/ angulus frontalis",
+          "indent": 1
+        },
+        {
+          "text": "prema natrag margo sagittalis prelazi u okcipitalni margo occipitalis tvori zatiljni kut/ angulus occipitalis",
+          "indent": 1
+        },
+        {
+          "text": "donji rub/ margo squamosus",
+          "indent": 0
+        },
+        {
+          "text": "ima 2 dijela:",
+          "indent": 1
+        },
+        {
+          "text": "prednji dio oštar",
+          "indent": 2
+        },
+        {
+          "text": "spojen je svkamoznim, ljuskastim šavom s ljuskom os temporale",
+          "indent": 3
+        },
+        {
+          "text": "stražnji dio debeo i nazubljen",
+          "indent": 2
+        },
+        {
+          "text": "spaja se s mastoidnim dijelom os temporale, a prema natrag završava tupim kutom/ angulus mastoideus",
+          "indent": 3
+        },
+        {
+          "text": "donji prednji kut/ angulus sphenoidalis",
+          "indent": 0
+        },
+        {
+          "text": "najoštriji je i spaja se s alae majores os sphenoidale sutura spenoparietaleom koji leži vodoravno",
+          "indent": 1
+        },
+        {
+          "text": "šav seže sprijeda do os frontale i straga do os temporale nastaje tvorba u obliku slova H pterion",
+          "indent": 2
+        },
+        {
+          "text": "vanjska strana/ facies externa",
+          "indent": 0
+        },
+        {
+          "text": "ima 2 koštane pruge linea temporalis superior et inferior",
+          "indent": 1
+        },
+        {
+          "text": "s polja između tih pruga polazi fascija sljepoočnog mišića, a ispod donje pruge prolazi m. temporalis",
+          "indent": 1
+        },
+        {
+          "text": "sredina ploče se izbočuje u tjemenu kvrgu/ tuber parietale na unutarnjoj strani ima udubinu/ fossa perietalis",
+          "indent": 1
+        },
+        {
+          "text": "unutarnja strana/ facies interna",
+          "indent": 0
+        },
+        {
+          "text": "uz margo sagittalis se nalazi brazda/ sulcus sinus sagittalis superioris s brazdom na suprotnoj strani oblikuje žlijeb gornjeg sagitalnoga sinusa",
+          "indent": 1
+        },
+        {
+          "text": "na unutarnjoj strani angulusa mastoideusa se nalazi brazda/ sulcus sinus sigmoidei",
+          "indent": 1
+        },
+        {
+          "text": "ima 2 arterijske brazde koje potječu od prednje i stražnje grane srednje maningealne arterije sulcus asteriae meningeae mediae duž brazde se nalaze foveolae granulares",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Sljepoočna kost/ Os temporale",
+      "bullets": [
+        {
+          "text": "tvori čvrst koštani oklop oko slušnog organa",
+          "indent": 0
+        },
+        {
+          "text": "s njom je zglobljena mandibula, a na processusu styloideusu os temporale je obješena os hyoideum",
+          "indent": 0
+        },
+        {
+          "text": "ima 3 glavna dijela:",
+          "indent": 0
+        },
+        {
+          "text": "pars petrosa",
+          "indent": 1
+        }
+      ]
+    },
+    {
+      "heading": "Piramida",
+      "bullets": [
+        {
+          "text": "ima oblik četverostrane piramide osnovica se proširuje u mastoid, a vrh strši u razdrti otvor baze lubanje/ foramen lacerum",
+          "indent": 0
+        },
+        {
+          "text": "facies anterior partis petrosae",
+          "indent": 0
+        },
+        {
+          "text": "na vrhu ima plitku udubinu/ impressio trigeminalis",
+          "indent": 1
+        },
+        {
+          "text": "ispod udubine je karotični kanal/ canalis caroticus s unutarnjim otvorom/ apertura interna canalis carotici",
+          "indent": 1
+        },
+        {
+          "text": "lateralno od impressio trigeminalis leže 2 usporedne brazde:",
+          "indent": 1
+        },
+        {
+          "text": "sulcus nervi petrosi majoris",
+          "indent": 2
+        },
+        {
+          "text": "leži medijalnije i započinje otvorom/ hiatus canalis nervi petrosi majoris ima poprječno položenu lučnu izbočinu/ eminentia arcuata tvori ju prednji polukružni kanal labirinta/ canalis semicircularis anterior",
+          "indent": 3
+        },
+        {
+          "text": "sulcus nervi petrosi minoris",
+          "indent": 2
+        },
+        {
+          "text": "leži lateralnije i započinje otvorom/ hiatus canalis nervi petrosi minoris",
+          "indent": 3
+        },
+        {
+          "text": "prema lateralno se nastavlja u tegmen tympani odozgo zatvara bubnjište cavitas tympani i antrum mastoideum",
+          "indent": 1
+        },
+        {
+          "text": "facies posterior partis petrosae",
+          "indent": 0
+        },
+        {
+          "text": "sa svake strane omeđuje stražnju zatiljnu šupljinu u koju su uložene hemisfere malog mozga",
+          "indent": 1
+        },
+        {
+          "text": "vidi se ovalni unutarnji otvor/ porus acusticus internus nastavlja se u unutarnji slušni hodnik ili sluhovod/ meatus acusticus internus",
+          "indent": 1
+        },
+        {
+          "text": "dug je oko cm i završava dnom/ fundus meatus acustici interni",
+          "indent": 2
+        },
+        {
+          "text": "dno je podijeljeno s poprječnim grebenom/ crista transversa u 2 dijela",
+          "indent": 2
+        },
+        {
+          "text": "u gornjem dijelu se nalazi otvor za lični kanal/ area nervi facialis  lateralno se nalazi područje s puno rupica area vestibularis superior",
+          "indent": 3
+        },
+        {
+          "text": "u donjem dijelu niz spiralno smještenih sitnih otvora/ tractus spiralis foraminosus ulazi slušni živac n. cochlearis pristupa na pužnicu/ cochlea iza toga se nalazi udubina s mnogo sitnih otvora area vestibularis inferior",
+          "indent": 3
+        },
+        {
+          "text": "sasvim uz stražnji rub sluhovoda se nalazi foramen singulare",
+          "indent": 2
+        },
+        {
+          "text": "iznad, lateralno i iza porusa acusticusa internusa se nalazi slijepa udubina/ fossa subarcuata u njoj započinje atrocerebelarni kanal pruža se prema mastoidu",
+          "indent": 2
+        },
+        {
+          "text": "ispod fosse subarcuate se nalazi procijep/ apertura externa aqueductus vestibuli gdje se nalazi ductus, odnosno saccus endolymphaticus",
+          "indent": 2
+        },
+        {
+          "text": "kod margo superior partis petrosae se nalazi brazda/ sulcus sinus petrosi superiori",
+          "indent": 2
+        },
+        {
+          "text": "kod margo posterior partis petrosae se nalazi brazda/ sulcus sinus petrosi inferioris",
+          "indent": 2
+        },
+        {
+          "text": "odijeljene su oštrim grebenom/ margo superior partis petrosae",
+          "indent": 0
+        },
+        {
+          "text": "facies inferior partis petrosae",
+          "indent": 0
+        },
+        {
+          "text": "sprijeda uz vrh piramide ima široko hrapavo polje iza toga je široki okrugli vanjski otvor karotičnog kanala/ apertura externa canalis carotici",
+          "indent": 1
+        },
+        {
+          "text": "još više straga leži različito duboka udubina/ fossa jungularis uložen je bulbus superior venae jungularis",
+          "indent": 1
+        },
+        {
+          "text": "ima brazdicu koja vodi u kanal/ canaliculus mastoideus",
+          "indent": 2
+        },
+        {
+          "text": "uz medijalni rub se nalazi urez/ incisura jungularis s istoimenom udubinim urezom na os occipitale omeđuje foramen jungulare podijeljen je koštanim izdankom/ processus intrajungularis",
+          "indent": 1
+        },
+        {
+          "text": "ispod meatus acusticus internus uz medijalni rub se nalazi trokutasta udubina u kojoj leži apertura externa canaliculi cochleae",
+          "indent": 1
+        },
+        {
+          "text": "između incisure jungularis i canalis caroticus leži malena fossula petrosa",
+          "indent": 1
+        },
+        {
+          "text": "u toj jamici započinje kanal/ canaliculus tympanicus",
+          "indent": 2
+        },
+        {
+          "text": "iza incisure jungularis uz processus styloideus se nalazi otvor/ foramen stylomastoideum lateralno strši različito dug koštani izdanak/ processus styloideus",
+          "indent": 1
+        },
+        {
+          "text": "lateralna strana piramide tvori medijalnu stijenku bubnjišta/ cavitas tympani",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "heading": "Mastoidni dio",
+      "bullets": [
+        {
+          "text": "od ljuske ga odjeljuje duboka incisura parietalis",
+          "indent": 0
+        },
+        {
+          "text": "sa os occipitale ju povezuje sutura occipitomastoidea",
+          "indent": 0
+        },
+        {
+          "text": "izbočuje se različito razvijen izdanak/ processus mastoideus na medijalnoj strani se nalazi urez/ incisura mastoidea medijalno od nje se nalazi brazda/ sulcus arteriae occipitalis",
+          "indent": 0
+        },
+        {
+          "text": "s unutarnje strane se nalazi duboka brazda sigmoidnog sinusa/ sulcus sinus sigmoidei u njoj se nalazi otvor/ foramen mastoideum nastavlja se u kanal otvara se u području okcitomastoidnog šava, a kroz njega prolazi mastoidni emisatij",
+          "indent": 0
+        },
+        {
+          "text": "ima antrum mastoideum koji preko ulaza aditus ad antrum mastoidei kominicira s bubnjićem",
+          "indent": 0
+        },
+        {
+          "text": "okružuje ga sustav zračnih šupljina",
+          "indent": 1
+        },
+        {
+          "text": "bubnjište/ cavitas tympani",
+          "indent": 0
+        },
+        {
+          "text": "tvori dio središnjeg uha",
+          "indent": 1
+        },
+        {
+          "text": "prostor omeđen sa 6 stijenki:",
+          "indent": 1
+        },
+        {
+          "text": "paries caroticus/ prednja stijenka",
+          "indent": 2
+        },
+        {
+          "text": "u donjem dijelu graniči s canalis caroticus iznad njega je kanal/ canalis musculotubalis dijeli se u 2 polukanala semicanalis musculi tensoris tympani i semicanalis tubae auditive",
+          "indent": 3
+        },
+        {
+          "text": "paries jungularis/ donja stijenka",
+          "indent": 2
+        },
+        {
+          "text": "ima izbočinu/ prominentia styloidea",
+          "indent": 3
+        },
+        {
+          "text": "s donje strane se prislanja bulbus superior venuae jungularis internae",
+          "indent": 3
+        },
+        {
+          "text": "paries tegmentalis/ gornja stijenka",
+          "indent": 2
+        },
+        {
+          "text": "tvori ju tanka koštana ploča/ tegmen tympani",
+          "indent": 3
+        },
+        {
+          "text": "paries mastoideus/ stražnja stijenka",
+          "indent": 2
+        },
+        {
+          "text": "ima izbočinu/ eminentia pyramidalis s otvorom na vrhu",
+          "indent": 3
+        },
+        {
+          "text": "iza jajolikog otvora i iznad njega facijalni kanal tvori izbočinu/ prominentia canalis facialis iznad se nalazi prominentia canalis semicircularis lateralis služi kao putokaz pri trepanaciji da se ne ozlijede facijalni kanal i živac te za točnu orijentaciju o položaju labirinta",
+          "indent": 3
+        },
+        {
+          "text": "na stražnjoj stijenci labirinta je udubina/ fossa incudis uložen je kratki krak nakovnja",
+          "indent": 3
+        },
+        {
+          "text": "ispod nje je otvor/ apertura tympanica canaliculi chordae tympani",
+          "indent": 4
+        },
+        {
+          "text": "paries mambranaceus/ lateralna stijenka",
+          "indent": 2
+        },
+        {
+          "text": "tvori ju dio ljuske os temporale i membrana tympani uložena u koštanu brazdu/ sulcus tympanicus",
+          "indent": 3
+        },
+        {
+          "text": "paries labyrinthicus/ medijalna stijenka",
+          "indent": 2
+        },
+        {
+          "text": "najsloženije je oblikovana",
+          "indent": 3
+        },
+        {
+          "text": "u sredini je smješten jajoliki, poprijeko položen otvor/ fenestra vestibuli (fenestra ovalis) okružen koštanim nasipom nastaje jamica/ fossula fenestrae vestibuli",
+          "indent": 3
+        },
+        {
+          "text": "u otvor se ulaže baza stremena",
+          "indent": 4
+        },
+        {
+          "text": "ispred otvora je zavijen koštani izdanak/ processus cochleariformis nalazi se na stražnjem kraju koštane pregrade na prednjoj stijenci bubnjišta/ septum canalis musculotubarii",
+          "indent": 4
+        },
+        {
+          "text": "ispod ovalnog okna izbočuje se bazalni zavoj pužnice u promontorium ispod se nalazi jamica/ fossula fenestrae cochleae s okruglim oknom/ fenestra cochleae (fenestra rotunda) koju in vivo zatvara membrana tympani secundaria",
+          "indent": 3
+        },
+        {
+          "text": "na promontoriju leži brazda/ sulcus promontorii uložen je n. tympaticus",
+          "indent": 3
+        },
+        {
+          "text": "od promontorija, blizu ovalnog otvora se pruža prema stražnjoj stijenci koštanog grebena subiculum promontorii ispod se nalazi sinus tympani",
+          "indent": 3
+        },
+        {
+          "text": "pars squamosa",
+          "indent": 1
+        },
+        {
+          "text": "dugačkim jagodičnim izdankom/ processus zygomaticus je podijeljena na:",
+          "indent": 2
+        },
+        {
+          "text": "gornji dio ljuska",
+          "indent": 3
+        },
+        {
+          "text": "sprijeda se spaja s alae majores os sphenoidale (margo sphenoidalis)",
+          "indent": 4
+        },
+        {
+          "text": "gore i straga se spaja s os parietale (margo parietalis)",
+          "indent": 4
+        },
+        {
+          "text": "s pars petrosa se spaja u šavu/ sutura petrosquamosa",
+          "indent": 4
+        },
+        {
+          "text": "s unutarnje strane se nalazi imperssiones gyrorum i juga cerebralia i brazda/ sulcus arteriosus",
+          "indent": 4
+        },
+        {
+          "text": "donji dio manji, nosi zglobnu plohu za zglob s mandibulom",
+          "indent": 3
+        },
+        {
+          "text": "processus zygomaticus polazi s 2 korijena prednji se nalazi ispred, a stražnji iza zglobne šupljine za mandibulu",
+          "indent": 2
+        },
+        {
+          "text": "prema natrag se nastavlja u horizontalni sagitalno položen koštani greben/ crista supramastoidea",
+          "indent": 2
+        },
+        {
+          "text": "uz gornji i stražnji rub vanjskoga slušnog otvora leži mala udubina kraj nje je mali izdanak/ spina suprameatica",
+          "indent": 2
+        },
+        {
+          "text": "pars tympanica",
+          "indent": 1
+        },
+        {
+          "text": "sastoji se od nepotpuno zatvorenog koštanog prstena/ anulus tympanicus ima brazdu/ sulcus tympanicus uložena je membrana tympani",
+          "indent": 2
+        },
+        {
+          "text": "ispred prstena se stvara koštana ploča prema gore i natrag nastaje koštani žlijeb sraste s ljuskom os temporale između rubova i ljuske ostaje urez/ incusura tympanica uložen je pars flaccida membranae tympani",
+          "indent": 2
+        },
+        {
+          "text": "prednji kraj čini stražnje omeđenje zglobne udubine/ fossa mandibularis spaja se s ljuskom os temporale u šavu u kojem ostaje pukotina/ fissura petrotympanica kroz nju prolazi dugi nastavak maleusa, chorda tympani i prednja temporalna arterija",
+          "indent": 2
+        },
+        {
+          "text": "prema straga se između pars tympanica i mastoidnog dijela nalazi fissura tympanomastoidea kroz nju kroz mali otvor prolazi ramus auricularis nervi vagi",
+          "indent": 2
+        },
+        {
+          "text": "okružuje vanjski slušni otvor/ porus acusticus externus nastavlja se u kanal/ meatus acusticus externus",
+          "indent": 2
+        },
+        {
+          "text": "kroz os temporale prolazi nekoliko kanala:",
+          "indent": 0
+        },
+        {
+          "text": "canalis caroticus",
+          "indent": 1
+        },
+        {
+          "text": "kroz njega prolazi unutarnja karotidna arterija",
+          "indent": 2
+        },
+        {
+          "text": "od koljena se odvajaju jedan ili dva kanalića/ canaliculi caroticotympanici prolaze male arterije u bubnjište",
+          "indent": 2
+        },
+        {
+          "text": "canalis nervi facialis",
+          "indent": 1
+        },
+        {
+          "text": "započinje na dnu meatus acusticus internus otvorom area nervi facialis usmjeren je lateralno do mjesta na gornjoj površini piramide u kanalu se nalazi otvor/ hiatus canalis nervi facialis tvori ganglion geniculi kanal zavija prema natrag i tvori koljeno/ geniculum canalis nervi facialis izbočuje se u bubnjištu iznad ovalnog okna/ prominantia canalis nervi facialis zavija u blagom luku prema dolje i završava na foramenu stylomastoideumu",
+          "indent": 2
+        },
+        {
+          "text": "odvajaju se 2 kanalića:",
+          "indent": 2
+        },
+        {
+          "text": "kroz gornji kanalić prolazi živac za musculus stapedius",
+          "indent": 3
+        },
+        {
+          "text": "kroz donji kanalić u bubnjište ulaze chorda tympani i arteria tympanica posterior",
+          "indent": 3
+        },
+        {
+          "text": "chorda tympani ostavlja bubnjište kroz pukotinu/ fissura petrotympanica",
+          "indent": 4
+        },
+        {
+          "text": "canalicus tympanicus",
+          "indent": 1
+        },
+        {
+          "text": "započinje na bazi piramide u dnu udubine/ fossula petrosa",
+          "indent": 2
+        },
+        {
+          "text": "u bubnjištu nastavlja preko promontorija u žlijeb/ sulcus promontorii probija tegmen tympani i na gornjoj površini piramide prelazi u žlijeb/ sulcus nervi petrosi minoris",
+          "indent": 2
+        },
+        {
+          "text": "canalicus mastoideus",
+          "indent": 1
+        },
+        {
+          "text": "započinje u fossa jungularis ide prema natrag i izlazi iz kosti kroz pukotinu/ fissura tympanomastoidea",
+          "indent": 2
+        },
+        {
+          "text": "prolazi ramus auricularis nervi vagi",
+          "indent": 2
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "group": "Kosti trupa",
+      "items": [
+        {
+          "name": "Atlas i Axis",
+          "url": "https://quizlet.com/be/568483554/atlas-axis-flash-cards/"
+        },
+        {
+          "name": "Vertebrae Cervicales",
+          "url": "https://quizlet.com/266373322/vertebra-cervicales-flash-cards/"
+        },
+        {
+          "name": "Vertebrae Thoracicae",
+          "url": "https://quizlet.com/be/239817595/vertebra-thoracica-flash-cards/"
+        },
+        {
+          "name": "Vertebrae Lumbales",
+          "url": "https://quizlet.com/448923340/vertebrae-lumbales-flash-cards/"
+        },
+        {
+          "name": "Os Sacrum",
+          "url": "https://quizlet.com/be/239816600/os-sacrum-flash-cards/"
+        },
+        {
+          "name": "Costae",
+          "url": "https://quizlet.com/186646740/costae-flash-cards/"
+        }
+      ]
+    },
+    {
+      "group": "Kosti gornjih okrajina",
+      "items": [
+        {
+          "name": "Clavicula",
+          "url": "https://quizlet.com/436496541/clavicula-flash-cards/"
+        },
+        {
+          "name": "Scapula",
+          "url": "https://quizlet.com/436500423/scapula-flash-cards/"
+        },
+        {
+          "name": "Humerus",
+          "url": "https://quizlet.com/436548411/humerus-flash-cards/"
+        },
+        {
+          "name": "Ulna",
+          "url": "https://quizlet.com/437790102/ulna-flash-cards/"
+        },
+        {
+          "name": "Radius",
+          "url": "https://quizlet.com/549297001/radius-flash-cards/"
+        },
+        {
+          "name": "Ossa Manus",
+          "url": "https://quizlet.com/549315586/ossa-manus-flash-cards/"
+        }
+      ]
+    },
+    {
+      "group": "Kosti donjih okrajina",
+      "items": [
+        {
+          "name": "Os Coxae",
+          "url": "https://quizlet.com/be/239834338/os-coxae-flash-cards/"
+        },
+        {
+          "name": "Femur",
+          "url": "https://quizlet.com/de/557899573/femur-flash-cards/"
+        },
+        {
+          "name": "Tibia",
+          "url": "https://quizlet.com/433469865/tibia-flash-cards/"
+        },
+        {
+          "name": "Fibula",
+          "url": "https://quizlet.com/433514476/fibula-flash-cards/"
+        },
+        {
+          "name": "Talus",
+          "url": "https://quizlet.com/be/239833203/talus-flash-cards/"
+        }
+      ]
+    }
+  ]
+}

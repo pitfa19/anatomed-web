@@ -134,7 +134,7 @@ export default function Agent() {
     } catch (err) {
       const errText =
         err instanceof MissingApiKeyError
-          ? 'API ključ nije postavljen. Dodaj `VITE_ANTHROPIC_API_KEY` u `web-prototype/.env.local` i restartaj `npm run dev`.'
+          ? 'API ključ nije postavljen na poslužitelju. Dodaj `ANTHROPIC_API_KEY` u Vercel env vars (ili u `.env.local` za `vercel dev`).'
           : `Greška: ${err instanceof Error ? err.message : String(err)}`;
       setMessages((m) => [
         ...m,

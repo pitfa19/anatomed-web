@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Vercel
+.vercel
+
 # Rendered PDF page images (~431 MB) — served from Vercel Blob in production.
 # Keep locally for dev; do not commit. See README for blob setup.
 public/pdfs-rendered/

@@ -1,0 +1,91 @@
+{
+  "id": "quizlet_sacrum",
+  "name": "Os Sacrum + Costae",
+  "subtitle": "Križna kost i rebra",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Kako se dijele rebra prema načinu pričvršćivanja za prsnu kost?",
+      "a": "Rebra se dijele u tri funkcionalne skupine prema tome dosežu li sternum i na koji način. Costae verae su gornjih sedam parova rebara koja dosežu sternum direktno. Costae spuriae su pet donjih parova koji ne dosežu sternum direktno, pri čemu 8., 9. i u trećini slučajeva 10. rebro bivaju hrskavičnim završetkom pričvršćeni za arcus costalis. Costae fluctuantes, koje obuhvaćaju 10. (u dvije trećine slučajeva), 11. i 12. rebro, završavaju hrskavičnim vrškovima slobodno između trbušnih mišića, bez ikakve koštane ili hrskavične veze sa sternumom.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 14,
+        "snippet": "costae fluctuantes – 10. (u 2/3 slučajeva), 11. i 12. rebro završavaju hrskavičnm vrškovima slobodno između trbušnih mišića"
+      }
+    },
+    {
+      "q": "Koje je najduže rebro i kako se mijenja duljina rebara duž prsnog koša?",
+      "a": "Duljina rebara nije jednolika duž cijeloga prsnog koša, već slijedi određeni uzorak koji odražava oblik toraksa. Od prvoga do sedmoga rebra duljina se postupno povećava, dok se od osmoga do dvanaestoga smanjuje. Iz toga slijedi da je 7. rebro najduže od svih dvanaest parova. Taj raspored odgovara činjenici da je skelet toraksa širi prema dolje sve do razine sedmoga rebra, a zatim se sužuje prema donjem otvoru prsnog koša.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 14,
+        "snippet": "dužina: od 1. do 7. rebra se povećava, a od 8. do 12. smanjuje => 7. rebro je najduže"
+      }
+    },
+    {
+      "q": "Koje se strukture nalaze na gornjoj površini prvoga rebra?",
+      "a": "Prvo rebro je morfološki posebno jer je kratko i široko, a njegove površine usmjerene su prema gore i dolje, a rubovi prema medijalno i lateralno. Na gornjoj površini prvoga rebra nalaze se tri karakteristične tvorbe. To su tuberculum m. scaleni anterioris, koji je hvatište istoimenoga mišića, te dva žljeba smještena s obiju strana toga kvržice: sulcus a. subclaviae koji leži dorzalno od kvržice i sulcus v. subclaviae koji leži ventralno od nje. Ti žljebovi odgovaraju prolazištu potkljičnih krvnih žila iznad rebra.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 15,
+        "snippet": "gornja površina: tuberculum m. scaleni anterioris sulcus a. subclaviae – dorzalno sulcus v. subcalviae – ventralno"
+      }
+    },
+    {
+      "q": "Što je foramen sternale i koje ima kliničko značenje?",
+      "a": "Foramen sternale je otvor u sternumu koji nastaje kao posljedica nepotpunoga spajanja sternalnih linija tijekom embrionalnoga razvoja. Radi se o relativno čestoj varijaciji koja se javlja u 5 do 9 posto populacije, a uglavnom se nalazi u visini četvrtog ili petog interkostalnog prostora. Klinički je značajan jer može zakomplicirati sternalnu punkciju, zbog čega se u kliničkoj praksi preferira punkcija u području criste iliace. Nesvjesno uvođenje igle kroz taj otvor moglo bi dovesti do ozljede medijastinalnih struktura.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 14,
+        "snippet": "foramen sternale – otvor u sternumu nastao kao posljedica nepotpunog spajanja sternalnih linija tijekom razvoja; relativno je čest (5-9%), uglavnom se nalazi u visini 4. ili 5. IC prostora te može zakomplicirati sternalnu punkciju"
+      }
+    },
+    {
+      "q": "Što tvore rebrene hrskavice od 7. do 10. rebra i koji kut omeđuju?",
+      "a": "Rebrene hrskavice od sedmoga do desetoga rebra međusobno su povezane kratkim ligamentima i zajedno tvore arcus costalis, odnosno rebreni luk. Lijevi i desni rebreni luk zajedno omeđuju angulus infrasternalis, koji se još naziva i epigastrični kut. Taj kut je anatomski orijentir koji se rutinski procjenjuje u kliničkom pregledu prsnog koša i trbuha, a njegova veličina može upućivati na tip tjelesne građe ili na prisutnost patoloških stanja u abdomenu i prsnom košu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 15,
+        "snippet": "7. do 10. rebrena hrskavica povezane su kratkim ligamentima i tvore arcus costalis (rebreni luk); lijevi i desni rebreni luk omeđuju angulus infrasternalis, tj. epigastrični kut"
+      }
+    },
+    {
+      "q": "Koja je vrsta zgloba articulatio capitis costae i koje sveze ga ojačavaju?",
+      "a": "Articulatio capitis costae je kuglasti zglob čija su zglobna tijela konveksna facies articularis capitis costae rebra i konkavna fovea costalis vertebrae thoracicae. Zglob ojačavaju dvije sveze: lig. capitis costae intraarticulare, koje polazi od criste capitis costae prema intervertebralnom disku, i lig. capitis costae radiatum. Ligamentum capitis costae intraarticulare nedostaje kod prvoga, jedanaestoga i dvanaestoga rebra jer ta rebra nemaju cristu capitis costae. Kretnje u ovom zglobu su klizanje, a usklađene su s kretnjama u articulatio costotransversaria.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 16,
+        "snippet": "lig. capitis costae intraarticulare – polazi od crista capitis costae prema intervertebralnom disku, pa nedostaje kod 1., 11. i 12. rebra"
+      }
+    },
+    {
+      "q": "Kako se mijenja promjer prsnog koša pri inspiraciji u gornjem i donjem dijelu?",
+      "a": "Kretnje prsnog koša pri inspiraciji nisu jednake u svim njegovim dijelovima, što je posljedica različite orijentacije zglobnih osi u gornjem i donjem dijelu toraksa. U gornjem dijelu prsnog koša inspiracija je praćena povećanjem sagitalnoga promjera, što odgovara takozvanom pumping handle mehanizmu. U donjem dijelu prsnog koša veći je transverzalni promjer, što odgovara bucket handle mehanizmu. Oba mehanizma zajedno osiguravaju optimalno povećanje volumena prsišta potrebnog za usis zraka.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 16,
+        "snippet": "gornji dio prsnog koša: veći je sagitalni promjer prsnog koša donji dio prsnog koša: veći je transverzalni promjer prsnog koša"
+      }
+    },
+    {
+      "q": "Što je sakralizacija i koje kliničke posljedice može imati?",
+      "a": "Sakralizacija je razvojna varijacija pri kojoj se L5 ili Co1 srastaju s os sacrum, čime postaju sastavni dio križne kosti umjesto da ostanu kao poseban lumbalni ili kokcigalni segment. Asimetrična sakralizacija L5 posebno je klinički značajna jer može inducirati skoliozu zbog neuravnoteženog opterećenja zdjelice i slabinske kralježnice. Uz skoliozu, asimetrično srastanje može uzrokovati i neurološke poremećaje jer dolazi do promjene topografskih odnosa lumbalnih živčanih korijenova i međukralježničnih otvora. Sakralizacija se suprotstavlja pojmu lumbalizacije, pri kojoj S1 nije srastao s os sacrum već funkcionira kao šesti lumbalni kralježak.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 23,
+        "snippet": "sakralizacija – L5 ili Co1 je srastao s os sacrum; asimetrična sakralizacija L5 može inducirati skoliozu i neurološke poremećaje"
+      }
+    },
+    {
+      "q": "Koje su embrionalne osnove krista na dorsalnoj plohi sakruma?",
+      "a": "Tri kriste na facies dorsalis os sacrum nastaju srastanjem određenih koštanih nastavaka zasebnih sakralnih kralježaka koji se stapaju tijekom fetalnog razvoja i u ranoj postnatalnoj dobi. Crista sacralis mediana nastaje srastanjem trnastih nastavaka, processus spinosi. Cristae sacrales laterales nastaju srastanjem poprečnih nastavaka, processus transversi. Srastanje zglobnih nastavaka daje cristae sacrales intermediae, premda su one slabije izražene. Ova embrionalna osnova odgovara općem pravilu razvoja križne kosti u kojoj su tri izbočenja posljedica srastanja određenih nastavaka.",
+      "source": {
+        "doc": "skripta_a1",
+        "page": 161,
+        "snippet": "Sacrum - kralješci su srasli, tri izbočenja (criste) koja nastaju posljedica su srastanja odrečenih nastavaka (rebrenih, poprečnih ili zglobnih)"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

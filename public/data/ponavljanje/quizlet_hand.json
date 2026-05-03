@@ -1,0 +1,64 @@
+{
+  "id": "quizlet_hand",
+  "name": "Ossa Manus",
+  "subtitle": "Kosti šake",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Što je sulcus carpi i koji su sadržaj te klinički značaj canalis carpi?",
+      "a": "Sulcus carpi je koštana brazda koja nastaje između eminentia carpi radialis i eminentia carpi ulnaris. In vivo se taj žlijeb zatvara retinaculum flexorum i tako se formira canalis carpi (carpalis). Kroz taj kanal prolaze tetive m. flexoris digitorum superficialis et profundus, tetiva m. flexoris pollicis longi, tetiva m. flexoris carpi radialis te n. medianus. Kompresija navedenih struktura unutar tog relativno čvrstog osteofibroznog prostora uzrokuje sindrom karpalnog tunela, koji je najčešći periferni kompresijski sindrom u gornjemu udu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 27,
+        "snippet": "sulcus carpi – koštana prazda između dvije eminentia carpi; in vivo je zatvoren u canalis carpi (carpalis) pomoću retinaculum flexorum; sadržaj canalis carpi: tendo m. flexoris digg. superficialis et longi, tendo m. flexoris pollicis longi, tendo m. flexoris carpi radialis, n. medianus"
+      }
+    },
+    {
+      "q": "Koje su klinički važne varijacije u broju kostiju zapešća i zašto je os hamuli proprium posebno klinički relevantna?",
+      "a": "Uz osam kanonskih kostiju zapešća mogu se pojaviti dodatne varijantne kosti. Os styloideum smještena je između os capitatum, os trapezoideum i ossa metacarpalia II et III. Os centrale carpi nalazi se između os capitatum, os trapezium i os scaphoideum. Os hamuli proprium nastaje kada hamulus ossis hamati postoji kao samostalna, odvojena kost. Klinička relevantnost os hamuli proprium posebno je važna jer se na radiogramima može zamijeniti za frakturu hamulusa, što vodi pogrješnoj dijagnozi i nepotrebnom liječenju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 27,
+        "snippet": "os hamuli proprium – hamulus ossis hamati kao samostalna kost (ne smije se zamijeniti za frakturu)"
+      }
+    },
+    {
+      "q": "Gdje se nalaze sezamske kosti šake i koja je njihova učestalost pojavljivanja?",
+      "a": "Sezamske kosti šake nalaze se na palmarnoj strani metakarpofalangealnih i interfalangealnih zglobova, uklopljene u tetive kratkih mišića. Na bazalnom zglobu palca redovito se nalaze jedna ulnarna i jedna radijalna sezamska kost, što znači da su konstantno prisutne. U 70% slučajeva na palcu se nađe i interfalangealna sezamska kost. Osim palca, u 80% slučajeva na ulnarnoj strani metakarpofalangealnog zgloba petoga prsta nalazi se jedna sezamska kost. Sezamske kosti štite tetive od pritiska i povećavaju mehanički učinak kratkih mišića.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 28,
+        "snippet": "na bazalnom zglobu palca redovito se nalaze 1 ulnarna i 1 radijalna sezamska kost; u 70% slučajeva se na palcu nalazi i interfalangealna sezamska kost; u 80% slučajeva se na ulnarnoj strani metakarpofalangealnog zgloba V. prsta nalazi 1 sezamska kost"
+      }
+    },
+    {
+      "q": "Koja je vrsta zgloba articulatio radiocarpalis, koja zglobna tijela ga tvore i koje su moguće kretnje?",
+      "a": "Articulatio radiocarpalis (proksimalni zglob šake) elipsoidni je zglob. Konveksni dio zglobnog tijela čine os scaphoideum, os lunatum i os triquetrum, dok konkavni dio tvore facies articularis carpalis radii i discus articularis. Zglobna šupljina podijeljena je na radiokarpalni odjeljak s dvije fasete radijusa i ulnarni odjeljak koji uključuje discus ulnocarpalis. U zglobu su mogući adukcija, abdukcija, fleksija, ekstenzija i cirkumdukcija, dok prava rotacija nije moguća zbog elipsoidne konfiguracije.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 28,
+        "snippet": "vrsta zgloba: elipsoidni; kretnje: adukcija, abdukcija, fleksija, ekstenzija, cirkumdukcija"
+      }
+    },
+    {
+      "q": "Koje su kretnje moguće u articulatio carpometacarpalis pollicis i koja vrsta zgloba to omogućuje?",
+      "a": "Articulatio carpometacarpalis pollicis sedlasti je zglob kojega tvore os trapezium i basis ossis metacarpalis I. Sedlasta konfiguracija zglobnih ploha omogućuje iznimno širok raspon kretnji koji nije moguć ni u jednom drugom karpometakarpalnom zglobu. U tom zglobu moguće su fleksija, ekstenzija, abdukcija, adukcija, opozicija, repozicija i cirkumdukcija. Opozicija je funkcionalno najvažnija kretnja jer omogućuje dodir vrška palca s vršcima ostalih prstiju, što je temelj preciznog hvatanja karakterističnog za čovjeka.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 30,
+        "snippet": "vrsta zgloba: sedlasti; kretnje: fleksija, ekstenzija, abdukcija, adukcija, opozicija, repozicija, cirkumdukcija"
+      }
+    },
+    {
+      "q": "Kakva je vrsta zgloba articulationes interphalangeae manus, koje sveze ga stabiliziraju i koje su kretnje moguće?",
+      "a": "Articulationes interphalangeae manus zglobovi su tipa ginglymus (šarnirski zglob) kod kojih konveksno zglobno tijelo tvori caput phalangis, a konkavno basis phalangis sljedeće falange. Zglobove stabiliziraju ligg. collateralia, koja su napeta u fleksiji i ekstenziji, ali opuštena u središnjem položaju, zatim ligg. palmaria (palmarna ploča) te dorzalna aponeuroza ekstenzora. Za razliku od metakarpofalangealnih zglobova, u interfalangealnim zglobovima jedine moguće kretnje su fleksija i ekstenzija jer šarnirska konfiguracija ne dopušta abdukciju ni adukciju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 31,
+        "snippet": "ligg. collateralia – napeti i u fleksiji i u ekstenziji, a opušteni u središnjem položaju; vrsta zgloba: ginglymus; kretnje: fleksija, ekstenzija"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

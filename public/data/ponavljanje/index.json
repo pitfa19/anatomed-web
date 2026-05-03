@@ -1,0 +1,94 @@
+[
+  {
+    "group": "Lubanja",
+    "topics": [
+      {
+        "id": "neurocranium",
+        "name": "Neurocranium",
+        "subtitle": "5 pitanja · kratka skripta",
+        "badge": "A1"
+      },
+      {
+        "id": "viscerocranium",
+        "name": "Viscerocranium",
+        "subtitle": "6 pitanja · kratka skripta",
+        "badge": "A1"
+      }
+    ]
+  },
+  {
+    "group": "Kralježnica i trup",
+    "topics": [
+      {
+        "id": "quizlet_vertebrae",
+        "name": "Vertebrae Cervicales",
+        "subtitle": "Vratni kralješci · Atlas i Axis",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_thoracic",
+        "name": "Vertebrae Thoracicae",
+        "subtitle": "Prsni kralješci",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_lumbar",
+        "name": "Vertebrae Lumbales",
+        "subtitle": "Slabinski kralješci",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_sacrum",
+        "name": "Os Sacrum + Costae",
+        "subtitle": "Križna kost i rebra",
+        "badge": "A1-Auto"
+      }
+    ]
+  },
+  {
+    "group": "Gornji okrajci",
+    "topics": [
+      {
+        "id": "quizlet_shoulder",
+        "name": "Clavicula + Scapula",
+        "subtitle": "Ključna kost i lopatica",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_arm",
+        "name": "Humerus · Ulna · Radius",
+        "subtitle": "Kosti nadlaktice i podlaktice",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_hand",
+        "name": "Ossa Manus",
+        "subtitle": "Kosti šake",
+        "badge": "A1-Auto"
+      }
+    ]
+  },
+  {
+    "group": "Donji okrajci",
+    "topics": [
+      {
+        "id": "quizlet_hip",
+        "name": "Os Coxae · Femur",
+        "subtitle": "Zdjelična kost i bedrena kost",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_leg",
+        "name": "Tibia · Fibula",
+        "subtitle": "Goljenična i lisna kost",
+        "badge": "A1-Auto"
+      },
+      {
+        "id": "quizlet_foot",
+        "name": "Talus · Calcaneus · Ossa Pedis",
+        "subtitle": "Kosti stopala",
+        "badge": "A1-Auto"
+      }
+    ]
+  }
+]

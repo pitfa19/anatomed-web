@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Search } from 'lucide-react';
+import { bundledPageImageUrl } from '../../lib/data';
 
 const TERMS = ['Os capitatum', 'Femur'];
 
@@ -98,7 +99,7 @@ export default function BentoSkripteTile({ className }: { className?: string }) 
         {/* Right: page thumbnail with pulsing highlight */}
         <div className="relative hidden w-44 shrink-0 overflow-hidden rounded-xl border border-border bg-bg shadow-md sm:block">
           <img
-            src="/pdfs-rendered/handout_a1/0001.webp"
+            src={bundledPageImageUrl('handout_a1', 1)}
             alt=""
             className="block aspect-[3/4] w-full object-cover"
             loading="lazy"

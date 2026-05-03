@@ -1,0 +1,91 @@
+{
+  "id": "quizlet_foot",
+  "name": "Talus · Calcaneus · Ossa Pedis",
+  "subtitle": "Kosti stopala",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Kako se dijele kosti stopala prema kliničkoj podjeli?",
+      "a": "Prema kliničkoj podjeli kosti stopala dijele se na tri funkcionalne cjeline. Stražnji dio stopala čine talus i calcaneus, koji preuzimaju najveće mehaničke sile pri hodu i trčanju. Srednji dio stopala obuhvaća os naviculare, os cuboideum i ossa cuneiformia, koje sudjeluju u oblikovanju svodova stopala. Prednji dio stopala čine ossa metatarsalia i ossa digitorum pedis, koje su neposredno uključene u odraz stopala od podloge.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 43,
+        "snippet": "Klinička podjela kostiju stopala: stražnji dio stopala: talus, calcaneus srednji dio stopala: os naviculare, os cuboideum, ossa cuneiformia prednji dio stopala: ossa metatarsalia, ossa digitorum pedis"
+      }
+    },
+    {
+      "q": "Koji su osnovni dijelovi talusa i što se nalazi u sulcus tendinis m. flexoris hallucis longi?",
+      "a": "Talus (gležanjska kost) građen je od triju osnovnih dijelova: corpus tali, collum tali i caput tali. Corpus tali nosi trochlea tali s gornjom i objema maleolamrnim zglobnim plohama, a na stražnjem polu se nalaze processus lateralis tali i processus posterior tali. Na processus posterior tali razlikuju se tuberculum mediale i tuberculum laterale, a između njih pruža se sulcus tendinis m. flexoris hallucis longi koji odvaja ta dva tuberkula. Time je omogućen klizajući prolaz tetive dugog fleksora palca prema tabanu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 43,
+        "snippet": "sulcus tendinis m. flexoris hallucis longi – odvaja tuberculum mediale od tuberculum laterale"
+      }
+    },
+    {
+      "q": "Što je sinus tarsi i koje strukture sudjeluju u njegovoj tvorbi?",
+      "a": "Sinus tarsi je kavernozni prostor koji se nalazi između talusa i kalkaneusa, a nastaje udruživanjem dvaju žljebova. Na vratu talusa nalazi se sulcus tali, dok na gornjoj strani kalkaneusa postoji sulcus calcanei; zajedno ta dva žlijeba tvore sinus tarsi. Taj prostor ispunjen je masnim tkivom, krvnim žilama i živčanim završecima te ligamentima, posebice lig. talocalcaneum interosseum koji funkcionalno dijeli donji nožni zglob na prednji i stražnji odjeljak. Klinički, oštećenje tih struktura uzrokuje sindrom sinus tarsi koji se očituje bolovima i oticanjem nakon inverzijske traume.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 43,
+        "snippet": "sulcus tali – zajedno sa sulcus calcanei čini sinus tarsi"
+      }
+    },
+    {
+      "q": "Koja je klinička važnost sustentaculum tali i što prolazi ispod te strukture?",
+      "a": "Sustentaculum tali je medijalni koštani izdanak kalkaneusa koji služi kao potpora glavi talusa te sudjeluje u oblikovanju medijalnog uzdužnog luka stopala. Ispod sustentaculum tali prolazi tetiva m. flexoris hallucis longi, koja klizi u koštano-ligamentarnom kanalu prema planti stopala. Ta anatomska blizina objašnjava zašto ozljede ili upale tog područja mogu ometati funkciju dugog fleksora palca. Sustentaculum tali ujedno je hvatište za dijelove lig. deltoideum te lig. calcaneonaviculare plantare, čime pridonosi stabilnosti gornjeg i donjeg nožnog zgloba.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 44,
+        "snippet": "sustentaculum tali – ispod njega prolazi tendo m. flex. hallucis longi"
+      }
+    },
+    {
+      "q": "Koja je funkcija trochlea fibularis kalkaneusa i zašto je klinički važna?",
+      "a": "Trochlea fibularis (peronealis) je koštani greben na lateralnoj strani kalkaneusa koji služi kao hipomohlion (oslonac) za tetivu m. peroneus longus, usmjeravajući je prema tabanu. Time trochlea fibularis mehanički povećava polugu tog mišića pri everziji stopala i plantarnoj fleksiji prvog metatarzalnog zraka. Oštećenje ili hipertrofija te koštane izbočine može dovesti do sindroma peronealne tendinopatije, posebice u sportaša. Ova je struktura važna i pri kirurškom pristupu lateralnoj strani stopala.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 44,
+        "snippet": "trochlea fibularis (peronealis) – hipomohlion tetivi m. peroneus longus"
+      }
+    },
+    {
+      "q": "Zašto raspored baza ossa cuneiformia pojačava poprečni svod stopala?",
+      "a": "Tri klinaste kosti (ossa cuneiformia) raspoređene su tako da je baza os cuneiforme mediale okrenuta prema plantarnoj strani, dok su baze os cuneiforme intermedium i os cuneiforme laterale okrenute prema dorzumu stopala. Taj naizmjenični raspored stvara koštani lučni raspored koji funkcionira poput arhitektonskog svoda, raspoređujući opterećenje prema periferiji i sprječavajući kolaps svoda prema plantarno. Poprečni svod dodatno stabiliziraju m. tibialis posterior i m. peroneus longus čijim se tetivama prenosi dinamička potpora. Poremećaj tog rasporeda može pridonijeti razvoju ravnog stopala (pes planus) ili dorzalne stopalne kvrge.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 44,
+        "snippet": "baza os cuneiforme mediale usmjerena je plantarno, a ostale dvije kuneiformne kosti dorzalno – takav raspored pojačava poprečni svod stopala"
+      }
+    },
+    {
+      "q": "Koja je uloga lig. calcaneonaviculare plantare u statici stopala i što je posebno u njegovu sastavu?",
+      "a": "Lig. calcaneonaviculare plantare jedno je od ključnih sveza donjeg nožnog zgloba i ima nezamjenjivu ulogu u podupiranju uzdužnog svoda stopala, posebice njegova medijalnog luka. Ta sveza premošćuje sustentaculum tali i os naviculare te podupire glavu talusa odozdo, sprječavajući njezino propadanje prema plantarno. Posebnost tog ligamenta leži u tome što je u njega ugrađena hrskavica — fibrocartilago navicularis — koja mu daje povećanu čvrstoću i otpornost na kompresijska opterećenja. Degeneracija ili ruptura ove sveze jedan je od važnih čimbenika u nastanku stečenog ravnog stopala u odraslih.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 46,
+        "snippet": "lig. calcaneonaviculare plantare – podupire uzdužni svod stopala, u ligament je ugrađena hrskavica (fibrocartilago navicularis)"
+      }
+    },
+    {
+      "q": "Koji su sastavni dijelovi medijalnog i lateralnog uzdužnog luka stopala?",
+      "a": "Uzdužni svod stopala dijeli se na medijalni i lateralni luk. Medijalni luk je viši i obuhvaća sljedeće kosti: tuber calcanei, talus, os naviculare, ossa cuneiformia te ossa metatarsalia I–III; dinamički ga osiguravaju m. tibialis posterior, kratki mišići tabana i lig. plantare longum. Lateralni luk je niži i izgrađuju ga tuber calcanei, os cuboideum te ossa metatarsalia IV–V; njegova je dinamička podrška slabije izražena jer je strukturno bliže podlozi. Patološke promjene visine tih lukova opisuju se kao pes varus (previsoki svod) ili pes valgus (sniženi svod).",
+      "source": {
+        "doc": "handout_a1",
+        "page": 49,
+        "snippet": "medijalni luk (viši): tuber calcanei, talus, os naviculare, ossa cuneiformia, ossa metatarsalia I – III lateralni luk (niži): tuber calcanei, os cuboideum, ossa metatarsalia IV – V"
+      }
+    },
+    {
+      "q": "Gdje se nalazi hvatište m. peroneus brevis i koja je klinička posljedica avulzijske frakture toga mjesta?",
+      "a": "M. peroneus brevis hvata se na tuberositas ossis metatarsalis V, koštanom izbočenju na bazi pete metatarzalne kosti s lateralne strane stopala. Pri nagloj inverziji stopala snažna kontrakcija toga mišića može uzrokovati avulzijsku frakturu tuberoziteta, pri čemu se odlomak kosti odvoji zajedno s hvatištem tetive. Klinički se ta ozljeda manifestira bolom, otokom i osjetljivošću na palpaciju baze pete metatarzalne kosti te je potrebno razlikovati je od distorzije skočnog zgloba, jer su mehanizam i terapija djelomično različiti. Identifikacija te anatomske točke moguća je palpacijom, što se koristi i za utvrđivanje položaja Lisfrankove zglobne linije.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 45,
+        "snippet": "tuberositas ossis metatarsalis V – hvatište za m. peroneus brevis"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}

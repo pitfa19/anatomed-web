@@ -1,0 +1,100 @@
+{
+  "id": "quizlet_hip",
+  "name": "Os Coxae · Femur",
+  "subtitle": "Zdjelična kost i bedrena kost",
+  "badge": "A1-Auto",
+  "questions": [
+    {
+      "q": "Od kojih se triju kostiju sastoji os coxae i gdje se one međusobno spajaju?",
+      "a": "Os coxae (zdjelična kost) građena je od triju zasebnih kostiju koje u odrasloj dobi srastaju u jedinstvenu cjelinu. Radi se o os ilium (bočna kost), os ischii (sjedna kost) i os pubis (preponska kost). Sve tri kosti zajednički srastaju upravo u području acetabuluma, dubokog zglobnog udubljenja koje prima caput femoris. Osim toga, os ischii i os pubis zajedno omeđuju foramen obturatorium, veliki otvor na zdjeličnoj kosti koji je prekriven membrana obturatoria.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 17,
+        "snippet": "os ilium, os ischii zajednički srasle u području acetabuluma, os pubis; os ischii (stražnje omeđenje) i os pubis (prednje omeđenje) tvore foramen obturatorium"
+      }
+    },
+    {
+      "q": "Koje strukture nalazimo na facies glutealis os ilium i koja je njihova funkcija?",
+      "a": "Facies glutealis je vanjska strana krila bočne kosti (ala ossis ilii) i ona je okrenuta prema stražnjoj površini tijela. Na toj plohi nalaze se tri koštana grebena: linea glutealis anterior, linea glutealis posterior i linea glutealis inferior. Ove linije služe kao polazišta za glutealne mišiće koji su ključni za kretanje u zglobu kuka, posebice za abdukciju i rotaciju natkoljenice te za stabilizaciju zdjelice pri hodu.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 17,
+        "snippet": "facies glutealis – vanjska strana krila bočne kosti, sadrži linea glutealis anterior, posterior et inferior, polazište za glutealne mišiće"
+      }
+    },
+    {
+      "q": "Što je linea arcuata i koja je njezina topografska važnost u kontekstu zdjelice?",
+      "a": "Linea arcuata je koštani greben koji se nalazi na unutarnjoj strani krila bočne kosti (os ilium), a donja je granica fossa iliaca. Njezina topografska važnost leži u tome što čini dio granice između velike zdjelice (pelvis major) i male zdjelice (pelvis minor). Linea arcuata jedan je od sastavnih dijelova linea terminalis, zamišljene granice koja odvaja ta dva dijela zdjeličnog prostora. Linea terminalis osim linea arcuata uključuje još promontorium ossis sacri, eminentiae ileopubicae i pecten ossis pubis.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 17,
+        "snippet": "linea arcuata – dio granice između male i velike zdjelice"
+      }
+    },
+    {
+      "q": "Koje su razlike između muške i ženske zdjelice u pogledu oblika kuta ispod simfize i oblika otvora zdjelice?",
+      "a": "Muška i ženska zdjelica razlikuju se u nekoliko bitnih anatomskih obilježja koja su klinički relevantna ponajprije u opstetriciji. U muškarca je angulus subpubicus oštar, zdjelica je uža, foramina obturatoria su okrugla, a promontorij je jače izbočen pa je otvor zdjelice srcolikog oblika. U žene, naprotiv, postoji arcus pubicus, zdjelica je šira, foramina obturatoria su jajolika, a promontorij je manje izbočen pa je otvor zdjelice ovalan, što olakšava prolaz djeteta kroz porođajni kanal.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 18,
+        "snippet": "M – oštri angulus subpubicus, uža zdjelica, okrugli foramina obturatoria, jače izbočen promontorij (otvor zdjelice je srcolik); Ž – arcus pubicus, šira zdjelica, jajoliki foramina obturatoria, manje izbočen promontorij (otvor zdjelice je ovalni)"
+      }
+    },
+    {
+      "q": "Što je conjugata vera i kako se klinički računa?",
+      "a": "Conjugata vera, poznata i kao conjugata obstetrica, najuže je mjesto male zdjelice i klinički je najvažnija mjera ulaza u porođajni kanal. Proteže se između eminentia retropubica na stražnjoj površini simfize i promontorija, a njezina normalna vrijednost iznosi 11 do 11,5 cm. Budući da se ne može izravno izmjeriti vaginalnim pregledom, računa se neizravno: od conjugata diagonalis, koja iznosi 13 cm i mjeri se između donjeg ruba simfize i promontorija, oduzima se 1,5 cm.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 18,
+        "snippet": "conjugata vera/obstreticia – između eminentia retropubica i promontorija = najuže mjesto male zdjelice; 11 – 11,5 cm; računa se tako da se od conjugata diagonalis odbije 1,5 cm"
+      }
+    },
+    {
+      "q": "Koje strukture omeđuju foramen ischiadicum majus i čemu taj otvor služi?",
+      "a": "Foramen ischiadicum majus je važan prolaz u stražnjem dijelu zdjelice kroz koji prolaze ključne neurovaskularne strukture na putu prema glutealnoj regiji i natkoljenici. Gore lateralno ga omeđuje incisura ischiadica major os ischii, medijalno lig. sacrotuberale, a dolje lig. sacrospinale. Kroz taj otvor prolaze, između ostaloga, n. ischiadicus, n. gluteus superior i inferior sa istoimenim krvnim žilama, te n. cutaneus femoris posterior, pri čemu n. gluteus superior prolazi kroz foramen suprapiriforme, a ostali živci kroz foramen infrapiriforme.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 19,
+        "snippet": "Foramen ischiadicum majus – omeđenja: gore lateralno – incisura ischiadica major; medijalno – lig. sacrotuberale; dolje – lig. sacrospinale"
+      }
+    },
+    {
+      "q": "Što je linea aspera femura i koje su njezine komponente te klinički relevantni nastavci?",
+      "a": "Linea aspera je hrapavi uzdužni greben na stražnjoj površini tijela femura (corpus femoris) koji služi kao hvatište brojnih mišića natkoljenice. Sastoji se od dva usnata grebena: labium mediale i labium laterale. Proksimalni nastavak medijalnog usnata je linea pectinea, koja se pruža prema trochanter minor i na kojoj se hvata m. pectineus. Na proksimalnom dijelu lateralnog usnata nalazi se tuberositas glutea, hvatište za m. gluteus maximus, a kada je posebno istaknuta, naziva se trochanter tertius. Distalno od linea aspera, na medijalnoj epikondili, smješten je tuberculum adductorium, hvatište za m. adductor magnus.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 9,
+        "snippet": "linea aspera: labium mediale + labium laterale; linea pectinea – produžetak med. usne lineje aspere, pruža se prema trochanter minor; tuberositas glutea – proksimalno zadebljanje lineje aspere; ako je posebno istaknuta zove se trochanter tertius"
+      }
+    },
+    {
+      "q": "Što sadrži lig. capitis femoris i klinički, zašto je ta struktura važna pri frakturama vrata femura?",
+      "a": "Lig. capitis femoris unutrazglobna je sveza articulatio coxae koja se pruža između fovea capitis femoris na glavi femura i fossa acetabuli, odnosno lig. transversum acetabuli. Ova sveza u svojoj unutrašnjosti sadrži r. acetabularis arteriae obturatoriae, krvnu žilu koja doprinosi vaskularizaciji glave femura. Klinička važnost tog ligamenta posebno dolazi do izražaja pri medijalnim, intraartikularnima frakturama vrata femura, kada može doći do prekida ovog vaskularnog opskrbe i posljedičnih avaskularnih nekroza glave femura, što je ozbiljna komplikacija koja zahtijeva kiruršku intervenciju.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 10,
+        "snippet": "lig. capitis femoris – između fovea capitis femoris i fossa acetabuli / lig. transversum acetabuli, sadrži r. acetabularis a. obturatoriae"
+      }
+    },
+    {
+      "q": "Kojim putem prolazi n. ischiadicus od zdjelice do natkoljenice i koje mišiće inerviraju njegovi kolateralni ogranci?",
+      "a": "N. ischiadicus (L4–S3) najdeblji je živac u ljudskom tijelu te napušta malu zdjelicu prolazeći kroz foramen infrapiriforme. Nakon izlaska iz zdjelice prelazi preko m. triceps coxae i m. quadratus femoris te se spušta prema natkoljenici prolazeći između tuber ischiadicum i trochanter major. Križa m. biceps femoris i dostiže fossa poplitea gdje se terminalno dijeli na n. tibialis i n. peroneus communis. Putem kolateralnih ogranaka (rr. musculares) inervira m. triceps coxae, m. quadratus femoris, m. biceps femoris, m. semimembranosus, m. semitendinosus i m. adductor magnus, a r. articularis daje osjetnu inervaciju čahuri zgloba kuka.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 79,
+        "snippet": "n. ischiadicus: prolazi kroz foramen infrapiriforme i prelazi preko m. triceps coxae i m. quadratus femoris te se spušta prema natkoljenici između tuber ischiadicum i trochanter major; križa m. biceps femoris te stiže u fossa poplitea"
+      }
+    },
+    {
+      "q": "Što je hiatus adductorius Hunteri i koji je njegov klinički značaj?",
+      "a": "Hiatus adductorius Hunteri otvor je koji nastaje između vlakana tetive m. adductor magnus i tijela femura te predstavlja distalni kraj canalis adductorius (Hunterov kanal). Kroz taj hiatus prolaze a. i v. femoralis iz prednjeg odjeljka natkoljenice u fossa poplitea, gdje nastavljaju kao a. i v. poplitea. Klinički je značaj ovog otvora velik jer je to mjesto na kojemu su krvne žile relativno fiksirane i izložene ozljedi pri prijelomima distalne trećine femura ili pri raznim kirurškim pristupima, a stenoze ili tromboza u tom segmentu mogu ugroziti vaskularizaciju potkoljenice.",
+      "source": {
+        "doc": "handout_a1",
+        "page": 56,
+        "snippet": "hiatus adductorius Hunter – između vlakana tetive m. add. magnus i tijela femura, predstavlja distalni kraj canalis adductorius"
+      }
+    }
+  ],
+  "notes": [],
+  "links": []
+}
