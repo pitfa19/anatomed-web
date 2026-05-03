@@ -1,5 +1,6 @@
 public/pdfs-rendered
 public/pdfs
+public/models/thumbs
 files
 dist
 .vercel

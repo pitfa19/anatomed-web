@@ -125,12 +125,16 @@ export function saveBestScore(systemId: SystemId, count: number, score: number):
   }
 }
 
+const THUMBS_BASE_URL = (import.meta.env.VITE_THUMBS_BASE_URL ?? '/models/thumbs').replace(/\/$/, '');
+
 /** Path to the precomputed thumbnail rendered by tools/render_part_thumbnails.py.
  *  Filename mirrors three.js's `PropertyBinding.sanitizeNodeName` so it lines
- *  up with the GLB node name. Missing renders surface as a broken `<img>` —
- *  callers should provide a fallback (e.g. <PartPreview>). */
+ *  up with the GLB node name. With VITE_THUMBS_BASE_URL set the request hits
+ *  the Supabase `thumbs` bucket; without it falls back to a static
+ *  `/models/thumbs/...` path under public/. Missing renders surface as a
+ *  broken `<img>` — callers should provide a fallback (e.g. <PartPreview>). */
 export function thumbnailUrl(canonicalId: string): string {
-  return `/models/thumbs/${sanitizeId(canonicalId)}.png`;
+  return `${THUMBS_BASE_URL}/${sanitizeId(canonicalId)}.png`;
 }
 
 function sanitizeId(id: string): string {

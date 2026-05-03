@@ -164,18 +164,23 @@ def imported_meshes() -> list:
 
 
 def find_target(name: str) -> Optional[bpy.types.Object]:
-    """Match the sanitized part id against object names. Prefers an exact hit,
-    falls back to startswith for Blender-suffixed `.001` collisions."""
-    target = sanitize(name)
-    obj = bpy.data.objects.get(target)
-    if obj is not None:
-        return obj
-    for o in bpy.data.objects:
-        if o.name == target:
-            return o
-    for o in bpy.data.objects:
-        if o.name.startswith(target + ".") and o.type == "MESH":
-            return o
+    """Match the catalog id against Blender object names. Tries the raw name
+    first (Blender preserves dots and spaces from glTF), then falls back to
+    sanitized form, then a startswith match for Blender's `.001` suffixes."""
+    candidates = [name, sanitize(name)]
+    seen = set()
+    candidates = [c for c in candidates if not (c in seen or seen.add(c))]
+    for cand in candidates:
+        obj = bpy.data.objects.get(cand)
+        if obj is not None:
+            return obj
+    for cand in candidates:
+        for o in bpy.data.objects:
+            if o.name == cand:
+                return o
+        for o in bpy.data.objects:
+            if o.name.startswith(cand + ".") and o.type == "MESH":
+                return o
     return None
 
 
