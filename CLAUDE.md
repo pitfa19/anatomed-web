@@ -73,8 +73,7 @@ All PDFs live in the same Supabase project (`uafyfwyyqzunabpuftue`) but in diffe
 - `pdfs` — the 5 source PDFs as `<filename>.pdf`. Public read. 200 MB file limit, `application/pdf` only.
 - `pdfs-rendered` — `<slug>/0001.webp`, `<slug>/0001.json`, `<slug>/meta.json` for each of the 5 slugs (skripta_a1/a2/a3, handout_a1, duale_reihe). Public read. 10 MB file limit, `image/webp` + `application/json`.
 - Front-end reads via `VITE_PDFS_BASE_URL` / `VITE_PDFS_RENDERED_BASE_URL` (`src/lib/data.ts:21-24`). The values point at `https://<project>.supabase.co/storage/v1/object/public/<bucket>`.
-- Uploads go through `tools/upload_to_supabase.ts` (one-shot, idempotent, concurrency 8). Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` — never committed, never shipped to the browser. Reads source PDFs from `<repo>/files/` (gitignored) and rendered from `public/pdfs-rendered/` (gitignored).
-- `tools/upload_to_blob.ts` is the legacy Vercel Blob uploader, kept around for reference. Don't run it.
+- Uploads go through `tools/upload_to_supabase.ts` (one-shot, idempotent, concurrency 8). Requires `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` — never committed, never shipped to the browser. Reads source PDFs from `<repo>/files/` (gitignored) and rendered from `public/pdfs-rendered/` (gitignored). Free-tier Supabase plans cap single-file uploads at 50 MB, so two oversized source PDFs (Skripta A1 53 MB, Duale Reihe 114 MB) are skipped — runtime never reads source PDFs (PdfViewer.tsx is dead code; only RenderedPdfViewer is mounted).
 
 ### Private bucket (per-user uploads)
 
