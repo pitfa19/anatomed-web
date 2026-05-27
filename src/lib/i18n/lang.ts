@@ -7,12 +7,12 @@ function isLang(v: unknown): v is Lang {
 }
 
 function readInitial(): Lang {
-  if (typeof window === 'undefined') return 'hr';
+  if (typeof window === 'undefined') return 'en';
   const stored = localStorage.getItem(KEY);
   if (isLang(stored)) return stored;
-  // No stored preference: honor the browser only if it explicitly prefers
-  // English; otherwise default to Croatian (the content language).
-  return navigator.language?.toLowerCase().startsWith('en') ? 'en' : 'hr';
+  // No stored preference: default to English. Users can switch to Croatian
+  // from the header toggle, and that choice is then persisted.
+  return 'en';
 }
 
 export function getInitialLang(): Lang {
