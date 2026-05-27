@@ -1,5 +1,6 @@
 import type { SourceMeta, Hit } from '../../lib/types';
 import { ChevronRight, Trash2 } from 'lucide-react';
+import { useT, plural } from '../../lib/i18n';
 
 interface Props {
   /** When null we render the picker in browse mode (any source clickable, shows page count). */
@@ -30,6 +31,7 @@ export default function SourcePicker({
   localDocs,
   onDelete,
 }: Props) {
+  const t = useT();
   const isBrowse = !term;
   const totalHits = isBrowse
     ? 0
@@ -39,8 +41,7 @@ export default function SourcePicker({
     return (
       <div className="rounded-2xl border border-border bg-surface p-8 text-center">
         <p className="text-base text-text-muted">
-          Nema rezultata za{' '}
-          <span className="font-semibold text-text-strong">{term}</span>.
+          {t('docs.noResultsFor', { term: term ?? '' })}
         </p>
       </div>
     );
@@ -62,11 +63,20 @@ export default function SourcePicker({
         const isSel = selected === src.doc;
         const isLocal = localDocs?.has(src.doc) ?? false;
         const showDelete = isLocal && !!onDelete;
+        const pageCount = pagesByDoc[src.doc] ?? 0;
         const stat = isBrowse
-          ? `${pagesByDoc[src.doc] ?? 0} stranica`
+          ? plural(t.lang, pageCount, {
+              one: t('docs.pagesCountOne', { n: pageCount }),
+              few: t('docs.pagesCountFew', { n: pageCount }),
+              many: t('docs.pagesCountMany', { n: pageCount }),
+            })
           : has
-          ? `${hits.length} rezultat${hits.length === 1 ? '' : 'a'}`
-          : 'nema rezultata';
+          ? plural(t.lang, hits.length, {
+              one: t('docs.resultsCountOne', { n: hits.length }),
+              few: t('docs.resultsCountFew', { n: hits.length }),
+              many: t('docs.resultsCountMany', { n: hits.length }),
+            })
+          : t('docs.noResults');
         return (
           <div key={src.doc} className="relative">
             <button
@@ -116,10 +126,10 @@ export default function SourcePicker({
             {showDelete && (
               <button
                 type="button"
-                aria-label={`Obriši ${src.label}`}
+                aria-label={t('docs.deleteSource', { label: src.label })}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (confirm(`Obrisati "${src.label}"?`)) {
+                  if (confirm(t('docs.deleteSourceConfirm', { label: src.label }))) {
                     onDelete!(src.doc);
                   }
                 }}

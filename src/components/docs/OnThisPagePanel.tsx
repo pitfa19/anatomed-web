@@ -9,6 +9,7 @@ import {
   getTermsForPage,
   nextPageWithCatalogMatch,
 } from '../../lib/docs/pageTermIndex';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   doc: string;
@@ -24,6 +25,7 @@ interface Item {
 }
 
 export default function OnThisPagePanel({ doc, page, unified, catalog, onGotoPage }: Props) {
+  const t = useT();
   const items = useMemo<Item[]>(() => {
     if (!catalog) return [];
     const seen = new Set<string>();
@@ -41,7 +43,7 @@ export default function OnThisPagePanel({ doc, page, unified, catalog, onGotoPag
     if (!catalog || !docHasAnyCatalogMatch(unified, catalog, doc)) {
       return (
         <section className="rounded-lg border border-border bg-surface px-3 py-2 text-xs text-text-muted">
-          Ova skripta nema indeksiranih 3D-struktura.
+          {t('docs.noIndexed3d')}
         </section>
       );
     }
@@ -50,7 +52,7 @@ export default function OnThisPagePanel({ doc, page, unified, catalog, onGotoPag
       <section className="rounded-lg border border-border bg-surface">
         <header className="flex items-center justify-between px-3 py-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-            Na ovoj stranici
+            {t('docs.onThisPage')}
           </span>
           <span className="text-[11px] text-text-muted">0</span>
         </header>
@@ -62,8 +64,8 @@ export default function OnThisPagePanel({ doc, page, unified, catalog, onGotoPag
           >
             <ArrowDown size={12} className="shrink-0" />
             <span className="flex-1">
-              Sljedeća stranica s 3D-strukturama:{' '}
-              <strong className="font-semibold">str. {nextPage}</strong>
+              {t('docs.nextPageWith3d')}{' '}
+              <strong className="font-semibold">{t('docs.pageShort', { n: nextPage })}</strong>
             </span>
           </button>
         )}

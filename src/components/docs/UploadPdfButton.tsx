@@ -4,6 +4,7 @@ import { bumpLocalDocsCache, loadUnifiedIndex } from '../../lib/data';
 import { deleteLocalDoc, saveLocalDoc } from '../../lib/localDocs';
 import { cloudUploadDoc } from '../../lib/cloudDocs';
 import { useAuth } from '../../lib/AuthContext';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   onUploaded: (slug: string) => void;
@@ -17,6 +18,7 @@ interface Progress {
 }
 
 export default function UploadPdfButton({ onUploaded }: Props) {
+  const t = useT();
   const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -47,7 +49,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
     }
     if (file.type && file.type !== 'application/pdf') {
       e.target.value = '';
-      setError('Datoteka mora biti PDF.');
+      setError(t('docs.mustBePdf'));
       return;
     }
 
@@ -64,14 +66,14 @@ export default function UploadPdfButton({ onUploaded }: Props) {
       e.target.value = '';
       setError(
         err instanceof Error
-          ? `Ne mogu pročitati datoteku: ${err.message}`
-          : 'Ne mogu pročitati datoteku.',
+          ? t('docs.cannotReadFileNamed', { error: err.message })
+          : t('docs.cannotReadFile'),
       );
       return;
     }
     e.target.value = '';
     if (buffer.byteLength === 0) {
-      setError('Datoteka je prazna ili nedostupna.');
+      setError(t('docs.emptyFile'));
       return;
     }
 
@@ -119,9 +121,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
           'name' in saveErr &&
           (saveErr as { name: string }).name === 'QuotaExceededError'
         ) {
-          throw new Error(
-            'Nema dovoljno prostora za pohranu. Obriši druge dokumente i pokušaj ponovo.',
-          );
+          throw new Error(t('docs.quotaExceeded'));
         }
         throw saveErr;
       }
@@ -131,17 +131,13 @@ export default function UploadPdfButton({ onUploaded }: Props) {
           await cloudUploadDoc(user.id, result);
         } catch (cloudErr) {
           console.warn('cloudUploadDoc failed', cloudErr);
-          setWarning(
-            'Uploadano je lokalno, ali sinkronizacija sa Supabaseom nije uspjela.',
-          );
+          setWarning(t('docs.cloudSyncFailed'));
         }
       }
 
       bumpLocalDocsCache();
       if (result.warning === 'no_searchable_text') {
-        setWarning(
-          'PDF nema tekstualni sloj - pretraga neće raditi (vjerojatno skenirani dokument).',
-        );
+        setWarning(t('docs.noSearchableText'));
       }
       onUploaded(result.slug);
       setProgress(null);
@@ -169,7 +165,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
         'name' in err &&
         (err as { name: string }).name === 'PdfPasswordError'
       ) {
-        setError('PDF je zaštićen lozinkom.');
+        setError(t('docs.passwordProtected'));
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -202,7 +198,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
         className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-surface/50 p-4 text-sm text-text-muted transition-colors hover:border-accent/60 hover:bg-surface hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Upload size={16} />
-        Učitaj svoj PDF
+        {t('docs.uploadPdf')}
       </button>
 
       {error && (
@@ -213,7 +209,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
             type="button"
             onClick={() => setError(null)}
             className="rounded p-0.5 hover:bg-warn/10"
-            aria-label="Zatvori"
+            aria-label={t('docs.close')}
           >
             <X size={14} />
           </button>
@@ -228,7 +224,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
             type="button"
             onClick={() => setWarning(null)}
             className="rounded p-0.5 hover:bg-accent/10"
-            aria-label="Zatvori"
+            aria-label={t('docs.close')}
           >
             <X size={14} />
           </button>
@@ -244,7 +240,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
           <div className="w-full max-w-md rounded-2xl border border-border bg-bg p-5 shadow-xl">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-base font-semibold text-text-strong">Indeksiranje</div>
+                <div className="text-base font-semibold text-text-strong">{t('docs.indexing')}</div>
                 <div className="truncate text-xs text-text-muted">{progress.filename}</div>
               </div>
               <Loader2 size={18} className="shrink-0 animate-spin text-accent" />
@@ -256,7 +252,7 @@ export default function UploadPdfButton({ onUploaded }: Props) {
                 onClick={cancel}
                 className="rounded-md px-3 py-1.5 text-sm text-text-muted hover:bg-surface hover:text-text-strong"
               >
-                Odustani
+                {t('docs.cancel')}
               </button>
             </div>
           </div>
@@ -267,12 +263,13 @@ export default function UploadPdfButton({ onUploaded }: Props) {
 }
 
 function ProgressBar({ progress }: { progress: Progress }) {
+  const t = useT();
   const label =
     progress.stage === 'load'
-      ? 'Učitavam PDF…'
+      ? t('docs.loadingPdf')
       : progress.stage === 'saving'
-      ? 'Spremam…'
-      : `Indeksiram stranicu ${progress.current} / ${progress.total}`;
+      ? t('docs.saving')
+      : t('docs.indexingPage', { current: progress.current, total: progress.total });
   const pct =
     progress.stage === 'load'
       ? progress.current >= progress.total
