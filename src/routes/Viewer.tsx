@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Loader2, ArrowLeft, X as XIcon, Crosshair, BookOpen, Eye, EyeOff, Plus } from 'lucide-react';
 import { useGLTF, useProgress } from '@react-three/drei';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
 import PartSearchBar from '../components/viewer/PartSearchBar';
 import AnatomyScene, { type AnatomySceneHandle } from '../components/viewer/AnatomyScene';
 import NeighborsPanel from '../components/viewer/NeighborsPanel';
@@ -12,6 +13,7 @@ import type { UnifiedIndex } from '../lib/types';
 import type { Neighbor, NeighborMap, Part, PartsCatalog, SystemId, SystemMeta } from '../lib/viewer/types';
 
 export default function Viewer() {
+  const t = useT();
   const [catalog, setCatalog] = useState<PartsCatalog | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState<Part | null>(null);
@@ -290,7 +292,7 @@ export default function Viewer() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center p-6 text-sm text-warn">
-        Greška učitavanja kataloga: {error}
+        {t('viewer.catalogError', { error })}
       </div>
     );
   }
@@ -298,7 +300,7 @@ export default function Viewer() {
   if (!catalog) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam katalog…
+        <Loader2 size={16} className="animate-spin" /> {t('viewer.loadingCatalog')}
       </div>
     );
   }
@@ -313,7 +315,7 @@ export default function Viewer() {
     if (pendingPart) {
       return (
         <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-          <Loader2 size={16} className="animate-spin" /> Učitavam {pendingPart.name_en}…
+          <Loader2 size={16} className="animate-spin" /> {t('viewer.loadingPart', { name: pendingPart.name_en })}
         </div>
       );
     }
@@ -322,10 +324,10 @@ export default function Viewer() {
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:gap-8 sm:px-8 sm:py-16">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-4xl">
-              3D anatomija
+              {t('viewer.title')}
             </h1>
             <p className="text-sm text-text-muted sm:text-base">
-              Pretraži dio tijela - automatski ćemo izolirati taj dio iz cijelog sustava.
+              {t('viewer.landingHint')}
             </p>
           </div>
           <PartSearchBar
@@ -343,7 +345,7 @@ export default function Viewer() {
               className="mx-auto flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm text-accent transition-colors hover:bg-accent/20"
             >
               <BookOpen size={14} />
-              Pronađi u skriptama: {pdfMatches[0]}
+              {t('viewer.findInNotes', { term: pdfMatches[0]! })}
             </Link>
           )}
           <SystemHints catalog={catalog} />
@@ -357,7 +359,7 @@ export default function Viewer() {
       {drawerOpen && (
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t('viewer.closeMenu')}
           onClick={() => setDrawerOpen(false)}
           className="fixed inset-0 z-30 bg-black/50 lg:hidden"
         />
@@ -375,11 +377,11 @@ export default function Viewer() {
             onClick={clearAll}
             className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-text-muted hover:bg-surface hover:text-text-strong"
           >
-            <ArrowLeft size={14} /> Pretraga
+            <ArrowLeft size={14} /> {t('viewer.search')}
           </button>
           <button
             onClick={() => setDrawerOpen(false)}
-            aria-label="Close menu"
+            aria-label={t('viewer.closeMenu')}
             className="rounded-md p-1.5 text-text-muted hover:bg-surface hover:text-text-strong lg:hidden"
           >
             <XIcon size={16} />
@@ -405,15 +407,15 @@ export default function Viewer() {
               )}
               {active.side && (
                 <p className="mt-2 text-xs text-text-muted">
-                  {active.side === 'r' ? 'desno' : 'lijevo'}
+                  {active.side === 'r' ? t('viewer.sideRight') : t('viewer.sideLeft')}
                 </p>
               )}
             </div>
             <button
               type="button"
               onClick={() => toggleLabels(active.id)}
-              aria-label={labelsByPartId.has(active.id) ? 'Sakrij oznake' : 'Prikaži oznake'}
-              title={labelsByPartId.has(active.id) ? 'Sakrij oznake' : 'Prikaži oznake'}
+              aria-label={labelsByPartId.has(active.id) ? t('viewer.hideLabels') : t('viewer.showLabels')}
+              title={labelsByPartId.has(active.id) ? t('viewer.hideLabels') : t('viewer.showLabels')}
               className="shrink-0 rounded-md p-1.5 text-text-muted hover:bg-surface-2 hover:text-text-strong"
             >
               {labelsByPartId.has(active.id) ? <Eye size={16} /> : <EyeOff size={16} />}
@@ -425,14 +427,14 @@ export default function Viewer() {
           <div className="flex shrink-0 flex-col gap-1.5 rounded-xl border border-border bg-surface p-2.5">
             <div className="flex items-center justify-between px-1">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                Odabrano · {extras.size}
+                {t('viewer.selectedCount', { n: extras.size })}
               </p>
               <button
                 type="button"
                 onClick={clearExtras}
                 className="rounded-md px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-muted hover:bg-surface-2 hover:text-warn"
               >
-                Očisti sve
+                {t('viewer.clearAll')}
               </button>
             </div>
             <div className="flex max-h-32 flex-wrap gap-1.5 overflow-y-auto pr-1">
@@ -453,7 +455,7 @@ export default function Viewer() {
                     <button
                       type="button"
                       onClick={() => focusFromNeighbor(part)}
-                      title="Postavi kao izabrano"
+                      title={t('viewer.setAsActive')}
                       className="max-w-[140px] truncate text-text-strong hover:text-accent"
                     >
                       {part.name_en}
@@ -461,8 +463,8 @@ export default function Viewer() {
                     <button
                       type="button"
                       onClick={() => toggleLabels(id)}
-                      aria-label={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
-                      title={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
+                      aria-label={labelsOn ? t('viewer.hideLabels') : t('viewer.showLabels')}
+                      title={labelsOn ? t('viewer.hideLabels') : t('viewer.showLabels')}
                       className="rounded p-0.5 text-text-muted hover:text-text-strong"
                     >
                       {labelsOn ? <Eye size={11} /> : <EyeOff size={11} />}
@@ -470,8 +472,8 @@ export default function Viewer() {
                     <button
                       type="button"
                       onClick={() => toggleExtra(id)}
-                      aria-label="Ukloni"
-                      title="Ukloni"
+                      aria-label={t('viewer.remove')}
+                      title={t('viewer.remove')}
                       className="rounded p-0.5 text-text-muted hover:text-warn"
                     >
                       <XIcon size={11} />
@@ -516,8 +518,8 @@ export default function Viewer() {
             <button
               type="button"
               onClick={() => sceneRef.current?.recenter()}
-              aria-label="Centriraj"
-              title="Centriraj na izolirani dio"
+              aria-label={t('viewer.recenter')}
+              title={t('viewer.recenterTitle')}
               className="flex size-11 items-center justify-center rounded-full border border-border bg-surface text-text-muted shadow-md transition-colors hover:bg-surface-2 hover:text-text-strong lg:size-10"
             >
               <Crosshair size={18} />
@@ -561,6 +563,7 @@ function MobileDock({
   onFocusExtra,
   onRemoveExtra,
 }: MobileDockProps) {
+  const t = useT();
   const extraParts = useMemo(() => {
     const byId = new Map(catalog.parts.map((p) => [p.id, p]));
     const out: Part[] = [];
@@ -577,7 +580,7 @@ function MobileDock({
         <button
           type="button"
           onClick={onOpenDrawer}
-          aria-label="Otvori detalje aktivnog dijela"
+          aria-label={t('viewer.openActiveDetails')}
           className="flex h-11 min-w-0 max-w-[40%] shrink-0 items-center gap-1.5 rounded-xl px-2 text-left text-text-strong active:bg-surface-2"
         >
           <span
@@ -590,7 +593,7 @@ function MobileDock({
         <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
           {extraParts.length === 0 ? (
             <span className="px-1 text-[11px] text-text-muted">
-              Dodaj susjedne dijelove →
+              {t('viewer.addNeighbors')}
             </span>
           ) : (
             extraParts.map((p) => {
@@ -607,7 +610,7 @@ function MobileDock({
                   <button
                     type="button"
                     onClick={() => onFocusExtra(p)}
-                    title="Postavi kao izabrano"
+                    title={t('viewer.setAsActive')}
                     className="max-w-[110px] truncate px-1.5 text-text-strong"
                   >
                     {p.name_en}
@@ -615,7 +618,7 @@ function MobileDock({
                   <button
                     type="button"
                     onClick={() => onRemoveExtra(p.id)}
-                    aria-label={`Ukloni ${p.name_en}`}
+                    aria-label={t('viewer.removeNamed', { name: p.name_en })}
                     className="flex size-8 items-center justify-center rounded-full text-text-muted hover:text-warn"
                   >
                     <XIcon size={14} />
@@ -629,10 +632,10 @@ function MobileDock({
         <button
           type="button"
           onClick={onOpenDrawer}
-          aria-label="Dodaj dijelove"
+          aria-label={t('viewer.addParts')}
           className="flex h-11 shrink-0 items-center gap-1 rounded-xl bg-accent/15 px-3 text-sm font-medium text-accent active:bg-accent/25"
         >
-          <Plus size={16} /> Dodaj
+          <Plus size={16} /> {t('viewer.add')}
         </button>
       </div>
     </div>
@@ -643,12 +646,13 @@ function MobileDock({
  *  drei's `useProgress` reads THREE.DefaultLoadingManager so this works for
  *  every loader started by `useGLTF`. */
 function ModelLoadingOverlay() {
+  const t = useT();
   const { active } = useProgress();
   if (!active) return null;
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-bg/30 backdrop-blur-sm">
       <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-text-muted shadow">
-        <Loader2 size={14} className="animate-spin" /> Učitavam model…
+        <Loader2 size={14} className="animate-spin" /> {t('viewer.loadingModel')}
       </div>
     </div>
   );
@@ -676,13 +680,13 @@ function SystemHints({ catalog }: { catalog: PartsCatalog }) {
 }
 
 function EmptyCatalog() {
+  const t = useT();
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-12 text-sm text-text-muted">
-        <h1 className="text-2xl font-semibold tracking-tight text-text-strong">3D anatomija</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-text-strong">{t('viewer.title')}</h1>
         <p>
-          Katalog dijelova još nije generiran. Pokreni izvoz iz Unityja da bi
-          vidio modele:
+          {t('viewer.emptyCatalogIntro')}
         </p>
         <pre className="overflow-x-auto rounded-lg border border-border bg-surface p-3 text-xs">
           <code>
