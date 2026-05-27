@@ -12,7 +12,8 @@ import {
 } from '../lib/agent';
 import type { ChatMessage } from '../lib/types';
 import { useAuth } from '../lib/AuthContext';
-import { LOW_BALANCE_THRESHOLD, FEATURE_LABEL } from '../lib/packages';
+import { LOW_BALANCE_THRESHOLD, FEATURE_LABEL_KEY } from '../lib/packages';
+import { useT } from '../lib/i18n';
 import { Sparkles } from 'lucide-react';
 
 const SUGGESTED = [
@@ -60,6 +61,7 @@ function loadChat(): PersistedChat {
 }
 
 export default function Agent() {
+  const t = useT();
   const initial = loadChat();
   const [messages, setMessages] = useState<ChatMessage[]>(initial.messages);
   const [summary, setSummary] = useState<string>(initial.summary);
@@ -219,7 +221,7 @@ export default function Agent() {
       <OutOfTokensModal
         open={showBuyModal}
         onClose={() => setShowBuyModal(false)}
-        featureLabel={FEATURE_LABEL.agent_chat}
+        featureLabel={t(FEATURE_LABEL_KEY.agent_chat)}
       />
     </div>
   );
