@@ -6,6 +6,7 @@ import type { PartsCatalog, SystemId } from '../lib/viewer/types';
 import { QUIZ_SYSTEMS, buildDeck, loadBestScore } from '../lib/quiz';
 import { startQuizSession } from '../lib/quizSession';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
 
 const COUNT_OPTIONS = [5, 10, 20] as const;
 type CountOption = (typeof COUNT_OPTIONS)[number];
@@ -15,6 +16,7 @@ export default function Quiz() {
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState<CountOption>(10);
   const navigate = useNavigate();
+  const t = useT();
 
   useEffect(() => {
     loadCatalog()
@@ -44,12 +46,12 @@ export default function Quiz() {
   }
 
   if (error) {
-    return <div className="p-6 text-sm text-warn">Greška učitavanja kataloga: {error}</div>;
+    return <div className="p-6 text-sm text-warn">{t('quiz.catalogError', { error })}</div>;
   }
   if (!catalog) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam katalog…
+        <Loader2 size={16} className="animate-spin" /> {t('quiz.loadingCatalog')}
       </div>
     );
   }
@@ -64,18 +66,18 @@ export default function Quiz() {
         to="/revise"
         className="mb-3 inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-strong"
       >
-        <ArrowLeft size={12} /> Natrag
+        <ArrowLeft size={12} /> {t('quiz.back')}
       </Link>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-text-strong">Praktično ponavljanje</h1>
+        <h1 className="text-2xl font-semibold text-text-strong">{t('quiz.title')}</h1>
         <p className="mt-1 text-sm text-text-muted">
-          Pronađi naučenu strukturu na 3D modelu.
+          {t('quiz.subhead')}
         </p>
       </header>
 
       <section className="mb-5">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-          Broj pitanja
+          {t('quiz.questionCount')}
         </h2>
         <div className="flex gap-2">
           {COUNT_OPTIONS.map((n) => (
@@ -98,7 +100,7 @@ export default function Quiz() {
 
       <section>
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-          Sustav
+          {t('quiz.system')}
         </h2>
         <ul className="flex flex-col gap-2">
           {systems.map((sys) => {
@@ -132,8 +134,8 @@ export default function Quiz() {
                       </div>
                       <div className="text-xs text-text-muted">
                         {tooFew
-                          ? `Premalo dijelova (${total})`
-                          : `${total} dijelova dostupno`}
+                          ? t('quiz.tooFewParts', { n: total })
+                          : t('quiz.partsAvailable', { n: total })}
                       </div>
                     </div>
                   </div>
@@ -153,11 +155,11 @@ export default function Quiz() {
       </section>
 
       <p className="mt-6 text-center text-xs text-text-muted">
-        Klikni na ime → otvara se{' '}
+        {t('quiz.hintBefore')}{' '}
         <Link to="/viewer" className="text-accent hover:underline">
-          3D model
+          {t('quiz.hintLink')}
         </Link>
-        . Klikom na pravu strukturu osvajaš bod.
+        {t('quiz.hintAfter')}
       </p>
     </div>
   );
