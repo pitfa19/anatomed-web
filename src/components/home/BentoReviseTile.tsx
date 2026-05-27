@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { GraduationCap } from 'lucide-react';
+import { useT } from '../../lib/i18n';
 
 const QUESTIONS = [
   'Kojim arterijama se opskrbljuje glava femura?',
@@ -53,6 +54,7 @@ function StackCard({ text, rotBase, yBase, yHover, zIndex }: CardProps) {
 }
 
 export default function BentoReviseTile({ className }: { className?: string }) {
+  const t = useT();
   return (
     <Link
       to="/revise"
@@ -64,7 +66,7 @@ export default function BentoReviseTile({ className }: { className?: string }) {
       <div className="flex items-start justify-between">
         <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-text-muted">
           <GraduationCap size={13} className="text-accent" />
-          Ponavljanje
+          {t('nav.revise')}
         </span>
         <span className="rounded-full border border-border bg-bg px-2 py-0.5 text-[10px] uppercase tracking-wider text-text-muted">
           Q&amp;A
@@ -85,9 +87,9 @@ export default function BentoReviseTile({ className }: { className?: string }) {
       </div>
 
       <div>
-        <h3 className="text-base font-semibold text-text-strong">Pitanja koja te love</h3>
+        <h3 className="text-base font-semibold text-text-strong">{t('home.reviseTitle')}</h3>
         <p className="mt-0.5 text-xs leading-relaxed text-text-muted">
-          Mali setovi pitanja po temama, s napredovanjem koje se pamti lokalno.
+          {t('home.reviseBody')}
         </p>
       </div>
     </Link>

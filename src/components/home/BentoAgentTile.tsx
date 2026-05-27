@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessagesSquare, BookOpen, ChevronRight } from 'lucide-react';
+import { useT } from '../../lib/i18n';
 
 const QUESTION = 'Što čini acetabulum?';
 const ANSWER =
@@ -9,6 +10,7 @@ const SOURCE_LABEL = 'Skripta A1 · str. 12';
 const SOURCE_LINK = '/docs?q=acetabulum&doc=Skripta%20A1%20ispravljena.pdf&page=12';
 
 export default function BentoAgentTile({ className }: { className?: string }) {
+  const t = useT();
   const [typed, setTyped] = useState('');
   const [showChip, setShowChip] = useState(false);
 
@@ -82,9 +84,9 @@ export default function BentoAgentTile({ className }: { className?: string }) {
       </div>
 
       <div className="mt-auto">
-        <h3 className="text-sm font-semibold text-text-strong">Postavi pitanje, dobiješ izvor</h3>
+        <h3 className="text-sm font-semibold text-text-strong">{t('home.agentTitle')}</h3>
         <p className="mt-0.5 text-[11px] leading-relaxed text-text-muted">
-          Hrvatski jezik, samo anatomija, s linkovima na točnu stranicu skripte.
+          {t('home.agentBody')}
         </p>
       </div>
 

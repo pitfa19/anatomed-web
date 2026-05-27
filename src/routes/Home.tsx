@@ -5,6 +5,7 @@ import { useStats } from '../lib/useStats';
 import { useReducedMotion } from '../lib/useReducedMotion';
 import { useScrollProgress } from '../lib/useScrollProgress';
 import { bundledPageImageUrl } from '../lib/data';
+import { useT } from '../lib/i18n';
 import MeshGradientBg from '../components/home/MeshGradientBg';
 import CursorSpotlight from '../components/home/CursorSpotlight';
 import HeroHeadline from '../components/home/HeroHeadline';
@@ -22,6 +23,7 @@ const HeroAnatomy3D = lazy(() => import('../components/home/HeroAnatomy3D'));
 const WELCOME_KEY = 'anatom3d_welcome_dismissed_v1';
 
 export default function Home() {
+  const t = useT();
   const [showWelcome, setShowWelcome] = useState(false);
   const stats = useStats();
   const reduced = useReducedMotion();
@@ -49,10 +51,10 @@ export default function Home() {
         <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-12 sm:px-8 sm:pb-16 sm:pt-16 lg:grid-cols-12 lg:gap-12 lg:pt-24">
           <div className="flex flex-col gap-8 lg:col-span-7 lg:justify-center">
             <HeroHeadline
-              eyebrow="Anatom3d · za studente medicine"
+              eyebrow={t('home.eyebrow')}
               line1=""
               line2="Anatom3D"
-              subhead="Pet skripti, hrvatski agent i 3D viewer dijele isti indeks - sve radi u browseru, bez instalacije."
+              subhead={t('home.subhead')}
             />
 
             <div className="flex flex-wrap gap-3">
@@ -60,7 +62,7 @@ export default function Home() {
                 to="/docs"
                 className="group inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white shadow-sm transition-all hover:opacity-90 hover:shadow-md"
               >
-                Otvori skripte
+                {t('home.openNotes')}
                 <ArrowRight
                   size={15}
                   className="transition-transform group-hover:translate-x-0.5"
@@ -71,19 +73,19 @@ export default function Home() {
                 className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/80 px-5 py-3 text-sm font-medium text-text-strong backdrop-blur transition-colors hover:bg-surface-2"
               >
                 <MessagesSquare size={15} />
-                Pitaj agenta
+                {t('home.askAgent')}
               </Link>
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-              <StatChip label="Stranica" value={stats.pages} loading={stats.loading} />
-              <StatChip label="Izvora" value={stats.sources} loading={stats.loading} />
+              <StatChip label={t('home.statPages')} value={stats.pages} loading={stats.loading} />
+              <StatChip label={t('home.statSources')} value={stats.sources} loading={stats.loading} />
               <StatChip
-                label="Pojmova"
+                label={t('home.statTerms')}
                 value={stats.terms}
                 loading={stats.loading}
               />
-              <StatChip label="Tema" value={stats.topics} loading={stats.loading} />
+              <StatChip label={t('home.statTopics')} value={stats.topics} loading={stats.loading} />
             </div>
           </div>
 
@@ -114,10 +116,10 @@ export default function Home() {
         <SectionReveal>
           <div className="mb-6 flex flex-col gap-2 sm:mb-8">
             <span className="text-xs font-medium uppercase tracking-wider text-accent">
-              Što imaš
+              {t('home.bentoEyebrow')}
             </span>
             <h2 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-              Četiri alata nad istim podacima
+              {t('home.bentoTitle')}
             </h2>
           </div>
         </SectionReveal>
@@ -173,13 +175,13 @@ export default function Home() {
             <div className="order-1 lg:order-2 lg:col-span-5 lg:flex lg:flex-col lg:justify-center">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-muted">
                 <Search size={12} className="text-accent" />
-                Pretraga koja pamti
+                {t('home.searchChip')}
               </div>
               <h3 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-                Klik na rezultat te vodi ravno na stranicu skripte
+                {t('home.searchTitle')}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Umjesto liste rezultata, otvara se cijela stranica sa žuto označenim pojmom u kontekstu. Strelicama prelaziš na sljedeću pojavu bez gubljenja mjesta na stranici.
+                {t('home.searchBody')}
               </p>
             </div>
           </div>
@@ -193,13 +195,13 @@ export default function Home() {
             <div className="lg:col-span-5">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-muted">
                 <ArrowRight size={12} className="text-accent" />
-                Tvoji PDF-ovi
+                {t('home.pdfChip')}
               </div>
               <h3 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-3xl">
-                Učitaj vlastitu skriptu - ostaje u browseru
+                {t('home.pdfTitle')}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
-                Indeksiranje se odvija lokalno; ništa od tvoje skripte ne završava na serveru. Pretraga, agent i deep linkovi rade jednako za učitane PDF-ove kao i za priložene skripte.
+                {t('home.pdfBody')}
               </p>
             </div>
             <div className="relative flex items-center justify-center lg:col-span-7">
@@ -208,13 +210,13 @@ export default function Home() {
                   <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#4a9eff] to-[#16a34a] text-white shadow-md">
                     <ArrowRight size={20} className="-rotate-90" />
                   </div>
-                  <p className="text-sm font-medium text-text-strong">Povuci PDF ovdje</p>
+                  <p className="text-sm font-medium text-text-strong">{t('home.dropPdf')}</p>
                   <p className="mt-1 text-xs text-text-muted">
-                    Indeksiranje ~150ms / stranica
+                    {t('home.indexingSpeed')}
                   </p>
                 </div>
                 <div className="pointer-events-none absolute -right-3 -top-3 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-semibold text-accent shadow-sm">
-                  100% lokalno
+                  {t('home.local100')}
                 </div>
               </div>
             </div>
@@ -242,22 +244,22 @@ export default function Home() {
             <button
               onClick={dismissWelcome}
               className="absolute right-3 top-3 rounded-md p-1 text-text-muted hover:bg-surface-2 hover:text-text-strong"
-              aria-label="Close"
+              aria-label={t('common.close')}
             >
               <X size={18} />
             </button>
             <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-white">
               <Sparkles size={20} />
             </div>
-            <h2 className="text-xl font-semibold text-text-strong">Dobro došao</h2>
+            <h2 className="text-xl font-semibold text-text-strong">{t('home.welcomeTitle')}</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
-              Prototip s četiri alata - pretragom skripti, agentom, ponavljanjem i 3D viewerom - prije nego što UI prijeđe u Unity. Slobodno klikaj okolo.
+              {t('home.welcomeBody')}
             </p>
             <button
               onClick={dismissWelcome}
               className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
             >
-              U redu
+              {t('home.welcomeOk')}
             </button>
           </div>
         </div>

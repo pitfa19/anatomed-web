@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Search } from 'lucide-react';
 import { bundledPageImageUrl } from '../../lib/data';
+import { useT } from '../../lib/i18n';
 
 const TERMS = ['Os capitatum', 'Femur'];
 
 export default function BentoSkripteTile({ className }: { className?: string }) {
+  const t = useT();
   const [termIdx, setTermIdx] = useState(0);
   const [typed, setTyped] = useState('');
 
@@ -53,10 +55,10 @@ export default function BentoSkripteTile({ className }: { className?: string }) 
       <div className="flex items-start justify-between">
         <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-text-muted">
           <BookOpen size={13} className="text-accent" />
-          Skripte
+          {t('nav.docs')}
         </span>
         <span className="rounded-full border border-border bg-bg px-2 py-0.5 text-[10px] uppercase tracking-wider text-text-muted">
-          5 izvora
+          {t('home.notesBadge')}
         </span>
       </div>
 
@@ -116,9 +118,9 @@ export default function BentoSkripteTile({ className }: { className?: string }) 
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-text-strong">Pretraga skripti</h3>
+        <h3 className="text-lg font-semibold text-text-strong">{t('home.notesTitle')}</h3>
         <p className="mt-1 text-sm leading-relaxed text-text-muted">
-          Pet skripti i više od stotinu termina po stranici - pretraga te odvodi ravno na mjesto gdje se pojam pojavljuje, sa žuto označenim kontekstom.
+          {t('home.notesBody')}
         </p>
       </div>
     </Link>
