@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { LangContext } from './LangContext';
 import type { Dict } from './hr';
 import type { Lang } from './lang';
@@ -42,9 +42,13 @@ export function useLang() {
 
 export function useT(): TFn {
   const { dict, lang } = useLang();
-  const t = ((key: TKey, vars?: Vars) => translate(dict, key, vars)) as TFn;
-  t.lang = lang;
-  return t;
+  return useMemo(
+    () =>
+      Object.assign((key: TKey, vars?: Vars) => translate(dict, key, vars), {
+        lang,
+      }) as TFn,
+    [dict, lang],
+  );
 }
 
 /**

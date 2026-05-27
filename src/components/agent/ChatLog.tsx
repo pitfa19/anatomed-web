@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { Bot, BookOpen, ChevronRight, Loader2, Search, User } from 'lucide-react';
 import type { Anatomy3DConfig, ChatMessage } from '../../lib/types';
 import type { ToolStatus } from '../../lib/agent';
+import { useT } from '../../lib/i18n';
+import type { TFn, TKey } from '../../lib/i18n';
 
 const InlineAnatomy3D = lazy(() => import('./InlineAnatomy3D'));
 
@@ -14,9 +16,9 @@ interface Props {
   status?: ToolStatus;
 }
 
-const TOOL_LABELS: Record<string, string> = {
-  search_skripte: 'Pretražujem skripte',
-  prikaz_3d: 'Renderiram 3D model',
+const TOOL_LABEL_KEYS: Record<string, TKey> = {
+  search_skripte: 'agent.toolSearchNotes',
+  prikaz_3d: 'agent.toolRender3d',
 };
 
 function extractText(node: ReactNode): string {
@@ -42,12 +44,12 @@ function isAnatomy3DConfig(v: unknown): v is Anatomy3DConfig {
   return true;
 }
 
-function statusLabel(status: ToolStatus): { text: string; detail?: string } {
-  if (!status) return { text: 'Razmišljam' };
-  if (status.phase === 'thinking') return { text: 'Razmišljam' };
-  if (status.phase === 'summarizing')
-    return { text: 'Sažimam stariji razgovor' };
-  const base = TOOL_LABELS[status.name] ?? `Pokrećem alat ${status.name}`;
+function statusLabel(status: ToolStatus, t: TFn): { text: string; detail?: string } {
+  if (!status) return { text: t('agent.thinking') };
+  if (status.phase === 'thinking') return { text: t('agent.thinking') };
+  if (status.phase === 'summarizing') return { text: t('agent.summarizing') };
+  const labelKey = TOOL_LABEL_KEYS[status.name];
+  const base = labelKey ? t(labelKey) : t('agent.runningTool', { name: status.name });
   const q = (status.input as { query?: unknown })?.query;
   return {
     text: base,
@@ -56,6 +58,7 @@ function statusLabel(status: ToolStatus): { text: string; detail?: string } {
 }
 
 export default function ChatLog({ messages, pending, status }: Props) {
+  const t = useT();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export default function ChatLog({ messages, pending, status }: Props) {
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs text-text-muted">
-              {m.role === 'user' ? 'Ti' : 'Agent'}
+              {m.role === 'user' ? t('agent.you') : t('nav.agent')}
             </div>
             <div className="mt-1 max-w-prose text-sm leading-relaxed text-text break-words">
               <ReactMarkdown
@@ -170,7 +173,7 @@ export default function ChatLog({ messages, pending, status }: Props) {
                                     size={14}
                                     className="mr-2 animate-spin"
                                   />
-                                  Učitavam 3D…
+                                  {t('agent.loading3d')}
                                 </div>
                               }
                             >
@@ -264,8 +267,9 @@ export default function ChatLog({ messages, pending, status }: Props) {
 }
 
 function PendingIndicator({ status }: { status: ToolStatus }) {
+  const t = useT();
   const isTool = !!status && status.phase === 'tool';
-  const { text, detail } = statusLabel(status ?? null);
+  const { text, detail } = statusLabel(status ?? null, t);
   return (
     <div
       className={
