@@ -12,12 +12,15 @@ import {
 } from '../lib/quizSession';
 import { buildDeck } from '../lib/quiz';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
+import type { TFn } from '../lib/i18n';
 
 export default function QuizResults() {
   const navigate = useNavigate();
   const [catalog, setCatalog] = useState<PartsCatalog | null>(null);
   const [session] = useState<QuizSession | null>(() => loadQuizSession());
   const [isNewBest, setIsNewBest] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     loadCatalog().then(setCatalog).catch(() => {});
@@ -61,7 +64,7 @@ export default function QuizResults() {
   if (!session || !catalog || !system) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam…
+        <Loader2 size={16} className="animate-spin" /> {t('quiz.loading')}
       </div>
     );
   }
@@ -91,10 +94,10 @@ export default function QuizResults() {
           {correct} / {total}
         </h1>
         <p className="text-sm text-text-muted">
-          {system.label_hr} · {pct}% točno
+          {system.label_hr} · {t('quiz.percentCorrect', { pct })}
           {isNewBest && (
             <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-medium text-accent">
-              novi rekord
+              {t('quiz.newBest')}
             </span>
           )}
         </p>
@@ -106,14 +109,14 @@ export default function QuizResults() {
           onClick={retry}
           className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent/90"
         >
-          <RotateCcw size={14} /> Pokušaj ponovno
+          <RotateCcw size={14} /> {t('quiz.retry')}
         </button>
         <button
           type="button"
           onClick={backToLobby}
           className="flex-1 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong"
         >
-          Natrag na izbor
+          {t('quiz.backToChoice')}
         </button>
       </div>
 
@@ -131,6 +134,7 @@ export default function QuizResults() {
                 pickedId={a?.pickedId ?? null}
                 partsById={partsById}
                 system={system}
+                t={t}
               />
             </li>
           );
@@ -147,9 +151,10 @@ interface RowProps {
   pickedId: string | null;
   partsById: Map<string, Part>;
   system: SystemMeta;
+  t: TFn;
 }
 
-function ResultRow({ q, isCorrect, skipped, pickedId, partsById, system }: RowProps) {
+function ResultRow({ q, isCorrect, skipped, pickedId, partsById, system, t }: RowProps) {
   const pickedPart = pickedId ? partsById.get(pickedId) : null;
   const wrongIntoOtherSystem =
     !isCorrect && pickedPart && pickedPart.system !== system.id;
@@ -173,12 +178,12 @@ function ResultRow({ q, isCorrect, skipped, pickedId, partsById, system }: RowPr
         )}
         {!isCorrect && !skipped && pickedPart && (
           <div className="mt-0.5 truncate text-[11px] text-rose-400">
-            tvoj odabir: {pickedPart.name_en}
+            {t('quiz.yourPick', { pick: pickedPart.name_en })}
             {wrongIntoOtherSystem ? ` (${pickedPart.system})` : ''}
           </div>
         )}
         {skipped && (
-          <div className="mt-0.5 text-[11px] text-text-muted">preskočeno</div>
+          <div className="mt-0.5 text-[11px] text-text-muted">{t('quiz.skippedLower')}</div>
         )}
       </div>
       <span

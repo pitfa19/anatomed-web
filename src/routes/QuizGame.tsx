@@ -12,6 +12,7 @@ import {
 } from '../lib/quizSession';
 import QuizScene from '../components/quiz/QuizScene';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
 
 type Phase = 'guess' | 'reveal';
 
@@ -19,6 +20,7 @@ const REVEAL_MS = 1100;
 
 export default function QuizGame() {
   const navigate = useNavigate();
+  const t = useT();
   const [catalog, setCatalog] = useState<PartsCatalog | null>(null);
   const [session, setSession] = useState<QuizSession | null>(() => loadQuizSession());
   const [phase, setPhase] = useState<Phase>('guess');
@@ -119,14 +121,14 @@ export default function QuizGame() {
   if (!session || !currentQ) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam…
+        <Loader2 size={16} className="animate-spin" /> {t('quiz.loading')}
       </div>
     );
   }
   if (!catalog || !system) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam katalog…
+        <Loader2 size={16} className="animate-spin" /> {t('quiz.loadingCatalog')}
       </div>
     );
   }
@@ -152,7 +154,7 @@ export default function QuizGame() {
           onClick={handleQuit}
           className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-text-muted hover:bg-surface-2 hover:text-text-strong"
         >
-          <ArrowLeft size={14} /> Izlaz
+          <ArrowLeft size={14} /> {t('quiz.quit')}
         </button>
         <div className="flex items-center gap-3 text-xs text-text-muted">
           <span>
@@ -169,7 +171,7 @@ export default function QuizGame() {
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-text-muted">
-              Pronađi
+              {t('quiz.find')}
             </p>
             <p className="mt-0.5 text-lg font-semibold text-text-strong sm:text-xl">
               {currentQ.prompt}
@@ -184,7 +186,7 @@ export default function QuizGame() {
             disabled={phase !== 'guess'}
             className="shrink-0 rounded-md border border-border px-3 py-1.5 text-xs text-text-muted transition-colors hover:bg-surface hover:text-text-strong disabled:opacity-40"
           >
-            Preskoči
+            {t('quiz.skip')}
           </button>
         </div>
       </div>
@@ -208,9 +210,9 @@ export default function QuizGame() {
                   : 'bg-rose-500/90 text-white',
               )}
             >
-              {lastAnswer.correct ? 'Točno!' : (
+              {lastAnswer.correct ? t('quiz.correct') : (
                 <>
-                  <XIcon size={14} /> {lastAnswer.pickedId === null ? 'Preskočeno' : 'Krivo'}
+                  <XIcon size={14} /> {lastAnswer.pickedId === null ? t('quiz.skipped') : t('quiz.wrong')}
                 </>
               )}
             </div>
@@ -219,9 +221,9 @@ export default function QuizGame() {
         <Link
           to="/viewer"
           className="pointer-events-auto absolute bottom-3 right-3 rounded-md border border-border bg-surface/80 px-2 py-1 text-[10px] text-text-muted backdrop-blur hover:bg-surface hover:text-text-strong"
-          title="Otvori 3D pregled"
+          title={t('quiz.open3dTitle')}
         >
-          3D pregled
+          {t('quiz.view3d')}
         </Link>
       </div>
     </div>
