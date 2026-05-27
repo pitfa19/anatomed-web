@@ -8,15 +8,18 @@ import NotesTab from '../components/revise/NotesTab';
 import DueBadge from '../components/revise/DueBadge';
 import { dueCountForTopic } from '../lib/srs';
 import { cn } from '../lib/cn';
+import { useT, plural } from '../lib/i18n';
+import type { TKey } from '../lib/i18n';
 
 type Tab = 'questions' | 'notes';
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'questions', label: 'Pitanja' },
-  { id: 'notes', label: 'Skripta' },
+const TABS: { id: Tab; labelKey: TKey }[] = [
+  { id: 'questions', labelKey: 'revise.tabQuestions' },
+  { id: 'notes', labelKey: 'revise.tabNotes' },
 ];
 
 export default function ReviseTopic() {
+  const t = useT();
   const { topicId } = useParams<{ topicId: string }>();
   const [searchParams] = useSearchParams();
   const [topic, setTopic] = useState<Topic | null>(null);
@@ -41,9 +44,9 @@ export default function ReviseTopic() {
   if (error) {
     return (
       <div className="p-6 text-sm text-warn">
-        Greška: {error}{' '}
+        {t('revise.error', { error })}{' '}
         <Link to="/revise/teorija" className="underline">
-          natrag
+          {t('revise.back').toLowerCase()}
         </Link>
       </div>
     );
@@ -51,7 +54,7 @@ export default function ReviseTopic() {
   if (!topic) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam…
+        <Loader2 size={16} className="animate-spin" /> {t('decks.loading')}
       </div>
     );
   }
@@ -63,7 +66,7 @@ export default function ReviseTopic() {
           to="/revise/teorija"
           className="mb-2 inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
         >
-          <ArrowLeft size={12} /> Sve teme
+          <ArrowLeft size={12} /> {t('revise.allTopics')}
         </Link>
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-semibold text-text-strong">{topic.name}</h1>
@@ -77,22 +80,26 @@ export default function ReviseTopic() {
             to={`/revise/${topic.id}?due=1`}
             className="mt-2 inline-flex items-center gap-1.5 text-xs text-accent hover:underline"
           >
-            Vježbaj samo {dueCount} {dueCount === 1 ? 'pitanje' : 'pitanja'} na redu →
+            {plural(t.lang, dueCount, {
+              one: t('revise.practiceOnlyDueOne', { n: dueCount }),
+              few: t('revise.practiceOnlyDueMany', { n: dueCount }),
+              many: t('revise.practiceOnlyDueMany', { n: dueCount }),
+            })}
           </Link>
         )}
         <div className="mt-3 flex gap-1 rounded-lg border border-border bg-surface p-1">
-          {TABS.map((t) => (
+          {TABS.map((tab2) => (
             <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
+              key={tab2.id}
+              onClick={() => setTab(tab2.id)}
               className={cn(
                 'flex-1 rounded-md py-1.5 text-sm transition-colors',
-                tab === t.id
+                tab === tab2.id
                   ? 'bg-accent text-white'
                   : 'text-text-muted hover:bg-surface-2 hover:text-text-strong',
               )}
             >
-              {t.label}
+              {t(tab2.labelKey)}
             </button>
           ))}
         </div>

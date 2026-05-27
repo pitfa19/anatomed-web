@@ -1,12 +1,14 @@
 import type { NotesEntry } from '../../lib/types';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   notes: NotesEntry[];
 }
 
 export default function NotesTab({ notes }: Props) {
+  const t = useT();
   if (notes.length === 0) {
-    return <p className="text-sm text-text-muted">Nema bilješki.</p>;
+    return <p className="text-sm text-text-muted">{t('revise.noNotes')}</p>;
   }
   return (
     <div className="flex flex-col gap-5">

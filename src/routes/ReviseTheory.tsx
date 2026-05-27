@@ -9,8 +9,10 @@ import { loadDecks, dueCardsForUserDeck } from '../lib/userDecks';
 import DueBadge from '../components/revise/DueBadge';
 import XPBar from '../components/revise/XPBar';
 import { cn } from '../lib/cn';
+import { useT, plural } from '../lib/i18n';
 
 export default function ReviseTheory() {
+  const t = useT();
   const [groups, setGroups] = useState<ReviseGroup[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -65,13 +67,13 @@ export default function ReviseTheory() {
 
   if (error) {
     return (
-      <div className="p-6 text-sm text-warn">Greška učitavanja: {error}</div>
+      <div className="p-6 text-sm text-warn">{t('revise.loadError', { error })}</div>
     );
   }
   if (!groups) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam...
+        <Loader2 size={16} className="animate-spin" /> {t('revise.loading')}
       </div>
     );
   }
@@ -82,12 +84,12 @@ export default function ReviseTheory() {
         to="/revise"
         className="mb-3 inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-strong"
       >
-        <ArrowLeft size={12} /> Natrag
+        <ArrowLeft size={12} /> {t('revise.back')}
       </Link>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-text-strong">Teorijsko ponavljanje</h1>
+        <h1 className="text-2xl font-semibold text-text-strong">{t('revise.theoryTitle')}</h1>
         <p className="mt-1 text-sm text-text-muted">
-          Pitanja i kratke skripte po temama.
+          {t('revise.theorySubhead')}
         </p>
       </header>
 
@@ -117,11 +119,15 @@ export default function ReviseTheory() {
               <Sparkles size={18} />
             </span>
             <div>
-              <div className="text-sm font-semibold text-text-strong">Danas</div>
+              <div className="text-sm font-semibold text-text-strong">{t('revise.today')}</div>
               <div className="text-xs text-text-muted">
                 {totalDue > 0
-                  ? `${totalDue} ${totalDue === 1 ? 'kartica spremna' : 'kartica spremno'} za ponavljanje`
-                  : 'Nema kartica na redu - vrati se kasnije'}
+                  ? plural(t.lang, totalDue, {
+                      one: t('revise.cardsReadyOne', { n: totalDue }),
+                      few: t('revise.cardsReadyMany', { n: totalDue }),
+                      many: t('revise.cardsReadyMany', { n: totalDue }),
+                    })
+                  : t('revise.noCardsDue')}
               </div>
             </div>
           </div>
@@ -151,20 +157,27 @@ export default function ReviseTheory() {
             <Layers size={18} />
           </span>
           <div>
-            <div className="text-sm font-semibold text-text-strong">Moji paketi</div>
+            <div className="text-sm font-semibold text-text-strong">{t('revise.myDecks')}</div>
             <div className="text-xs text-text-muted">
               {userDecks.length === 0
-                ? 'Stvori vlastite kartice ili generiraj s AI-jem'
+                ? t('revise.myDecksEmptyHint')
                 : userDecksDue > 0
-                  ? `${userDecksDue} kartica na redu · ${userDecks.length} ${userDecks.length === 1 ? 'paket' : 'paketa'}`
-                  : `${userDecks.length} ${userDecks.length === 1 ? 'paket' : 'paketa'}`}
+                  ? t('revise.deckCountDue', {
+                      due: userDecksDue,
+                      decks: userDecks.length,
+                      unit: plural(t.lang, userDecks.length, { one: t('revise.packageOne'), few: t('revise.packageMany'), many: t('revise.packageMany') }),
+                    })
+                  : t('revise.deckCount', {
+                      decks: userDecks.length,
+                      unit: plural(t.lang, userDecks.length, { one: t('revise.packageOne'), few: t('revise.packageMany'), many: t('revise.packageMany') }),
+                    })}
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {userDecks.length === 0 && (
             <span className="flex items-center gap-1 rounded-md border border-dashed border-border px-2 py-1 text-[10px] text-text-muted">
-              <Plus size={10} /> novi
+              <Plus size={10} /> {t('revise.new')}
             </span>
           )}
           <ChevronRight size={16} className="text-text-muted" />

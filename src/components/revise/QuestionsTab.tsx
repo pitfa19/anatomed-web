@@ -13,6 +13,7 @@ import {
 } from '../../lib/srs';
 import { awardXP } from '../../lib/xp';
 import GradeButtons from './GradeButtons';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   topicId: string;
@@ -45,6 +46,7 @@ function buildDocsLink(doc: string, page: number, q?: string): string {
 }
 
 export default function QuestionsTab({ topicId, questions }: Props) {
+  const t = useT();
   const [searchParams] = useSearchParams();
   const dueOnly = searchParams.get('due') === '1';
 
@@ -116,9 +118,9 @@ export default function QuestionsTab({ topicId, questions }: Props) {
           <div className="flex items-center gap-2 text-sm">
             <CheckCircle2 size={15} className="text-accent-2" />
             <span className="text-text-strong">{learned}</span>
-            <span className="text-text-muted">/ {questions.length} naučeno</span>
+            <span className="text-text-muted">/ {questions.length} {t('revise.learned')}</span>
             {seen > learned && (
-              <span className="ml-2 text-xs text-text-muted">· {seen} viđeno</span>
+              <span className="ml-2 text-xs text-text-muted">· {t('revise.seen', { n: seen })}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -127,14 +129,14 @@ export default function QuestionsTab({ topicId, questions }: Props) {
                 to={`/revise/${topicId}`}
                 className="text-xs text-accent hover:underline"
               >
-                Sva pitanja
+                {t('revise.allQuestions')}
               </Link>
             )}
             <button
               onClick={reset}
               className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-text-muted hover:bg-surface-2 hover:text-text-strong"
             >
-              <RotateCcw size={12} /> Resetiraj
+              <RotateCcw size={12} /> {t('revise.reset')}
             </button>
           </div>
         </div>
@@ -147,9 +149,9 @@ export default function QuestionsTab({ topicId, questions }: Props) {
       </div>
       {dueOnly && visibleIndexes.length === 0 && questions.length > 0 && (
         <div className="rounded-xl border border-border bg-surface p-4 text-center text-sm text-text-muted">
-          Nema pitanja na redu za ovu temu.{' '}
+          {t('revise.noQuestionsDueForTopic')}{' '}
           <Link to={`/revise/${topicId}`} className="text-accent hover:underline">
-            Pogledaj sva pitanja
+            {t('revise.viewAllQuestions')}
           </Link>
           .
         </div>
@@ -181,7 +183,7 @@ export default function QuestionsTab({ topicId, questions }: Props) {
                         ? 'bg-accent/15 text-accent'
                         : 'bg-surface-2 text-text-muted',
                   )}
-                  aria-label={box ? `Razina ${box} od 5` : 'Novo pitanje'}
+                  aria-label={box ? t('revise.questionLevel', { box }) : t('revise.newQuestion')}
                 >
                   {box || i + 1}
                 </span>
@@ -203,7 +205,7 @@ export default function QuestionsTab({ topicId, questions }: Props) {
                       className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border bg-surface-2 px-2 py-1 text-xs text-text-muted hover:border-accent/40 hover:text-accent"
                     >
                       <BookOpen size={12} />
-                      {DOC_SLUG_TO_LABEL[q.source.doc] ?? q.source.doc}, str. {q.source.page}
+                      {DOC_SLUG_TO_LABEL[q.source.doc] ?? q.source.doc}{t('revise.sourcePage', { page: q.source.page })}
                     </Link>
                   )}
                   <GradeButtons onGrade={(g) => onGrade(i, g)} />

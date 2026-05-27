@@ -18,8 +18,10 @@ import {
   type UserDeck,
 } from '../lib/userDecks';
 import { cn } from '../lib/cn';
+import { useT, plural } from '../lib/i18n';
 
 export default function MyDecks() {
+  const t = useT();
   const [decks, setDecks] = useState<UserDeck[]>(() => loadDecks());
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
@@ -53,32 +55,32 @@ export default function MyDecks() {
           to="/revise/teorija"
           className="mb-3 inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
         >
-          <ArrowLeft size={12} /> Ponavljanje
+          <ArrowLeft size={12} /> {t('decks.back')}
         </Link>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-text-strong">Moji paketi</h1>
+            <h1 className="text-2xl font-semibold text-text-strong">{t('decks.myDecks')}</h1>
             <p className="mt-1 text-sm text-text-muted">
-              Vlastite kartice za učenje - stvori sam ili generiraj s AI-jem.
+              {t('decks.myDecksDesc')}
             </p>
           </div>
           <button
             onClick={() => { setCreating(true); setDeleteConfirm(null); }}
             className="flex shrink-0 items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-sm font-medium text-accent hover:bg-accent/20"
           >
-            <Plus size={15} /> Novi paket
+            <Plus size={15} /> {t('decks.newDeck')}
           </button>
         </div>
       </header>
 
       {creating && (
         <div className="mb-5 rounded-xl border border-accent/40 bg-surface p-4">
-          <h2 className="mb-3 text-sm font-semibold text-text-strong">Novi paket</h2>
+          <h2 className="mb-3 text-sm font-semibold text-text-strong">{t('decks.newDeck')}</h2>
           <div className="flex flex-col gap-2">
             <input
               autoFocus
               type="text"
-              placeholder="Naziv paketa (npr. Kosti ruke)"
+              placeholder={t('decks.newDeckNamePlaceholder')}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -87,7 +89,7 @@ export default function MyDecks() {
             />
             <input
               type="text"
-              placeholder="Opis (neobavezno)"
+              placeholder={t('decks.descPlaceholder')}
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -100,13 +102,13 @@ export default function MyDecks() {
                 disabled={!newName.trim()}
                 className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-40"
               >
-                Stvori
+                {t('decks.create')}
               </button>
               <button
                 onClick={() => { setCreating(false); setNewName(''); setNewDesc(''); }}
                 className="rounded-lg border border-border px-4 py-2 text-sm text-text-muted hover:bg-surface-2"
               >
-                Odustani
+                {t('decks.cancel')}
               </button>
             </div>
           </div>
@@ -117,16 +119,16 @@ export default function MyDecks() {
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface p-10 text-center">
           <Layers size={32} className="text-text-muted/40" />
           <div>
-            <p className="font-medium text-text-strong">Još nemaš nijedan paket</p>
+            <p className="font-medium text-text-strong">{t('decks.emptyTitle')}</p>
             <p className="mt-1 text-sm text-text-muted">
-              Stvori vlastite kartice ili generiraj ih s AI-jem u par sekundi.
+              {t('decks.emptyDesc')}
             </p>
           </div>
           <button
             onClick={() => setCreating(true)}
             className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
           >
-            <Plus size={14} /> Stvori prvi paket
+            <Plus size={14} /> {t('decks.createFirst')}
           </button>
         </div>
       )}
@@ -163,14 +165,14 @@ export default function MyDecks() {
                     <div className="flex shrink-0 items-center gap-1">
                       <Link
                         to={`/revise/deck/${deck.id}/edit`}
-                        title="Uredi paket"
+                        title={t('decks.editDeck')}
                         className="flex size-7 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
                       >
                         <Pencil size={13} />
                       </Link>
                       <button
                         onClick={() => handleDelete(deck.id)}
-                        title={isConfirming ? 'Klikni ponovo za potvrdu brisanja' : 'Obriši paket'}
+                        title={isConfirming ? t('decks.deleteConfirmTitle') : t('decks.deleteDeck')}
                         className={cn(
                           'flex size-7 items-center justify-center rounded-md transition-colors',
                           isConfirming
@@ -183,19 +185,19 @@ export default function MyDecks() {
                     </div>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-text-muted">
-                    <span>{total} {total === 1 ? 'kartica' : 'kartica'}</span>
+                    <span>{plural(t.lang, total, { one: t('decks.cardCountOne', { n: total }), few: t('decks.cardCountMany', { n: total }), many: t('decks.cardCountMany', { n: total }) })}</span>
                     <span className="text-border">·</span>
-                    <span className="text-accent-2">{learned} naučeno</span>
+                    <span className="text-accent-2">{t('decks.learnedCount', { n: learned })}</span>
                     {due > 0 && (
                       <>
                         <span className="text-border">·</span>
-                        <span className="font-medium text-accent">{due} na redu</span>
+                        <span className="font-medium text-accent">{t('decks.dueCount', { n: due })}</span>
                       </>
                     )}
                   </div>
                   {isConfirming && (
                     <p className="mt-2 text-xs text-warn">
-                      Klikni ikonu kante još jednom za trajno brisanje paketa.
+                      {t('decks.deleteConfirmHint')}
                     </p>
                   )}
                 </div>
@@ -206,14 +208,14 @@ export default function MyDecks() {
                     to={`/revise/deck/${deck.id}/edit`}
                     className="text-xs text-accent hover:underline"
                   >
-                    Dodaj kartice za početak vježbanja
+                    {t('decks.addCardsToStart')}
                   </Link>
                 ) : (
                   <Link
                     to={`/revise/deck/${deck.id}`}
                     className="flex items-center gap-1.5 rounded-lg bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/20"
                   >
-                    Vježbaj
+                    {t('decks.practice')}
                     <ChevronRight size={12} />
                   </Link>
                 )}
@@ -221,7 +223,7 @@ export default function MyDecks() {
                   to={`/revise/deck/${deck.id}/edit`}
                   className="ml-auto text-xs text-text-muted hover:text-text-strong"
                 >
-                  Uredi kartice
+                  {t('decks.editCards')}
                 </Link>
               </div>
             </li>
