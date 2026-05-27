@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Check, Crosshair, Eye, EyeOff, Minus, Plus } from 'lucide-react';
+import { useT } from '../../lib/i18n';
 import type {
   Neighbor,
   NeighborMap,
@@ -44,6 +45,7 @@ export default function NeighborsPanel({
   onExpandLayer,
   onCollapseLayer,
 }: Props) {
+  const t = useT();
   const partsById = useMemo(() => {
     const m = new Map<string, Part>();
     for (const p of catalog.parts) m.set(p.id, p);
@@ -91,7 +93,7 @@ export default function NeighborsPanel({
   if (groups.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-surface p-3 text-xs text-text-muted">
-        Nema susjeda za prikaz.
+        {t('viewer.noNeighbors')}
       </div>
     );
   }
@@ -107,10 +109,10 @@ export default function NeighborsPanel({
     <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden">
       <div className="flex items-center justify-between px-1">
         <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-          Susjedi
+          {t('viewer.neighbors')}
         </h2>
         {extras.size > 0 && (
-          <span className="text-[10px] text-text-muted">{extras.size} odabrano</span>
+          <span className="text-[10px] text-text-muted">{t('viewer.neighborsSelected', { n: extras.size })}</span>
         )}
       </div>
 
@@ -146,7 +148,7 @@ export default function NeighborsPanel({
 
       <div className="flex items-center justify-between px-1">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">
-          Sloj {layerDepth}
+          {t('viewer.layer', { n: layerDepth })}
           <span className="ml-1 text-text-muted/70 normal-case tracking-normal">· {activeGroup.system.label_hr}</span>
         </span>
         <div className="flex items-center gap-1">
@@ -154,8 +156,8 @@ export default function NeighborsPanel({
             type="button"
             onClick={() => onCollapseLayer(activeGroup.system.id)}
             disabled={!canCollapse}
-            title="Skupi posljednji sloj"
-            aria-label="Skupi sloj"
+            title={t('viewer.collapseLayerTitle')}
+            aria-label={t('viewer.collapseLayer')}
             className="flex size-9 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted lg:size-6"
           >
             <Minus size={14} className="lg:hidden" />
@@ -165,8 +167,8 @@ export default function NeighborsPanel({
             type="button"
             onClick={() => onExpandLayer(activeGroup.system.id)}
             disabled={!canExpand}
-            title="Proširi za jedan sloj"
-            aria-label="Proširi sloj"
+            title={t('viewer.expandLayerTitle')}
+            aria-label={t('viewer.expandLayer')}
             className="flex size-9 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface disabled:hover:text-text-muted lg:size-6"
           >
             <Plus size={14} className="lg:hidden" />
@@ -195,7 +197,7 @@ export default function NeighborsPanel({
                   type="button"
                   onClick={() => onToggle(part.id)}
                   aria-pressed={ticked}
-                  aria-label={ticked ? `Ukloni ${part.name_en}` : `Dodaj ${part.name_en}`}
+                  aria-label={ticked ? t('viewer.removeNamed', { name: part.name_en }) : t('viewer.addNamed', { name: part.name_en })}
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-l-lg px-2 py-1 text-left active:bg-accent/15"
                 >
                   <span
@@ -224,8 +226,8 @@ export default function NeighborsPanel({
                   <button
                     type="button"
                     onClick={() => onToggleLabels(part.id)}
-                    title={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
-                    aria-label={labelsOn ? 'Sakrij oznake' : 'Prikaži oznake'}
+                    title={labelsOn ? t('viewer.hideLabels') : t('viewer.showLabels')}
+                    aria-label={labelsOn ? t('viewer.hideLabels') : t('viewer.showLabels')}
                     className="flex size-9 shrink-0 items-center justify-center rounded text-text-muted hover:text-text-strong lg:size-7"
                   >
                     {labelsOn ? <Eye size={16} className="lg:hidden" /> : <EyeOff size={16} className="lg:hidden" />}
@@ -235,8 +237,8 @@ export default function NeighborsPanel({
                 <button
                   type="button"
                   onClick={() => onFocus(part)}
-                  title="Postavi kao izabrano"
-                  aria-label={`Postavi ${part.name_en} kao izabrano`}
+                  title={t('viewer.setAsActive')}
+                  aria-label={t('viewer.setAsActiveNamed', { name: part.name_en })}
                   className="flex size-9 shrink-0 items-center justify-center rounded-r-lg text-text-muted hover:text-text-strong lg:size-7 lg:opacity-0 lg:group-hover:opacity-100"
                 >
                   <Crosshair size={16} className="lg:hidden" />
@@ -250,7 +252,7 @@ export default function NeighborsPanel({
 
       {extras.size === 0 && (
         <p className="px-1 pb-1 text-[10px] text-text-muted">
-          Označi susjedne dijelove ili koristi <Plus size={10} className="inline" /> za proširenje sloja.
+          {t('viewer.neighborsHint')}
         </p>
       )}
     </div>
