@@ -1,5 +1,6 @@
 import { cn } from '../../lib/cn';
 import { TIER_STYLES, type PackageId, type TokenPackage } from '../../lib/packages';
+import { useT, plural } from '../../lib/i18n';
 
 type Props = {
   pkg: TokenPackage;
@@ -10,7 +11,13 @@ type Props = {
 };
 
 export default function PackageCard({ pkg, busy, busyThis, onBuy, recommended }: Props) {
+  const t = useT();
   const tier = TIER_STYLES[pkg.id];
+  const tokensUnit = plural(t.lang, pkg.tokens, {
+    one: t('ai.tokenOne'),
+    few: t('ai.tokenFew'),
+    many: t('ai.tokenMany'),
+  });
   return (
     <button
       onClick={() => onBuy(pkg.id)}
@@ -28,7 +35,7 @@ export default function PackageCard({ pkg, busy, busyThis, onBuy, recommended }:
             tier.cta,
           )}
         >
-          Najpopularnije
+          {t('ai.recommended')}
         </span>
       )}
       <div className="flex flex-1 flex-col px-4 pt-4">
@@ -45,9 +52,9 @@ export default function PackageCard({ pkg, busy, busyThis, onBuy, recommended }:
           {pkg.label}
         </div>
         <div className="pb-2 pt-1 text-sm text-text-muted">
-          <span className={tier.accent}>+{pkg.tokens}</span> tokena
+          <span className={tier.accent}>+{pkg.tokens}</span> {tokensUnit}
         </div>
-        <div className="pb-3 text-[11px] text-text-muted">{pkg.blurb}</div>
+        <div className="pb-3 text-[11px] text-text-muted">{t(pkg.blurbKey)}</div>
       </div>
       <div
         className={cn(
@@ -56,7 +63,7 @@ export default function PackageCard({ pkg, busy, busyThis, onBuy, recommended }:
           tier.ctaHover,
         )}
       >
-        {busyThis ? '…' : 'Kupi'}
+        {busyThis ? '…' : t('ai.buy')}
       </div>
     </button>
   );

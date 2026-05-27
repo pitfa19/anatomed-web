@@ -23,9 +23,11 @@ import type { GeneratedCard } from '../lib/aiGenerate';
 import { cn } from '../lib/cn';
 import { useAuth } from '../lib/AuthContext';
 import OutOfTokensModal from '../components/ai/OutOfTokensModal';
-import { FEATURE_LABEL } from '../lib/packages';
+import { FEATURE_LABEL_KEY } from '../lib/packages';
+import { useT } from '../lib/i18n';
 
 export default function DeckEditor() {
+  const t = useT();
   const { deckId } = useParams<{ deckId: string }>();
   const navigate = useNavigate();
 
@@ -437,7 +439,7 @@ export default function DeckEditor() {
       <OutOfTokensModal
         open={showBuyModal}
         onClose={() => setShowBuyModal(false)}
-        featureLabel={FEATURE_LABEL.deck_generate}
+        featureLabel={t(FEATURE_LABEL_KEY.deck_generate)}
       />
     </div>
   );

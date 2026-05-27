@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Coins, Sparkles, X } from 'lucide-react';
 import { PACKAGES, type PackageId } from '../../lib/packages';
 import { useAuth } from '../../lib/AuthContext';
+import { useT } from '../../lib/i18n';
 import PackageCard from './PackageCard';
 
 type Props = {
@@ -18,6 +19,7 @@ export default function OutOfTokensModal({
   reason = 'out',
   featureLabel,
 }: Props) {
+  const t = useT();
   const { user, purchasePackage } = useAuth();
   const [busyPkg, setBusyPkg] = useState<PackageId | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,13 +51,13 @@ export default function OutOfTokensModal({
     try {
       await purchasePackage(id);
       const pkg = PACKAGES.find((p) => p.id === id)!;
-      setSuccess(`Dodano ${pkg.tokens} AI tokena.`);
+      setSuccess(t('ai.tokensAdded', { n: pkg.tokens }));
       // Auto-close after a short success flash so the user can retry their action.
       window.setTimeout(() => {
         onClose();
       }, 900);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Greška prilikom kupnje.');
+      setError(e instanceof Error ? e.message : t('ai.purchaseError'));
     } finally {
       setBusyPkg(null);
     }
@@ -63,10 +65,10 @@ export default function OutOfTokensModal({
 
   const headline =
     reason === 'low'
-      ? 'Tokeni su pri kraju'
+      ? t('ai.lowHeadline')
       : featureLabel
-        ? `Nema dovoljno tokena za ${featureLabel}`
-        : 'Nema dovoljno AI tokena';
+        ? t('ai.notEnoughFor', { feature: featureLabel })
+        : t('ai.notEnoughDefault');
 
   return (
     <div
@@ -86,14 +88,13 @@ export default function OutOfTokensModal({
           <div className="min-w-0 flex-1">
             <h2 className="text-base font-semibold text-text-strong">{headline}</h2>
             <p className="mt-1 text-xs text-text-muted">
-              AI dio aplikacije (tutor, generiranje pitanja) troši tokene. Sve ostalo —
-              3D model, skripte, ručno dodana pitanja — radi besplatno.
+              {t('ai.tokensExplain')}
             </p>
           </div>
           <button
             onClick={onClose}
             className="ml-1 rounded p-1 text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
-            aria-label="Zatvori"
+            aria-label={t('common.close')}
           >
             <X size={16} />
           </button>
@@ -102,9 +103,9 @@ export default function OutOfTokensModal({
         {user && (
           <div className="mt-4 flex items-center gap-2 rounded-md border border-border bg-surface-2 px-3 py-2 text-xs">
             <Coins size={13} className="text-accent-2" />
-            <span className="text-text-muted">Trenutno stanje:</span>
+            <span className="text-text-muted">{t('ai.currentBalance')}</span>
             <span className="font-semibold text-text-strong">
-              {user.credits} AI tokena
+              {user.credits} {t('common.aiTokens')}
             </span>
           </div>
         )}
@@ -123,7 +124,7 @@ export default function OutOfTokensModal({
         </div>
 
         <p className="mt-3 text-[11px] text-text-muted">
-          Demo — klik = uplata. Bez automatske obnove i skrivenih troškova.
+          {t('ai.demoNote')}
         </p>
 
         {error && (

@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
 
 type Mode = 'login' | 'signup';
 
 export default function Login() {
+  const t = useT();
   const { user, login, signup } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>('login');
@@ -40,7 +42,7 @@ export default function Login() {
         <div className="mb-5 flex items-center justify-center gap-2 text-text-strong">
           {mode === 'login' ? <LogIn size={18} /> : <UserPlus size={18} />}
           <h1 className="text-lg font-semibold">
-            {mode === 'login' ? 'Prijava' : 'Registracija'}
+            {mode === 'login' ? t('auth.signIn') : t('auth.signUp')}
           </h1>
         </div>
 
@@ -60,7 +62,7 @@ export default function Login() {
                   : 'text-text-muted hover:text-text',
               )}
             >
-              {m === 'login' ? 'Prijava' : 'Registracija'}
+              {m === 'login' ? t('auth.signIn') : t('auth.signUp')}
             </button>
           ))}
         </div>
@@ -68,7 +70,7 @@ export default function Login() {
         <form onSubmit={onSubmit} className="space-y-3">
           <div>
             <label className="mb-1 block text-xs font-medium text-text-muted">
-              Korisničko ime
+              {t('auth.username')}
             </label>
             <input
               autoFocus
@@ -80,7 +82,7 @@ export default function Login() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-text-muted">
-              Lozinka
+              {t('auth.password')}
             </label>
             <input
               type="password"
@@ -102,13 +104,13 @@ export default function Login() {
             disabled={busy || !username || !password}
             className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {busy ? '…' : mode === 'login' ? 'Prijavi se' : 'Registriraj se'}
+            {busy ? '…' : mode === 'login' ? t('auth.signInAction') : t('auth.signUpAction')}
           </button>
         </form>
 
         <div className="mt-4 text-center text-xs text-text-muted">
           <Link to="/" className="hover:text-text">
-            ← Natrag na početnu
+            {t('auth.backHome')}
           </Link>
         </div>
       </div>

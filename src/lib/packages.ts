@@ -5,6 +5,8 @@
 export const FREE_SIGNUP_TOKENS = 30;
 export const LOW_BALANCE_THRESHOLD = 10;
 
+import type { TKey } from './i18n';
+
 export type Feature = 'agent_chat' | 'deck_generate';
 
 export const FEATURE_COST: Record<Feature, number> = {
@@ -12,9 +14,10 @@ export const FEATURE_COST: Record<Feature, number> = {
   deck_generate: 3,
 };
 
-export const FEATURE_LABEL: Record<Feature, string> = {
-  agent_chat: 'AI razgovor',
-  deck_generate: 'AI generiranje pitanja',
+// Translation keys for feature labels; resolve with t() at the call site.
+export const FEATURE_LABEL_KEY: Record<Feature, TKey> = {
+  agent_chat: 'ai.featureAgentChat',
+  deck_generate: 'ai.featureDeckGenerate',
 };
 
 export type PackageId = 'starter' | 'standard' | 'pro';
@@ -24,7 +27,8 @@ export type TokenPackage = {
   priceEur: number;
   tokens: number;
   label: string;
-  blurb: string;
+  /** Translation key for the package blurb; resolve with t(). */
+  blurbKey: TKey;
 };
 
 export const PACKAGES: TokenPackage[] = [
@@ -33,21 +37,21 @@ export const PACKAGES: TokenPackage[] = [
     priceEur: 2,
     tokens: 80,
     label: 'Starter',
-    blurb: 'Za povremeno korištenje',
+    blurbKey: 'ai.blurbStarter',
   },
   {
     id: 'standard',
     priceEur: 5,
     tokens: 220,
     label: 'Standard',
-    blurb: 'Mjesečni paket za prosječnog studenta',
+    blurbKey: 'ai.blurbStandard',
   },
   {
     id: 'pro',
     priceEur: 10,
     tokens: 450,
     label: 'Pro',
-    blurb: 'Intenzivno korištenje tijekom ispitnih rokova',
+    blurbKey: 'ai.blurbPro',
   },
 ];
 
