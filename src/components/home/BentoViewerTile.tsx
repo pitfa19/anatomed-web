@@ -2,12 +2,14 @@ import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Box } from 'lucide-react';
 import { useReducedMotion } from '../../lib/useReducedMotion';
+import { useT } from '../../lib/i18n';
 
 const IsolatedBonesCanvas = lazy(() => import('./IsolatedBonesCanvas'));
 
 const FEMUR_IDS = ['Femur.r'];
 
 export default function BentoViewerTile({ className }: { className?: string }) {
+  const t = useT();
   const reduced = useReducedMotion();
   return (
     <Link
@@ -48,9 +50,9 @@ export default function BentoViewerTile({ className }: { className?: string }) {
       </div>
 
       <div>
-        <h3 className="text-base font-semibold text-text-strong">Izoliraj i rotiraj traženi dio</h3>
+        <h3 className="text-base font-semibold text-text-strong">{t('home.viewerTitle')}</h3>
         <p className="mt-0.5 text-xs leading-relaxed text-text-muted">
-          Učitaj cijeli sustav i izdvoji samo dio koji te zanima - kao u Unityju, ali u browseru.
+          {t('home.viewerBody')}
         </p>
       </div>
     </Link>
