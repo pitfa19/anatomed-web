@@ -21,8 +21,10 @@ import type { Part, PartsCatalog } from '../lib/viewer/types';
 import type { Hit, UnifiedIndex } from '../lib/types';
 import { Loader2, ArrowLeft, Box, X as XIcon } from 'lucide-react';
 import { cn } from '../lib/cn';
+import { useT } from '../lib/i18n';
 
 export default function Docs() {
+  const t = useT();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [data, setData] = useState<UnifiedIndex | null>(null);
@@ -127,13 +129,13 @@ export default function Docs() {
     setTotalPages(0);
   }, [selectedDoc]);
 
-  function pickTerm(t: string) {
-    setTerm(t);
+  function pickTerm(picked: string) {
+    setTerm(picked);
     if (!selectedDoc) {
       setHitIdx(null);
       return;
     }
-    const newHits = (data?.index?.[t] ?? []).filter((h) => h.doc === selectedDoc);
+    const newHits = (data?.index?.[picked] ?? []).filter((h) => h.doc === selectedDoc);
     if (newHits.length > 0) {
       setHitIdx(0);
       setVisiblePage(newHits[0]!.page);
@@ -261,14 +263,14 @@ export default function Docs() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center p-6 text-sm text-warn">
-        Greška učitavanja: {error}
+        {t('docs.loadError', { error })}
       </div>
     );
   }
   if (!data) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam skripte…
+        <Loader2 size={16} className="animate-spin" /> {t('docs.loadingDocs')}
       </div>
     );
   }
@@ -280,10 +282,10 @@ export default function Docs() {
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:gap-8 sm:px-8 sm:py-16">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight text-text-strong sm:text-4xl">
-              Skripte
+              {t('docs.title')}
             </h1>
             <p className="text-sm text-text-muted sm:text-base">
-              Pretraži termin ili otvori cijelu skriptu.
+              {t('docs.landingHint')}
             </p>
           </div>
           <SearchBar
@@ -317,7 +319,7 @@ export default function Docs() {
       {drawerOpen && (
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t('docs.closeMenu')}
           onClick={() => setDrawerOpen(false)}
           className="fixed inset-0 z-30 bg-black/50 lg:hidden"
         />
@@ -335,11 +337,11 @@ export default function Docs() {
             onClick={backToSources}
             className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-text-muted hover:bg-surface hover:text-text-strong"
           >
-            <ArrowLeft size={14} /> Sve skripte
+            <ArrowLeft size={14} /> {t('docs.allDocs')}
           </button>
           <button
             onClick={() => setDrawerOpen(false)}
-            aria-label="Close menu"
+            aria-label={t('docs.closeMenu')}
             className="rounded-md p-1.5 text-text-muted hover:bg-surface hover:text-text-strong lg:hidden"
           >
             <XIcon size={16} />
@@ -369,13 +371,12 @@ export default function Docs() {
           ) : (
             <div className="min-h-0 flex-1 overflow-y-auto pr-1">
               <p className="mb-3 rounded-lg border border-border bg-surface p-3 text-sm text-text-muted">
-                Nema rezultata za{' '}
-                <span className="font-medium text-text-strong">{term}</span> u ovoj skripti.
+                {t('docs.noResultsInDoc', { term: term ?? '' })}
               </p>
               {Object.values(hitsByDoc).some((h) => h.length > 0) && (
                 <>
                   <p className="mb-1.5 text-xs uppercase tracking-wider text-text-muted">
-                    Pronađeno u
+                    {t('docs.foundIn')}
                   </p>
                   <SourcePicker
                     term={term}
@@ -419,7 +420,7 @@ export default function Docs() {
           />
         ) : (
           <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-border bg-surface/40 p-10 text-center text-sm text-text-muted">
-            Učitavam skriptu…
+            {t('docs.loadingDoc')}
           </div>
         )}
       </div>
@@ -428,6 +429,7 @@ export default function Docs() {
 }
 
 function ViewIn3DChip({ part, variant }: { part: Part; variant: 'hero' | 'sidebar' }) {
+  const t = useT();
   const to = `/viewer?part=${encodeURIComponent(part.id)}`;
   if (variant === 'hero') {
     return (
@@ -436,7 +438,7 @@ function ViewIn3DChip({ part, variant }: { part: Part; variant: 'hero' | 'sideba
         className="mx-auto flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
       >
         <Box size={14} />
-        Pogledaj u 3D - {part.name_en}
+        {t('docs.viewIn3dNamed', { name: part.name_en })}
       </Link>
     );
   }
@@ -446,7 +448,7 @@ function ViewIn3DChip({ part, variant }: { part: Part; variant: 'hero' | 'sideba
       className="flex items-center gap-2 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent transition-colors hover:bg-accent/20"
     >
       <Box size={12} />
-      Pogledaj u 3D
+      {t('docs.viewIn3d')}
     </Link>
   );
 }

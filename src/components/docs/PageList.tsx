@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { cn } from '../../lib/cn';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   totalPages: number;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function PageList({ totalPages, currentPage, onPick }: Props) {
+  const t = useT();
   const ref = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -17,7 +19,7 @@ export default function PageList({ totalPages, currentPage, onPick }: Props) {
 
   return (
     <div className="flex min-h-0 flex-col">
-      <p className="mb-1.5 text-xs uppercase tracking-wider text-text-muted">Stranice</p>
+      <p className="mb-1.5 text-xs uppercase tracking-wider text-text-muted">{t('docs.pages')}</p>
       <ul
         ref={ref}
         className="flex-1 overflow-y-auto rounded-lg border border-border bg-surface"
@@ -36,8 +38,8 @@ export default function PageList({ totalPages, currentPage, onPick }: Props) {
                     : 'text-text hover:bg-surface-2',
                 )}
               >
-                <span>Stranica {p}</span>
-                {isSel && <span className="text-[10px] uppercase tracking-wider text-accent">trenutno</span>}
+                <span>{t('docs.page', { n: p })}</span>
+                {isSel && <span className="text-[10px] uppercase tracking-wider text-accent">{t('docs.currentPage')}</span>}
               </button>
             </li>
           );

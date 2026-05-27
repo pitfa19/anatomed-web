@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { fuzzyMatch } from '../../lib/data';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   terms: string[];
@@ -21,6 +22,7 @@ export default function SearchBar({
   autoFocus,
   size = 'md',
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState(value);
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(0);
@@ -93,8 +95,8 @@ export default function SearchBar({
           onKeyDown={onKeyDown}
           placeholder={
             isLg
-              ? 'Pretraži anatomski termin…'
-              : 'Pretraži termin (npr. fissura orbitalis)…'
+              ? t('docs.searchPlaceholderLg')
+              : t('docs.searchPlaceholder')
           }
           aria-controls={listId}
           aria-expanded={open}
@@ -112,7 +114,7 @@ export default function SearchBar({
               inputRef.current?.focus();
             }}
             className="rounded-md p-1 text-text-muted hover:bg-surface-2 hover:text-text-strong"
-            aria-label="Clear"
+            aria-label={t('docs.clear')}
           >
             <X size={isLg ? 18 : 14} />
           </button>

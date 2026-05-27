@@ -1,4 +1,5 @@
 import type { Hit } from '../../lib/types';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   hits: Hit[];
@@ -19,6 +20,7 @@ function snippetHtml(pre: string, match: string, post: string): string {
 }
 
 export default function HitList({ hits, selectedIdx, onPick }: Props) {
+  const t = useT();
   if (hits.length === 0) return null;
   return (
     <ul className="flex flex-col gap-2">
@@ -37,11 +39,11 @@ export default function HitList({ hits, selectedIdx, onPick }: Props) {
             >
               <div className="mb-1 flex items-center justify-between">
                 <span className="rounded bg-bg px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-text-muted">
-                  Stranica {h.page}
+                  {t('docs.page', { n: h.page })}
                 </span>
                 {h.exact && (
                   <span className="rounded bg-accent-2/15 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-accent-2">
-                    Točno
+                    {t('docs.exact')}
                   </span>
                 )}
               </div>

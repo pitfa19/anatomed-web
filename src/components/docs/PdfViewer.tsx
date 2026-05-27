@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { Hit, SourceMeta } from '../../lib/types';
 import { cn } from '../../lib/cn';
+import { useT } from '../../lib/i18n';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
@@ -58,6 +59,7 @@ export default function PdfViewer({
   onClose,
   onMenuClick,
 }: Props) {
+  const t = useT();
   const scrollRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const ioSourceRef = useRef(false);
@@ -318,7 +320,7 @@ export default function PdfViewer({
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              aria-label="Open menu"
+              aria-label={t('docs.openMenu')}
               className="rounded-md border border-border bg-surface p-2 text-text-muted hover:bg-surface-2 hover:text-text-strong lg:hidden"
             >
               <Menu size={16} />
@@ -344,20 +346,20 @@ export default function PdfViewer({
               <button
                 onClick={() => onStepOcc(-1)}
                 className="rounded p-1 text-text-muted hover:bg-surface-2 hover:text-text-strong"
-                aria-label="Previous occurrence"
-                title="Previous (↑)"
+                aria-label={t('docs.previousOccurrence')}
+                title={t('docs.previousOccurrenceTitle')}
               >
                 <ChevronLeft size={14} />
               </button>
               <span className="px-1 text-[11px] tabular-nums text-text-muted">
                 {occIdx + 1}/{hits.length}
-                <span className="hidden sm:inline"> pojava</span>
+                <span className="hidden sm:inline"> {t('docs.occurrences')}</span>
               </span>
               <button
                 onClick={() => onStepOcc(1)}
                 className="rounded p-1 text-text-muted hover:bg-surface-2 hover:text-text-strong"
-                aria-label="Next occurrence"
-                title="Next (↓)"
+                aria-label={t('docs.nextOccurrence')}
+                title={t('docs.nextOccurrenceTitle')}
               >
                 <ChevronRight size={14} />
               </button>
@@ -369,7 +371,7 @@ export default function PdfViewer({
               onClick={() => onGotoPage(1)}
               disabled={page <= 1}
               className="hidden rounded p-1.5 text-text-muted hover:bg-surface-2 hover:text-text-strong disabled:opacity-30 sm:inline-flex"
-              aria-label="First page"
+              aria-label={t('docs.firstPage')}
             >
               <ChevronFirst size={16} />
             </button>
@@ -377,7 +379,7 @@ export default function PdfViewer({
               onClick={() => onGotoPage(Math.max(1, page - 1))}
               disabled={page <= 1}
               className="rounded p-1.5 text-text-muted hover:bg-surface-2 hover:text-text-strong disabled:opacity-30"
-              aria-label="Previous page"
+              aria-label={t('docs.previousPage')}
             >
               <ChevronLeft size={16} />
             </button>
@@ -387,7 +389,7 @@ export default function PdfViewer({
               onClick={() => onGotoPage(Math.min(totalPages, page + 1))}
               disabled={page >= totalPages}
               className="rounded p-1.5 text-text-muted hover:bg-surface-2 hover:text-text-strong disabled:opacity-30"
-              aria-label="Next page"
+              aria-label={t('docs.nextPage')}
             >
               <ChevronRight size={16} />
             </button>
@@ -395,7 +397,7 @@ export default function PdfViewer({
               onClick={() => onGotoPage(totalPages)}
               disabled={page >= totalPages}
               className="hidden rounded p-1.5 text-text-muted hover:bg-surface-2 hover:text-text-strong disabled:opacity-30 sm:inline-flex"
-              aria-label="Last page"
+              aria-label={t('docs.lastPage')}
             >
               <ChevronLast size={16} />
             </button>
@@ -404,8 +406,8 @@ export default function PdfViewer({
           <button
             onClick={onClose}
             className="rounded-lg border border-border bg-surface p-2 text-text-muted hover:bg-surface-2 hover:text-text-strong"
-            aria-label="Close viewer"
-            title="Close (Esc)"
+            aria-label={t('docs.closeViewer')}
+            title={t('docs.closeViewerTitle')}
           >
             <X size={16} />
           </button>
@@ -416,7 +418,7 @@ export default function PdfViewer({
         <div ref={measureRef} className="mx-auto w-full max-w-3xl px-2 py-3 sm:px-4 sm:py-5">
           {docError && (
             <div className="rounded-lg border border-warn/40 bg-warn/5 p-4 text-sm text-warn">
-              Greška učitavanja PDF-a: {docError}
+              {t('docs.pdfLoadError', { error: docError })}
             </div>
           )}
           {pageWidth > 0 && (
@@ -430,7 +432,7 @@ export default function PdfViewer({
               options={documentOptions}
               loading={
                 <div className="flex h-64 items-center justify-center gap-2 text-sm text-text-muted">
-                  <Loader2 size={16} className="animate-spin" /> Učitavam PDF…
+                  <Loader2 size={16} className="animate-spin" /> {t('docs.loadingPdf')}
                 </div>
               }
               className="flex flex-col items-center gap-3 sm:gap-4"
@@ -479,7 +481,7 @@ export default function PdfViewer({
           )}
           {docLoading && pageWidth === 0 && (
             <div className="flex h-64 items-center justify-center gap-2 text-sm text-text-muted">
-              <Loader2 size={16} className="animate-spin" /> Učitavam PDF…
+              <Loader2 size={16} className="animate-spin" /> {t('docs.loadingPdf')}
             </div>
           )}
         </div>
@@ -497,6 +499,7 @@ function PageInput({
   totalPages: number;
   onCommit: (p: number) => void;
 }) {
+  const t = useT();
   const [value, setValue] = useState(String(page));
 
   useEffect(() => {
@@ -543,7 +546,7 @@ function PageInput({
       className={cn(
         'w-12 bg-transparent px-1 text-center text-sm font-medium tabular-nums text-text-strong outline-none',
       )}
-      aria-label="Page number"
+      aria-label={t('docs.pageNumber')}
     />
   );
 }
