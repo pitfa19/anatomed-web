@@ -18,26 +18,30 @@ import { cn } from './lib/cn';
 import { useTheme } from './lib/theme';
 import { useAuth } from './lib/AuthContext';
 import { LOW_BALANCE_THRESHOLD } from './lib/packages';
+import { useT, useLang } from './lib/i18n';
+import type { TKey } from './lib/i18n';
 
 type NavItem = {
   to: string;
-  label: string;
+  labelKey: TKey;
   icon: typeof HomeIcon;
   end?: boolean;
 };
 
 const NAV: NavItem[] = [
-  { to: '/', label: 'Home', icon: HomeIcon, end: true },
-  { to: '/docs', label: 'Skripte', icon: BookOpen },
-  { to: '/agent', label: 'Agent', icon: MessagesSquare },
-  { to: '/revise', label: 'Ponavljanje', icon: GraduationCap },
-  { to: '/viewer', label: '3D', icon: Box },
+  { to: '/', labelKey: 'nav.home', icon: HomeIcon, end: true },
+  { to: '/docs', labelKey: 'nav.docs', icon: BookOpen },
+  { to: '/agent', labelKey: 'nav.agent', icon: MessagesSquare },
+  { to: '/revise', labelKey: 'nav.revise', icon: GraduationCap },
+  { to: '/viewer', labelKey: 'nav.viewer', icon: Box },
 ];
 
 export default function App() {
   const loc = useLocation();
   const onHome = loc.pathname === '/';
   const [theme, , toggleTheme] = useTheme();
+  const { lang, toggleLang } = useLang();
+  const t = useT();
   const { user } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -91,7 +95,7 @@ export default function App() {
 
         {/* Desktop inline nav */}
         <nav className="ml-3 hidden items-center gap-1 md:flex">
-          {NAV.map(({ to, label, icon: Icon, end }) => (
+          {NAV.map(({ to, labelKey, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -106,7 +110,7 @@ export default function App() {
               }
             >
               <Icon size={15} />
-              <span>{label}</span>
+              <span>{t(labelKey)}</span>
             </NavLink>
           ))}
         </nav>
@@ -117,13 +121,13 @@ export default function App() {
             onClick={() => setNavOpen((v) => !v)}
             aria-haspopup="menu"
             aria-expanded={navOpen}
-            aria-label="Open navigation"
+            aria-label={t('nav.openNav')}
             className="flex items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 py-1.5 text-sm text-text transition-colors hover:bg-surface-2 md:hidden"
           >
             {currentNav ? (
               <>
                 <currentNav.icon size={15} />
-                <span className="max-w-[120px] truncate">{currentNav.label}</span>
+                <span className="max-w-[120px] truncate">{t(currentNav.labelKey)}</span>
               </>
             ) : (
               <Menu size={15} />
@@ -140,7 +144,7 @@ export default function App() {
               role="menu"
               className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-xl md:hidden"
             >
-              {NAV.map(({ to, label, icon: Icon, end }) => (
+              {NAV.map(({ to, labelKey, icon: Icon, end }) => (
                 <NavLink
                   key={to}
                   to={to}
@@ -156,7 +160,7 @@ export default function App() {
                   }
                 >
                   <Icon size={16} />
-                  {label}
+                  {t(labelKey)}
                 </NavLink>
               ))}
             </div>
@@ -171,7 +175,7 @@ export default function App() {
                   isActive ? 'text-accent' : 'text-text',
                 )
               }
-              title={`${user.username} · ${user.credits} AI tokena`}
+              title={`${user.username} · ${user.credits} ${t('common.aiTokens')}`}
             >
               <UserIcon size={13} />
               <span className="hidden max-w-[110px] truncate sm:inline">{user.username}</span>
@@ -198,14 +202,23 @@ export default function App() {
               }
             >
               <LogIn size={13} />
-              <span className="hidden sm:inline">Prijava</span>
+              <span className="hidden sm:inline">{t('nav.login')}</span>
             </NavLink>
           )}
 
           <button
+            onClick={toggleLang}
+            aria-label={lang === 'hr' ? t('settings.switchToEn') : t('settings.switchToHr')}
+            title={lang === 'hr' ? t('settings.switchToEn') : t('settings.switchToHr')}
+            className="ml-1 flex size-8 items-center justify-center rounded-md border border-border bg-surface text-xs font-semibold text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong"
+          >
+            {lang === 'hr' ? 'HR' : 'EN'}
+          </button>
+
+          <button
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            aria-label={theme === 'dark' ? t('settings.lightMode') : t('settings.darkMode')}
+            title={theme === 'dark' ? t('settings.lightMode') : t('settings.darkMode')}
             className="ml-1 flex size-8 items-center justify-center rounded-md border border-border bg-surface text-text-muted transition-colors hover:bg-surface-2 hover:text-text-strong"
           >
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}

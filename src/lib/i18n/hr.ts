@@ -15,6 +15,7 @@ const hr = {
     save: 'Spremi',
     retry: 'Pokušaj ponovno',
     search: 'Pretraži',
+    aiTokens: 'AI tokena',
   },
   nav: {
     home: 'Početna',

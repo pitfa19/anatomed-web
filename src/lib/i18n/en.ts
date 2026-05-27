@@ -9,6 +9,7 @@ const en: Dict = {
     save: 'Save',
     retry: 'Try again',
     search: 'Search',
+    aiTokens: 'AI tokens',
   },
   nav: {
     home: 'Home',
