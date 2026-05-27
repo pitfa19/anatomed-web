@@ -24,7 +24,7 @@ import { cn } from '../lib/cn';
 import { useAuth } from '../lib/AuthContext';
 import OutOfTokensModal from '../components/ai/OutOfTokensModal';
 import { FEATURE_LABEL_KEY } from '../lib/packages';
-import { useT } from '../lib/i18n';
+import { useT, plural } from '../lib/i18n';
 
 export default function DeckEditor() {
   const t = useT();
@@ -156,7 +156,7 @@ export default function DeckEditor() {
   if (!deck) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam…
+        <Loader2 size={16} className="animate-spin" /> {t('decks.loading')}
       </div>
     );
   }
@@ -168,7 +168,7 @@ export default function DeckEditor() {
           to="/revise/my-decks"
           className="mb-3 inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
         >
-          <ArrowLeft size={12} /> Moji paketi
+          <ArrowLeft size={12} /> {t('decks.studyMyDecks')}
         </Link>
 
         {editingName ? (
@@ -185,17 +185,17 @@ export default function DeckEditor() {
             <input
               value={descValue}
               onChange={(e) => setDescValue(e.target.value)}
-              placeholder="Opis (neobavezno)"
+              placeholder={t('decks.descPlaceholder')}
               maxLength={120}
               onKeyDown={(e) => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') setEditingName(false); }}
               className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-text-muted focus:border-accent/60 focus:outline-none"
             />
             <div className="flex gap-2">
               <button onClick={saveName} className="flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-accent/90">
-                <Check size={13} /> Spremi
+                <Check size={13} /> {t('decks.save')}
               </button>
               <button onClick={() => setEditingName(false)} className="rounded-lg border border-border px-3 py-1.5 text-sm text-text-muted hover:bg-surface-2">
-                Odustani
+                {t('decks.cancel')}
               </button>
             </div>
           </div>
@@ -217,7 +217,7 @@ export default function DeckEditor() {
               to={`/revise/deck/${deck.id}`}
               className="shrink-0 rounded-lg bg-accent/10 px-3 py-2 text-sm font-medium text-accent hover:bg-accent/20"
             >
-              Vježbaj
+              {t('decks.practice')}
             </Link>
           </div>
         )}
@@ -225,17 +225,17 @@ export default function DeckEditor() {
 
       {/* Add card form */}
       <section className="mb-6 rounded-xl border border-border bg-surface p-4">
-        <h2 className="mb-3 text-sm font-semibold text-text-strong">Dodaj karticu</h2>
+        <h2 className="mb-3 text-sm font-semibold text-text-strong">{t('decks.addCard')}</h2>
         <div className="flex flex-col gap-2">
           <textarea
-            placeholder="Pitanje"
+            placeholder={t('decks.questionPlaceholder')}
             value={newQ}
             onChange={(e) => setNewQ(e.target.value)}
             rows={2}
             className="resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text-strong placeholder:text-text-muted focus:border-accent/60 focus:outline-none"
           />
           <textarea
-            placeholder="Odgovor"
+            placeholder={t('decks.answerPlaceholder')}
             value={newA}
             onChange={(e) => setNewA(e.target.value)}
             rows={3}
@@ -246,7 +246,7 @@ export default function DeckEditor() {
             disabled={!newQ.trim() || !newA.trim()}
             className="flex items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-40"
           >
-            <Plus size={14} /> Dodaj karticu
+            <Plus size={14} /> {t('decks.addCard')}
           </button>
         </div>
       </section>
@@ -259,20 +259,20 @@ export default function DeckEditor() {
         >
           <div className="flex items-center gap-2 text-sm font-semibold text-text-strong">
             <Sparkles size={15} className="text-accent" />
-            Generiraj kartice s AI-jem
+            {t('decks.generateWithAI')}
           </div>
-          <span className="text-xs text-text-muted">{showAI ? 'Zatvori' : 'Otvori'}</span>
+          <span className="text-xs text-text-muted">{showAI ? t('decks.closeSection') : t('decks.openSection')}</span>
         </button>
 
         {showAI && (
           <div className="border-t border-border px-4 pb-4 pt-3">
             <p className="mb-3 text-xs text-text-muted">
-              Upiši anatomsku temu i AI će generirati pitanja i odgovore na hrvatskom.
+              {t('decks.aiHint')}
             </p>
             <div className="flex flex-col gap-2">
               <input
                 type="text"
-                placeholder="Tema (npr. Kosti podlaktice, Mišići nadlaktice…)"
+                placeholder={t('decks.aiTopicPlaceholder')}
                 value={aiTopic}
                 onChange={(e) => setAITopic(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAIGenerate()}
@@ -285,7 +285,7 @@ export default function DeckEditor() {
                   className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:outline-none"
                 >
                   {[4, 6, 8, 10, 12].map((n) => (
-                    <option key={n} value={n}>{n} kartica</option>
+                    <option key={n} value={n}>{t('decks.aiCardCount', { n })}</option>
                   ))}
                 </select>
                 <button
@@ -294,9 +294,9 @@ export default function DeckEditor() {
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-40"
                 >
                   {aiLoading ? (
-                    <><Loader2 size={14} className="animate-spin" /> Generiram…</>
+                    <><Loader2 size={14} className="animate-spin" /> {t('decks.generating')}</>
                   ) : (
-                    <><Sparkles size={14} /> Generiraj</>
+                    <><Sparkles size={14} /> {t('decks.generate')}</>
                   )}
                 </button>
               </div>
@@ -310,7 +310,7 @@ export default function DeckEditor() {
             {aiCards.length > 0 && (
               <div className="mt-4 flex flex-col gap-3">
                 <div className="flex items-center justify-between text-xs text-text-muted">
-                  <span>Generirane kartice - odaberi koje dodati:</span>
+                  <span>{t('decks.generatedPick')}</span>
                   <button
                     onClick={() =>
                       setAISelected(
@@ -321,7 +321,7 @@ export default function DeckEditor() {
                     }
                     className="text-accent hover:underline"
                   >
-                    {aiSelected.size === aiCards.length ? 'Poništi sve' : 'Odaberi sve'}
+                    {aiSelected.size === aiCards.length ? t('decks.deselectAll') : t('decks.selectAll')}
                   </button>
                 </div>
                 <ul className="flex flex-col gap-2">
@@ -346,7 +346,11 @@ export default function DeckEditor() {
                   disabled={aiSelected.size === 0}
                   className="rounded-lg bg-accent-2/10 px-4 py-2 text-sm font-medium text-accent-2 hover:bg-accent-2/20 disabled:opacity-40"
                 >
-                  Dodaj {aiSelected.size} {aiSelected.size === 1 ? 'karticu' : 'kartica'} u paket
+                  {plural(t.lang, aiSelected.size, {
+                    one: t('decks.addSelectedOne', { n: aiSelected.size }),
+                    few: t('decks.addSelectedMany', { n: aiSelected.size }),
+                    many: t('decks.addSelectedMany', { n: aiSelected.size }),
+                  })}
                 </button>
               </div>
             )}
@@ -357,11 +361,11 @@ export default function DeckEditor() {
       {/* Card list */}
       <section>
         <h2 className="mb-3 text-sm font-semibold text-text-strong">
-          Kartice ({deck.cards.length})
+          {t('decks.cardsHeading', { n: deck.cards.length })}
         </h2>
         {deck.cards.length === 0 ? (
           <p className="rounded-xl border border-border bg-surface p-6 text-center text-sm text-text-muted">
-            Još nema kartica - dodaj ih ručno ili generiraj s AI-jem.
+            {t('decks.noCardsYet')}
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
@@ -396,13 +400,13 @@ export default function DeckEditor() {
                           disabled={!editQ.trim() || !editA.trim()}
                           className="flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-40"
                         >
-                          <Check size={13} /> Spremi
+                          <Check size={13} /> {t('decks.save')}
                         </button>
                         <button
                           onClick={() => setEditingCardId(null)}
                           className="rounded-lg border border-border px-3 py-1.5 text-sm text-text-muted hover:bg-surface-2"
                         >
-                          Odustani
+                          {t('decks.cancel')}
                         </button>
                       </div>
                     </div>
@@ -416,14 +420,14 @@ export default function DeckEditor() {
                         <button
                           onClick={() => startEditCard(card)}
                           className="flex size-7 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
-                          title="Uredi karticu"
+                          title={t('decks.editCard')}
                         >
                           <Pencil size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteCard(card.id)}
                           className="flex size-7 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-warn"
-                          title="Obriši karticu"
+                          title={t('decks.deleteCard')}
                         >
                           <X size={13} />
                         </button>

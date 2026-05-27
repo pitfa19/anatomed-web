@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, GraduationCap, Target } from 'lucide-react';
+import { useT } from '../lib/i18n';
 
 export default function Revise() {
+  const t = useT();
   return (
     <div className="mx-auto h-full w-full max-w-3xl overflow-y-auto px-4 py-6 sm:px-6">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-text-strong">Ponavljanje</h1>
+        <h1 className="text-2xl font-semibold text-text-strong">{t('revise.title')}</h1>
         <p className="mt-1 text-sm text-text-muted">
-          Odaberi način ponavljanja.
+          {t('revise.chooseMode')}
         </p>
       </header>
 
@@ -22,10 +24,10 @@ export default function Revise() {
             </span>
             <div>
               <div className="text-base font-semibold text-text-strong">
-                Teorijsko ponavljanje
+                {t('revise.theoryTitle')}
               </div>
               <div className="mt-0.5 text-xs text-text-muted">
-                Pitanja i kratke skripte po temama, sa SRS-om za razmaknuto ponavljanje.
+                {t('revise.theoryDesc')}
               </div>
             </div>
           </div>
@@ -42,10 +44,10 @@ export default function Revise() {
             </span>
             <div>
               <div className="text-base font-semibold text-text-strong">
-                Praktično ponavljanje
+                {t('revise.practiceTitle')}
               </div>
               <div className="mt-0.5 text-xs text-text-muted">
-                Pronađi naučenu strukturu na 3D modelu. Kviz po sustavima.
+                {t('revise.practiceDesc')}
               </div>
             </div>
           </div>

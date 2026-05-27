@@ -2,6 +2,7 @@ import { Flame, Star } from 'lucide-react';
 import type { XPState } from '../../lib/xp';
 import { getLevelProgress } from '../../lib/xp';
 import { cn } from '../../lib/cn';
+import { useT, plural } from '../../lib/i18n';
 
 interface Props {
   state: XPState;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function XPBar({ state, className }: Props) {
+  const t = useT();
   const { level, xpInLevel, xpNeededForLevel, pct } = getLevelProgress(state.xp);
 
   return (
@@ -19,14 +21,14 @@ export default function XPBar({ state, className }: Props) {
             <Star size={16} className="fill-accent text-accent" />
           </span>
           <div>
-            <div className="text-xs font-semibold text-text-strong">Razina {level}</div>
-            <div className="text-[10px] text-text-muted">{state.xp} ukupno XP</div>
+            <div className="text-xs font-semibold text-text-strong">{t('revise.level', { level })}</div>
+            <div className="text-[10px] text-text-muted">{t('revise.xpTotal', { xp: state.xp })}</div>
           </div>
         </div>
         {state.streak > 0 && (
           <div className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2.5 py-1 text-xs font-medium text-orange-400">
             <Flame size={12} />
-            {state.streak} {state.streak === 1 ? 'dan' : state.streak < 5 ? 'dana' : 'dana'} niz
+            {plural(t.lang, state.streak, { one: t('revise.streakDaysOne', { n: state.streak }), few: t('revise.streakDaysMany', { n: state.streak }), many: t('revise.streakDaysMany', { n: state.streak }) })} {t('revise.streakSuffix')}
           </div>
         )}
       </div>
@@ -37,8 +39,8 @@ export default function XPBar({ state, className }: Props) {
         />
       </div>
       <div className="mt-1.5 flex items-center justify-between text-[10px] text-text-muted">
-        <span>{xpInLevel} / {xpNeededForLevel} XP</span>
-        <span>Razina {level + 1}</span>
+        <span>{t('revise.xpInLevel', { xpInLevel, xpNeeded: xpNeededForLevel })}</span>
+        <span>{t('revise.level', { level: level + 1 })}</span>
       </div>
     </div>
   );

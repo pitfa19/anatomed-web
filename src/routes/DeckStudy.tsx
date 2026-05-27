@@ -23,12 +23,14 @@ import { shuffle } from '../lib/srs';
 import type { Grade } from '../lib/types';
 import GradeButtons from '../components/revise/GradeButtons';
 import { cn } from '../lib/cn';
+import { useT, plural } from '../lib/i18n';
 
 interface StudyItem {
   card: UserCard;
 }
 
 export default function DeckStudy() {
+  const t = useT();
   const { deckId } = useParams<{ deckId: string }>();
   const [searchParams] = useSearchParams();
   const dueOnly = searchParams.get('due') !== '0';
@@ -93,7 +95,7 @@ export default function DeckStudy() {
   if (!deck || !items) {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Učitavam…
+        <Loader2 size={16} className="animate-spin" /> {t('decks.loading')}
       </div>
     );
   }
@@ -106,7 +108,7 @@ export default function DeckStudy() {
             to="/revise/my-decks"
             className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-strong"
           >
-            <ArrowLeft size={12} /> Moji paketi
+            <ArrowLeft size={12} /> {t('decks.studyMyDecks')}
           </Link>
           <div className="flex items-center gap-2">
             {xpState.streak > 1 && (
@@ -120,12 +122,12 @@ export default function DeckStudy() {
               title={`${xpState.xp} XP`}
             >
               <Star size={11} className="fill-accent" />
-              Razina {level}
+              {t('revise.level', { level })}
             </span>
             <Link
               to={`/revise/deck/${deck.id}/edit`}
               className="flex size-6 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
-              title="Uredi paket"
+              title={t('decks.editDeck')}
             >
               <Pencil size={13} />
             </Link>
@@ -138,15 +140,19 @@ export default function DeckStudy() {
             <p className="mt-0.5 text-xs text-text-muted">
               {total === 0
                 ? dueOnly
-                  ? 'Nema kartica na redu.'
-                  : 'Ovaj paket nema kartica.'
-                : `${Math.min(pos, total)} / ${total} kartica${graded > 0 ? ` · +${sessionXP} XP` : ''}`}
+                  ? t('decks.noCardsDue')
+                  : t('decks.deckEmpty')
+                : t('decks.progressCards', {
+                    done: Math.min(pos, total),
+                    total,
+                    xp: graded > 0 ? ` · +${sessionXP} XP` : '',
+                  })}
             </p>
           </div>
           {total > 0 && !done && (
             <button
               onClick={handleReset}
-              title="Resetiraj napredak i počni ispočetka"
+              title={t('decks.resetProgress')}
               className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs text-text-muted hover:bg-surface-2 hover:text-text-strong"
             >
               <RotateCcw size={12} />
@@ -194,7 +200,7 @@ export default function DeckStudy() {
               >
                 <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
                 +{p.amount} XP
-                {p.leveledUp && ' - Razina gore!'}
+                {p.leveledUp && t('revise.levelUp')}
               </motion.div>
             ))}
           </AnimatePresence>
@@ -204,26 +210,26 @@ export default function DeckStudy() {
           <div className="mx-auto mt-12 flex max-w-md flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-8 text-center">
             <Sparkles size={28} className="text-accent-2" />
             <h2 className="text-lg font-semibold text-text-strong">
-              {dueOnly ? 'Sve si stigao za danas' : 'Ovaj paket je prazan'}
+              {dueOnly ? t('decks.allDoneToday') : t('decks.deckEmptyTitle')}
             </h2>
             <p className="text-sm text-text-muted">
               {dueOnly
-                ? 'Nema kartica na redu. Vrati se sutra!'
-                : 'Dodaj kartice u paket kako bi mogao vježbati.'}
+                ? t('decks.noCardsDueDesc')
+                : t('decks.addCardsDesc')}
             </p>
             {dueOnly ? (
               <Link
                 to={`/revise/deck/${deck.id}?due=0`}
                 className="mt-2 rounded-md border border-border px-4 py-2 text-sm text-text-muted hover:bg-surface-2"
               >
-                Vježbaj sve kartice
+                {t('decks.practiceAll')}
               </Link>
             ) : (
               <Link
                 to={`/revise/deck/${deck.id}/edit`}
                 className="mt-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
               >
-                Dodaj kartice
+                {t('decks.addCards')}
               </Link>
             )}
           </div>
@@ -232,14 +238,14 @@ export default function DeckStudy() {
         {done && total > 0 && (
           <div className="mx-auto mt-12 flex max-w-md flex-col items-center gap-4 rounded-2xl border border-border bg-surface p-8 text-center">
             <Sparkles size={28} className="text-accent-2" />
-            <h2 className="text-lg font-semibold text-text-strong">Gotovo!</h2>
+            <h2 className="text-lg font-semibold text-text-strong">{t('revise.done')}</h2>
             <div className="flex w-full flex-col gap-2 rounded-xl border border-border bg-surface-2/60 p-4 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Ocijenjeno</span>
-                <span className="font-semibold text-text-strong">{graded} kartica</span>
+                <span className="text-text-muted">{t('revise.graded')}</span>
+                <span className="font-semibold text-text-strong">{t('decks.gradedCards', { n: graded })}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Zarađeno XP</span>
+                <span className="text-text-muted">{t('revise.earnedXP')}</span>
                 <span className="flex items-center gap-1 font-semibold text-accent">
                   <Star size={13} className="fill-accent" />
                   +{sessionXP} XP
@@ -247,15 +253,19 @@ export default function DeckStudy() {
               </div>
               {xpState.streak > 1 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-text-muted">Niz učenja</span>
+                  <span className="text-text-muted">{t('revise.streak')}</span>
                   <span className="flex items-center gap-1 font-semibold text-orange-400">
                     <Flame size={13} />
-                    {xpState.streak} {xpState.streak < 5 ? 'dana' : 'dana'}
+                    {plural(t.lang, xpState.streak, {
+                      one: t('revise.streakDaysOne', { n: xpState.streak }),
+                      few: t('revise.streakDaysMany', { n: xpState.streak }),
+                      many: t('revise.streakDaysMany', { n: xpState.streak }),
+                    })}
                   </span>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Razina</span>
+                <span className="text-text-muted">{t('revise.levelLabel')}</span>
                 <span className="font-semibold text-text-strong">{level}</span>
               </div>
             </div>
@@ -264,13 +274,13 @@ export default function DeckStudy() {
                 to="/revise/my-decks"
                 className="rounded-md border border-border px-4 py-2 text-sm text-text-muted hover:bg-surface-2"
               >
-                Moji paketi
+                {t('decks.studyMyDecks')}
               </Link>
               <button
                 onClick={handleReset}
                 className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
               >
-                Vježbaj opet
+                {t('decks.practiceAgain')}
               </button>
             </div>
           </div>
@@ -294,7 +304,7 @@ export default function DeckStudy() {
                 onClick={() => setRevealed(true)}
                 className="mt-5 w-full rounded-lg border border-accent/40 bg-accent/10 py-2.5 text-sm font-medium text-accent hover:bg-accent/20"
               >
-                Pokaži odgovor
+                {t('revise.showAnswer')}
               </button>
             ) : (
               <div className="mt-4 flex flex-col gap-4">
