@@ -14,13 +14,14 @@ import type { ChatMessage } from '../lib/types';
 import { useAuth } from '../lib/AuthContext';
 import { LOW_BALANCE_THRESHOLD, FEATURE_LABEL_KEY } from '../lib/packages';
 import { useT } from '../lib/i18n';
+import type { TKey, TFn } from '../lib/i18n';
 import { Sparkles } from 'lucide-react';
 
-const SUGGESTED = [
-  'Što prolazi kroz fissura orbitalis superior?',
-  'Razlika između neurocraniuma i viscerocraniuma?',
-  'Generiraj 5 pitanja iz Skripte A1.',
-  'Otvori stranicu o vaskularizaciji leđa.',
+const SUGGESTED: TKey[] = [
+  'agent.suggested1',
+  'agent.suggested2',
+  'agent.suggested3',
+  'agent.suggested4',
 ];
 
 const STORAGE_KEY = 'anatomed.agent.chat.v1';
@@ -117,7 +118,9 @@ export default function Agent() {
       try {
         result = await consumeTokens('agent_chat');
       } catch (err) {
-        const errText = `Greška pri provjeri kredita: ${err instanceof Error ? err.message : String(err)}`;
+        const errText = t('agent.creditCheckError', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         setMessages((m) => [
           ...m,
           { id: uid(), role: 'assistant', text: errText, ts: Date.now() },
@@ -131,7 +134,7 @@ export default function Agent() {
           {
             id: uid(),
             role: 'assistant',
-            text: 'Nemaš dovoljno kredita za AI razgovor. Otvori prozor za kupnju ili idi na Profil.',
+            text: t('agent.noCredits'),
             ts: Date.now(),
           },
         ]);
@@ -154,7 +157,7 @@ export default function Agent() {
           targetSummarizedThrough,
         );
         setStatus({ phase: 'summarizing' });
-        activeSummary = await summarizeMessages(toSummarize, activeSummary);
+        activeSummary = await summarizeMessages(toSummarize, activeSummary, t.lang);
         activeSummarizedThrough = targetSummarizedThrough;
         setSummary(activeSummary);
         setSummarizedThrough(activeSummarizedThrough);
@@ -164,6 +167,7 @@ export default function Agent() {
       const replyText = await chat(windowed, {
         onStatus: setStatus,
         summary: activeSummary || undefined,
+        lang: t.lang,
       });
       const replyMsg: ChatMessage = {
         id: uid(),
@@ -175,8 +179,10 @@ export default function Agent() {
     } catch (err) {
       const errText =
         err instanceof MissingApiKeyError
-          ? 'API ključ nije postavljen na poslužitelju. Dodaj `ANTHROPIC_API_KEY` u Vercel env vars (ili u `.env.local` za `vercel dev`).'
-          : `Greška: ${err instanceof Error ? err.message : String(err)}`;
+          ? t('agent.missingApiKey')
+          : t('agent.genericError', {
+              error: err instanceof Error ? err.message : String(err),
+            });
       setMessages((m) => [
         ...m,
         { id: uid(), role: 'assistant', text: errText, ts: Date.now() },
@@ -197,19 +203,19 @@ export default function Agent() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface/60 px-4 py-2 text-xs text-text-muted">
-        <span>Razgovor s agentom</span>
+        <span>{t('agent.conversation')}</span>
         {messages.length > 0 && (
           <button
             onClick={reset}
             className="rounded px-2 py-1 hover:bg-surface-2 hover:text-text-strong"
           >
-            Novi razgovor
+            {t('agent.newConversation')}
           </button>
         )}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {messages.length === 0 ? (
-          <EmptyState onPick={(t) => setSeed(t)} />
+          <EmptyState onPick={(text) => setSeed(text)} t={t} />
         ) : (
           <ChatLog messages={messages} pending={pending} status={status} />
         )}
@@ -227,28 +233,31 @@ export default function Agent() {
   );
 }
 
-function EmptyState({ onPick }: { onPick: (text: string) => void }) {
+function EmptyState({ onPick, t }: { onPick: (text: string) => void; t: TFn }) {
   return (
     <div className="mx-auto flex h-full max-w-2xl flex-col items-center justify-center gap-6 px-5 py-10 text-center">
       <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-white">
         <Sparkles size={26} />
       </div>
       <div>
-        <h2 className="text-2xl font-semibold text-text-strong">Pitaj asistenta</h2>
+        <h2 className="text-2xl font-semibold text-text-strong">{t('agent.emptyTitle')}</h2>
         <p className="mt-2 text-sm text-text-muted">
-          Postavi pitanje o anatomiji ili predloži zadatak.
+          {t('agent.emptyDesc')}
         </p>
       </div>
       <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-        {SUGGESTED.map((s) => (
-          <button
-            key={s}
-            onClick={() => onPick(s)}
-            className="rounded-xl border border-border bg-surface p-3 text-left text-sm text-text transition-colors hover:border-accent/40 hover:bg-surface-2"
-          >
-            {s}
-          </button>
-        ))}
+        {SUGGESTED.map((key) => {
+          const text = t(key);
+          return (
+            <button
+              key={key}
+              onClick={() => onPick(text)}
+              className="rounded-xl border border-border bg-surface p-3 text-left text-sm text-text transition-colors hover:border-accent/40 hover:bg-surface-2"
+            >
+              {text}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

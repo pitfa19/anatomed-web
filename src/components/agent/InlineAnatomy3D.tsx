@@ -6,6 +6,7 @@ import { Box as BoxIcon, ExternalLink, Loader2 } from 'lucide-react';
 import * as THREE from 'three';
 import { applyMultiIsolation } from '../../lib/viewer/isolate';
 import { getSystem, loadCatalog } from '../../lib/viewer/catalog';
+import { useT } from '../../lib/i18n';
 import type { Anatomy3DConfig } from '../../lib/types';
 import type { PartsCatalog, SystemId, SystemMeta } from '../../lib/viewer/types';
 
@@ -19,6 +20,7 @@ interface SystemGroup {
 }
 
 export default function InlineAnatomy3D({ config }: Props) {
+  const t = useT();
   const [catalog, setCatalog] = useState<PartsCatalog | null>(null);
 
   useEffect(() => {
@@ -83,19 +85,19 @@ export default function InlineAnatomy3D({ config }: Props) {
           to={viewerHref}
           className="inline-flex shrink-0 items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent no-underline transition-colors hover:border-accent/60 hover:bg-accent/20"
         >
-          <span className="hidden sm:inline">Otvori u 3D pregledniku</span>
-          <span className="sm:hidden">Otvori 3D</span>
+          <span className="hidden sm:inline">{t('agent.openInViewer')}</span>
+          <span className="sm:hidden">{t('agent.open3d')}</span>
           <ExternalLink size={11} />
         </Link>
       </div>
       <div className="relative h-72 w-full bg-bg">
         {!groups ? (
           <div className="flex h-full items-center justify-center text-xs text-text-muted">
-            <Loader2 size={14} className="mr-2 animate-spin" /> Učitavam katalog…
+            <Loader2 size={14} className="mr-2 animate-spin" /> {t('agent.loadingCatalog')}
           </div>
         ) : groups.length === 0 ? (
           <div className="flex h-full items-center justify-center px-3 text-center text-xs text-text-muted">
-            Nije moguće učitati 3D model za odabrane dijelove.
+            {t('agent.cannotLoad3d')}
           </div>
         ) : (
           <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>

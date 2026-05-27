@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
+import { useT } from '../../lib/i18n';
 
 interface Props {
   onSend: (text: string) => void;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function Composer({ onSend, pending, initial }: Props) {
+  const t = useT();
   const [value, setValue] = useState(initial ?? '');
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -28,9 +30,9 @@ export default function Composer({ onSend, pending, initial }: Props) {
   }
 
   function send() {
-    const t = value.trim();
-    if (!t || pending) return;
-    onSend(t);
+    const trimmed = value.trim();
+    if (!trimmed || pending) return;
+    onSend(trimmed);
     setValue('');
     requestAnimationFrame(autoresize);
   }
@@ -52,14 +54,14 @@ export default function Composer({ onSend, pending, initial }: Props) {
               send();
             }
           }}
-          placeholder="Pitaj agenta…"
+          placeholder={t('agent.composerPlaceholder')}
           className="max-h-[220px] flex-1 resize-none bg-transparent py-1 text-sm text-text-strong outline-none placeholder:text-text-muted"
         />
         <button
           onClick={send}
           disabled={!value.trim() || pending}
           className="flex size-8 items-center justify-center rounded-lg bg-accent text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
-          aria-label="Send"
+          aria-label={t('agent.send')}
         >
           <ArrowUp size={16} />
         </button>
