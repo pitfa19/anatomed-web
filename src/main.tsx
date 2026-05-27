@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './index.css';
 import { bootstrapTheme } from './lib/theme';
+import { bootstrapLang, LangProvider } from './lib/i18n';
 import App from './App';
 
 bootstrapTheme();
+bootstrapLang();
 import Home from './routes/Home';
 import Docs from './routes/Docs';
 import Agent from './routes/Agent';
@@ -55,8 +57,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <LangProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </LangProvider>
   </StrictMode>,
 );
