@@ -175,27 +175,27 @@ Old IO-only approach picked the wrong page when off-screen entries inside the ex
 
 ## 3D Viewer (`/viewer`)
 
-`@react-three/fiber` + `@react-three/drei` over `three`. Search-driven: the catalog tells us which system a part lives in, the glb for that system loads, and `applyIsolation` hides every other leaf mesh.
+`@react-three/fiber` + `@react-three/drei` over `three`. Search-driven: the catalog tells us which system a part lives in, that system's glb loads, and visibility is toggled per leaf mesh.
 
-### Isolation algorithm - port of Unity `MeshManagement.IsolationClick()`
+### Rendering architecture — one `SystemLayer` per system, NO per-part clone
 
-`src/lib/viewer/isolate.ts` mirrors `Assets/Scripts/MeshManagement.cs:318–367` + `SelectedObjectsManagement.cs:107–125, 226–256`:
+Mirrors how the Unity original works (toggle `renderer.enabled`, never instantiate). `AnatomyScene.tsx` derives `systemRenders` (one entry per system that has ≥1 visible part) from `active + extras`, and renders **one `<SystemLayer>` per system** (`src/components/viewer/SystemLayer.tsx`). `SystemLayer` calls `useGLTF(system.glb)` and renders the **shared cached scene instance directly — no `scene.clone(true)`**. This is safe because every *other* GLB consumer (home hero, quiz, agent inline) clones before rendering, and each system is shown by at most one `SystemLayer`, so the shared instance is never double-mounted.
 
-1. **`applyIsolation(scene, partId)`** - walks the scene, hides every leaf mesh not in `partId`'s subtree (Unity's `DeleteNotSelected`). Returns `{ hidden, anchors }` so `clearIsolation` can restore exactly what was hidden.
-2. Walks ancestors of the target setting `.visible = true` (Unity's `SetActiveParentsRecursively`).
-3. **Filter**: skips nodes whose name contains `-lin` or `labels`. `-line` connector meshes outside the target subtree are hidden, but **inside the target subtree they stay visible** so each HTML label has a 3D grey line drawn from bone surface to label anchor.
-4. **`collectAnchors(target)`** - gathers descendants whose glTF `extras.labelText` is set (FBX `.t` EMPTY anchors tagged at export) and returns `{ key, text, position }` triples in world coordinates.
+> ⚠️ Never render two `<SystemLayer>` for the same system, and never render a system's cached scene un-cloned anywhere else — both corrupt the shared graph. `systemRenders` dedupes by `systemId`.
 
-`SystemModel.tsx` runs `applyIsolation` in a `useEffect` keyed on `[scene, activePartId]` and emits anchors via `onAnchors`. `AnatomyScene.tsx` renders drei `<Html center>` labels at each anchor. **Labels live as siblings of `<SystemModel>`, not inside any `<Bounds>`** - `<Html>` portal would corrupt drei's auto-fit math.
+**This replaced the old `SystemModel` (active system) + `ExtraPart` (one full-system `.clone(true)` per cross-system neighbour) pair — the clone-per-neighbour was the lag source (adding 52 muscle neighbours cloned `muscles.glb` 52×). Now it's a set of `.visible` flips: adding a whole 52-part layer costs ~one 50 ms frame.**
 
-### Camera fit - `fitOrthoToObject(camera, controls, target, viewport)`
+Visibility is driven by a **scene index** (`src/lib/viewer/sceneIndex.ts`, `buildSceneIndex`, cached on `scene.userData.__anatomedIndex`): `partMeshes` / `partLineMeshes` / `partAncestors` / `allLeaves` / `allLines` per sanitized partId. Each visibility pass: hide all leaves + lines, then for each visible part show its meshes + ancestor chain, and show its `-line` connectors iff `labelsByPartId.has(part)` and the name isn't a whole-bone line. O(visible parts), not an O(scene) traverse.
 
-drei's `<Bounds fit>` was unreliable for orthographic + small-bone scale. `SystemModel.tsx` does an explicit fit:
+`applyIsolation` / `clearIsolation` still live in `isolate.ts` but are now used only by `applyMultiIsolation` (home/quiz/agent), not `/viewer`.
 
-1. World-space `Box3` from target's visible Mesh descendants (`-line`/`labels` excluded).
-2. Aim the camera along its current direction; pull back by `max(boxDiag * 2, 5)`.
-3. Set `left/right/top/bottom` to `boxSize * margin` (with aspect compensation), `zoom = 1`, `updateProjectionMatrix()`.
-4. Move OrbitControls' `target` to box center and `update()`.
+### Materials — one shared set per system
+
+`src/lib/viewer/materials.ts` `getSystemMaterials(systemId, tint)` caches `{ solid, line }` per `systemId+tint`. `SystemLayer` assigns the single `solid` material to every leaf (replacing the old ~890-per-mesh `new MeshStandardMaterial`) and `line` to every `-line`. Assignment is idempotent via `scene.userData.__tinted`. (Meshes are **never** recolored on hover — see Hover below.)
+
+### Camera fit — `CameraRig` + `src/lib/viewer/fit.ts`
+
+`fitOrthoToBox` / `computeVisibleUnionBox` / `fitOrthoToObject` live in `fit.ts`. `<CameraRig>` (child of `AnatomyScene`, after the layers) owns the fit: on a `fitKey` change (active + extras + camera.uuid + viewport) it fits to the **union box of every visible mesh across all mounted system roots** (registered via `registerRoot`), excluding `-line`. The "Centriraj"/recenter button calls `CameraRig.recenter()`.
 
 ### Landmark labels - `.t` EMPTY anchors with glTF `extras`
 
@@ -207,74 +207,58 @@ Don't try to derive labels from sanitized node names: `THREE.PropertyBinding.san
 
 `<OrbitControls makeDefault enableDamping enableRotate enablePan enableZoom screenSpacePanning minZoom={0.5} maxZoom={8}>`. Default mouse buttons; touch pan/zoom works as expected. Flags set explicitly because default-undefined was prone to silent regressions.
 
-A custom `<PanClamp>` listens to OrbitControls `change` and snaps `controls.target` back inside a sphere of radius `min(fitWidth, fitHeight) / 2 / camera.zoom`. The "Centriraj" button (lucide `Crosshair`) re-runs `fitOrthoToObject` on the active target only.
+A custom `<PanClamp>` listens to OrbitControls `change` and snaps `controls.target` back inside a sphere of radius `min(fitWidth, fitHeight) / 2 / camera.zoom`. The "Centriraj" button (lucide `Crosshair`) calls `CameraRig.recenter()` (refits to the visible union box).
 
-#### Pitfall: stable callbacks for `SystemModel`/`ExtraPart`
+#### Pitfall: stable callbacks + per-system anchor handlers
 
-`SystemModel`'s isolation effect deps include `onAnchors` and `onFit`. Both **must** be referentially stable - otherwise every state tick re-fits the camera and the user can't pan/zoom. `AnatomyScene` caches per-`srcKey` anchor handlers in a `useRef(new Map(...))` (`getSrcAnchors`) and `useCallback`s `handleFit`. Don't replace either with inline arrows in JSX.
+`SystemLayer`'s visibility/anchor effect and `CameraRig`'s fit must not churn function identities. `AnatomyScene` caches per-`systemId` anchor handlers in a `useRef(new Map())` (`getAnchorHandler`) and `useCallback`s `registerRoot` / `getRoots` / `handleFit` / `handleObjectClick` / `handleHover`. Don't inline these in JSX.
 
 #### Pitfall: OrbitControls drift on deep-link mount → useFrame post-fit
 
-Deep-linking `/viewer?part=<id>` sometimes shows blank/half-framed canvas; "Centriraj" or refresh fixes it. Cause: `OrbitControls.update()` runs every frame and re-derives camera position from internal spherical state; on a fresh mount the spherical hasn't settled (drei's `<OrthographicCamera makeDefault>` swaps the default camera once). Small spherical delta during early frames shifts the camera off the freshly-fit position.
+Deep-linking `/viewer?part=<id>` can show a blank/half-framed canvas. Cause: `OrbitControls.update()` runs every frame and re-derives camera position from internal spherical state; on a fresh mount it hasn't settled (drei's `<OrthographicCamera makeDefault>` swaps the default camera once). Fix: `CameraRig` runs a `useFrame` post-fit loop calling the fit for the first **6 frames** after each `fitKey` change (runs after OrbitControls, overriding drift). `fitKey` includes `camera.uuid` so a StrictMode camera remount re-fits.
 
-Fix: `SystemModel` runs a `useFrame` post-fit loop calling `fitOrthoToObject` for the first **6 frames** after each isolation-key change. useFrame runs after OrbitControls, overriding drift. Also retries when r3f reports `size` 0×0 transiently. Don't merge into the isolation effect (must run *after* OrbitControls). Don't extend past ~10 frames. Include `camera.uuid` in `lastIsolationKeyRef` - StrictMode remounts the OrthographicCamera; without it the new camera never gets fit.
+### Hover → name tooltip + subpart region glow (NO mesh recolor)
 
-### Neighbors panel - branching + BFS layer stack
+`SystemLayer` forwards r3f `onPointerMove`/`onPointerOut` to `AnatomyScene.handleHover(obj, ev, point)` (`point` = `e.point`, the world hit). `resolvePart` (shared with click; walks parents to a catalog node, gated on active/extra — raycaster already skips `visible===false`) gives the Part. The part **name** is written straight to a cursor-following `<div>` (a ref, not React state — no re-render per pointermove; lives in `AnatomyScene`'s wrapper, outside `<Canvas>`).
 
-`tools/export_to_glb.py → write_neighbors()` precomputes 30 nearest parts per part using **AABB-to-AABB closest-point distance** (center-to-center fails for elongated bones). Insertions are skipped from both sides - they're attachment markers, not anatomy users want as neighbors. Output: `public/models/parts-neighbors.json` (~6 MB, lazy-loaded).
+**Whole parts are deliberately never recolored on hover** (an earlier full-bone blue tint was rejected). The only highlight is the subpart region glow below.
 
-`<NeighborsPanel>` is fed `rows: Neighbor[]` from `Viewer.unionedNeighbors` (union of `[active.id, ...extras]` neighbours, **excluding already-selected**). Per-row interactions:
+### Landmark subparts — region glow on hover (`RegionHighlight`)
 
-- **Checkbox** → flips membership in `extras: Set<string>`.
-- **Name area** → makes this the new **active** part; previous active is **demoted to an extra**.
-- **Eye/EyeOff** (only on ticked rows) → toggles labels for that part.
+A bone's subparts (femur head/neck/condyles…) are NOT separate geometry — they're `<Landmark>.t` anchor nodes (`extras.labelText`) parented to the `.r` bone, each with a `-line` connector running to a point on the bone surface. `collectAnchors` (`isolate.ts`) returns each anchor's `position` (the `.t` label point) **and** `surface` (the connector's far vertex = the spot on the bone). `SystemLayer` always emits the **active** part's anchors (so this works with labels off).
 
-#### "Odabrano" pill row + clear-extras
+On hover over the active bone, `handleHover` finds the nearest active anchor `surface` within `SNAP_DIST` (0.035 m) of the hit `point`; if found, `<RegionHighlight>` (a flat single-color disc sprite in the app accent `#2f6df6`, `depthTest:false`, ~0.85 opacity) snaps to that surface point and the tooltip shows the subpart name. Otherwise the tooltip shows the whole-part name and nothing is marked. **No leader lines, no dots** (both removed — the earlier versions were rejected). Connector `-line` meshes are no longer rendered at all.
 
-Between the active card and the panel, an "Odabrano · N" pill row renders one chip per extra: system-color dot, name, eye, X. Clicking name promotes to active. `max-h-32` overflow-y-auto so it stays usable when many parts selected. `Očisti sve` clears all extras and layer stacks.
+"Labels on" still renders always-on `<Html>` name chips at the `.t` positions for any part in `labelsByPartId` (`chipAnchors`) — the "names just on" option, independent of the hover disc.
 
-#### Layer stack ("Sloj N · ±")
+#### Whole-bone anchor dropped
 
-Per-system toolbar:
+Each bone has a "whole-bone" `.t` anchor (`Femur.t` → labelText `Femur`). We drop it: `AnatomyScene` filters anchors whose `text` equals the owning Part's `name_en`/`name_lat`, so the active card's name isn't duplicated as a subpart.
 
-- `+` → `expandLayer(systemId)`: gather every neighbour of `[active.id, ...extras]` in that system not already selected, add all to `extras`, push array onto `layerStacks[systemId]`. No-op when frontier empty.
-- `−` → `collapseLayer(systemId)`: pop top, remove ids from `extras` and `labelsByPartId`. Disabled when stack empty.
+### Connector lines — not rendered
 
-Each system has an independent stack. Manual ticks/unticks don't push/pop. Stacks reset on `freshSearch`, `clearAll`, `clearExtras`, `focusFromNeighbor` - moving the centre invalidates BFS layers.
+`-line`/`-lin` Mesh nodes are kept hidden in every `SystemLayer` visibility pass (the leader-line look was removed in favour of the hover region glow). `collectAnchors` still reads their geometry to derive each landmark's `surface` point. The shared `getSystemMaterials().line` material is still assigned (harmless) but nothing shows it.
 
-#### Same-system vs cross-system extras
+### Neighbours — per-system stepper anchored to the active part
 
-`<AnatomyScene>` splits `extras`:
+`tools/export_to_glb.py → write_neighbors()` precomputes 30 nearest parts per part by **AABB-to-AABB closest-point distance** (insertions skipped both sides). Output `public/models/parts-neighbors.json` (~6 MB, lazy).
 
-- **Same-system extras** flow into `<SystemModel>` as `sameSystemExtras`. After isolation, each is re-enabled and its anchors collected with `collectAnchors(extra, 'extra', extraPartId)`. Piggy-back on the active scene graph.
-- **Cross-system extras** each render as `<ExtraPart>` which `useGLTF(otherSystem.glb)`, **clones the scene** (`scene.clone(true)`), runs isolation against the clone, emits anchors.
+`Viewer.activeNeighbors` = `neighbors[active.id]` sorted nearest→farthest (the active part only — **not** the old shifting union of all extras; this makes stepping predictable). `<NeighborsPanel>` groups them by system into tabs; the selected tab shows `Prikazano N / total` with `− / +`:
 
-Anchors are aggregated into one keyed dict, then flattened. Each carries `origin` (`'active'|'extra'`) + `partId`. `fitOrthoToObject` for the active includes same-system extras in its bbox; cross-system aren't (re-fit via Centriraj).
+- `+` → `stepSystem(sys, 1)`: add the next `STEP` (6) nearest of that system not yet in `extras`. Disabled at `N === total`.
+- `−` → `stepSystem(sys, -1)`: remove the `STEP` farthest currently shown (and their labels). Disabled at `N === 0`.
+
+Each system steps independently. The list keeps per-part checkboxes (fine-tune add/remove), eye (labels), and crosshair (promote to active → `focusFromNeighbor`, previous active demoted to extra). Instant because reveal is just `.visible` flips (see rendering architecture). The old `layerStacks` BFS-frontier model and `expandLayer`/`collapseLayer` are gone.
 
 #### Click-to-focus in 3D
 
-`AnatomyScene` builds `partsByName` from `catalog.parts` (key = `sanitizeNodeName(part.id)`), forwards a stable `handleObjectClick(obj)` to `<SystemModel>` and each `<ExtraPart>`. They call it from `onClick` on `<primitive>` after `e.stopPropagation()`. It walks parents to find a catalog Part. **Important**: gates on `part.id === activePartId || extras.has(part.id)` - three.js's raycaster doesn't filter by `visible`, so without this gate hidden meshes would still be clickable.
-
-### Per-part labels
-
-`labelsByPartId: Set<string>` in `Viewer.tsx`, default empty. Mutated by:
-
-- Eye buttons on the active card and on each ticked neighbour row.
-- `clearExtras`, `freshSearch`, `clearAll`, `collapseLayer` clean up entries.
-
-`<AnatomyScene>` filters `visibleAnchors` by `labelsByPartId.has(a.partId)` - independent of active/extra status. Each `LandmarkAnchor` carries `partId` (stamped by `collectAnchors(target, origin, partId)`). Chips render as drei `<Html>` with `bg-surface/70 backdrop-blur-sm border-border/60 text-[10px]`.
-
-#### Whole-bone anchor + connector dropped
-
-Z-Anatomy FBX includes a "whole-bone" `.t` anchor on each bone (`Femur.t` with labelText `Femur`) plus `Femur-line`. We drop these - the active card already names the bone and the chunky connector is disruptive. `AnatomyScene` filters anchors whose `text` matches the owning Part's `name_en`/`name_lat` (case-insensitive) and computes `wholeBoneLineNames: Set<string>` passed to `SystemModel`/`ExtraPart`; their line-visibility effects always set `visible = false` on those mesh names. Subpart connectors still toggle normally.
-
-### Connector lines
-
-`-line`/`-lin`-prefixed Mesh nodes that are descendants of an active/extra target stay visible during isolation **iff that part's labels are on**. Material is shared `MeshBasicMaterial({ color: 0x6b6b6b, opacity: 0.25, transparent, depthWrite: false })`. Geometry is non-uniformly **scaled per-mesh** by `thinAxisAligned(m, 0.2)`: longest axis stays 1, others shrink 5×.
+`resolvePart(obj)` (in `AnatomyScene`, shared by click + hover) walks parents to a catalog Part keyed by `sanitizeNodeName(part.id)`, gated on `active/extra`. Click → `focusFromNeighbor`.
 
 ### Mesh thinning for placeholder geometry
 
-Some parts (under `nerves`, `vessels`, `insertions`) export as fat cylindrical bars or flat plates instead of thin sheets/wires (e.g. Tentorium cerebelli as a yellow rectangular bar). `thinIfElongated(m, systemId)` runs after the system tint is assigned. Triggers when `max/med > maxOverMed` (wire-like) OR `med/min > medOverMin` (plate-like). Per-system in `THIN_THRESHOLDS`: `nerves/vessels/insertions = 4/3` aggressive; `skeleton/muscles/organs/joints/regions = 14/6` conservative (femur untouched). Both non-longest axes scaled to `target = clamp(max * 0.01, 0.03, 0.3)`. `fitOrthoToObject` excludes `-line` from the bbox.
+Some FBX-sourced parts (now only `insertions`) export as fat cylindrical bars or flat plates instead of thin sheets/wires. `thinIfElongated(m, systemId)` (now in `src/lib/viewer/thin.ts`, used by `SystemLayer`) runs when materials are assigned. Triggers when `max/med > maxOverMed` (wire-like) OR `med/min > medOverMin` (plate-like). Per-system `THIN_THRESHOLDS`: `insertions = 4/3` aggressive; solids `= 14/6`. Both non-longest axes scaled to `target = clamp(max * 0.01, 0.03, 0.3)`.
+
+**`nerves` and `vessels` early-return from `thinIfElongated`** — they ship as real thin curve-tubes (see "Vessels & nerves geometry" below); the `0.03` floor would *re-fatten* genuine 1 mm tubes to 3 cm. `/viewer` uses the single `thin.ts` copy; `agent/InlineAnatomy3D.tsx` and `quiz/PartPreview.tsx` still carry their own copies (keep the nerves/vessels guard in those if you touch them).
 
 ### `/docs` "Na ovoj stranici" 3D side-rail
 
@@ -321,7 +305,7 @@ The panel never returns `null` once a doc is open. When current page has zero ca
 
 ### Materials
 
-FBX→glTF strips materials. `SystemModel.tsx` assigns one `MeshStandardMaterial` per system at runtime, tinted by `system.tint`. Defaults: bones ivory, muscles red, vessels crimson, nerves yellow, organs pink, joints tan, regions blue-grey.
+FBX→glTF strips materials; the viewer tints at runtime. Tints (`system.tint`): bones ivory, muscles red, vessels crimson, nerves yellow, organs pink, joints tan, regions blue-grey. See "Materials — one shared set per system" above for how `SystemLayer` assigns them (one shared `solid` per system, not per mesh).
 
 ### Regenerating .glb files
 
@@ -331,6 +315,29 @@ blender --background --python tools/export_to_glb.py
 ```
 
 Outputs `public/models/glb/<system>.glb` and `public/models/parts-catalog.json`. Re-run only when FBX sources change. Optional: `gltfpack -cc -i in.glb -o in.glb`.
+
+**Exception — `nerves.glb` and `vessels.glb` are NOT regenerated by this script.** Re-running `export_to_glb.py` overwrites them with the broken fat-bar geometry; re-run `export_vessels_nerves_from_blend.py` (below) afterwards to restore the good versions.
+
+### Vessels & nerves geometry (sourced from the Z-Anatomy blend, not FBX)
+
+In the Unity FBX, vessels and nerves are baked solid meshes — and badly: FBX can't store curves, so the original Z-Anatomy CURVE objects (thin tubes with a ~0.5 mm round bevel) became fat solid bars 15-160 mm thick. `/viewer` rendered them as grotesquely thick, "elongated" blobs (e.g. the abdominal aorta as a rectangular column, intercostal nerves as one giant slab).
+
+Fix: `nerves.glb` and `vessels.glb` are re-exported **straight from the upstream `Startup.blend`** (`../Models-of-human-anatomy/Z-Anatomy.zip`), reading the curves' evaluated (beveled) geometry so the tubes stay thin. Object names are preserved, so `parts-catalog.json` / `parts-neighbors.json` keep matching (≈93 % vessels / ≈96 % nerves catalog IDs resolve; the rest are degenerate entries). The blend is in the same coordinate space as the FBX skeleton, and `export_yup=True` applies the same Z-up→Y-up swap, so output lands on `skeleton.glb` exactly (verified: `Femur.l` matches to the mm) — cross-system extras (e.g. sciatic nerve + femur) align with no correction.
+
+```bash
+# one-time: extract the master blend from the upstream repo
+cd ../Models-of-human-anatomy && unzip -o Z-Anatomy.zip "Z-Anatomy/Startup.blend" -d /tmp/za
+cd ../anatomed-web
+blender --background --python tools/export_vessels_nerves_from_blend.py -- \
+    /tmp/za/Z-Anatomy/Startup.blend  public/models/glb  1.0 2 6
+# then bump the ?v= cache-buster on the nerves/vessels entries in parts-catalog.json
+```
+
+Trailing args after the blend path + out dir: `bevel_mult` (tube thickness ×, default 1.0), `bevel_res` (ring segments, default 2 — sub-mm tubes don't need more), `res_u` (path-sample cap, default 6). The last two keep file size sane (~30 MB each vs ~80 MB at full res). Notes:
+
+- The exporter **flattens the hierarchy** (each part is an independent root), so isolating e.g. "Abdominal aorta" shows just that vessel, not its whole branch tree — consistent with how bones isolate. Use the neighbours panel / layer-expand to add related vessels.
+- Auxiliary Z-Anatomy objects (`.i/.j/.g/.s/.t` suffixes = helper meshes + FONT labels) are excluded. Landmark `.t` label anchors are therefore dropped for these two systems (they're mostly used on bones anyway).
+- `nerves.glb` size is dominated by solid CNS/sense-organ meshes (brain, spinal cord), not curves, so it shrinks less than `vessels.glb`.
 
 ### FBX transform sanitizer (`sanitize_transforms()`)
 

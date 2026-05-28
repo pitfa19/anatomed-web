@@ -78,9 +78,35 @@ export function collectAnchors(
     if (typeof text !== 'string' || text.length === 0) return;
     const pos = new THREE.Vector3();
     o.getWorldPosition(pos);
-    out.push({ key: o.uuid, text, position: pos, origin, partId });
+    out.push({ key: o.uuid, text, position: pos, surface: surfacePoint(o, pos), origin, partId });
   });
   return out;
+}
+
+/** The landmark's point on the bone surface = the far end of its `-line`
+ *  connector (the `.t` anchor sits off the bone at the label; the connector
+ *  runs from there to the surface). Returns the connector vertex farthest from
+ *  the label anchor; falls back to the anchor itself if there's no connector. */
+function surfacePoint(anchorNode: THREE.Object3D, anchorWorld: THREE.Vector3): THREE.Vector3 {
+  let best = anchorWorld.clone();
+  let bestD = -1;
+  const v = new THREE.Vector3();
+  anchorNode.traverse((c) => {
+    const m = c as THREE.Mesh;
+    if (!m.isMesh || !c.name.includes(LIN_TOKEN)) return;
+    const pos = m.geometry.attributes.position as THREE.BufferAttribute | undefined;
+    if (!pos) return;
+    m.updateWorldMatrix(true, false);
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld);
+      const d = v.distanceToSquared(anchorWorld);
+      if (d > bestD) {
+        bestD = d;
+        best.copy(v);
+      }
+    }
+  });
+  return best;
 }
 
 export function applyMultiIsolation(

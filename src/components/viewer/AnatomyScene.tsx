@@ -3,76 +3,100 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { Html, OrbitControls, OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import SystemModel, { type FitInfo, type SystemModelHandle } from './SystemModel';
-import ExtraPart from './ExtraPart';
+import SystemLayer from './SystemLayer';
+import CameraRig, { type CameraRigHandle } from './CameraRig';
+import RegionHighlight from './RegionHighlight';
 import { sanitizeNodeName } from '../../lib/viewer/isolate';
-import type { LandmarkAnchor, Part, PartsCatalog, SystemMeta } from '../../lib/viewer/types';
+import type { FitInfo } from '../../lib/viewer/fit';
+import type { LandmarkAnchor, Part, PartsCatalog, SystemId, SystemMeta } from '../../lib/viewer/types';
 
 export interface AnatomySceneHandle {
   recenter: () => void;
 }
 
 interface Props {
-  system: SystemMeta | null;
   activePartId: string | null;
   catalog: PartsCatalog;
   extras: ReadonlySet<string>;
   /** Set of partIds whose landmark labels (and connector lines) should be
-   *  rendered. Anything not in this set is hidden - applies to active and
-   *  every extra alike. */
+   *  rendered. Anything not in this set is hidden. */
   labelsByPartId: ReadonlySet<string>;
   /** Called when the user clicks a 3D part. Same semantics as clicking a
    *  Part in the left "Odabrano" panel. */
   onPartClick: (part: Part) => void;
 }
 
+interface SystemRender {
+  system: SystemMeta;
+  visibleParts: Set<string>;
+  activePartId: string | null;
+  systemPartIds: string[];
+}
+
 const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene(
-  { system, activePartId, catalog, extras, labelsByPartId, onPartClick },
+  { activePartId, catalog, extras, labelsByPartId, onPartClick },
   ref,
 ) {
-  // Anchors keyed by source: 'active' = SystemModel (which now also contains
-  // same-system extras' anchors); 'extra:<partId>' = each cross-system ExtraPart.
-  const [anchorsBySrc, setAnchorsBySrc] = useState<Record<string, LandmarkAnchor[]>>({});
-  const modelRef = useRef<SystemModelHandle>(null);
+  const [anchorsBySystem, setAnchorsBySystem] = useState<Record<string, LandmarkAnchor[]>>({});
+  const rigRef = useRef<CameraRigHandle>(null);
   const fitInfoRef = useRef<FitInfo | null>(null);
+  const rootsRef = useRef(new Map<SystemId, THREE.Object3D>());
 
   useImperativeHandle(ref, () => ({
-    recenter: () => modelRef.current?.recenter(),
+    recenter: () => rigRef.current?.recenter(),
   }), []);
 
-  // Split extras into same-system (handled by the active SystemModel) and
-  // cross-system (each rendered in its own ExtraPart).
-  const { sameSystemExtras, crossSystemExtras } = useMemo(() => {
-    const same = new Set<string>();
-    const cross: Part[] = [];
-    if (!system) return { sameSystemExtras: same, crossSystemExtras: cross };
-    const byId = new Map<string, Part>();
-    for (const p of catalog.parts) byId.set(p.id, p);
-    for (const id of extras) {
-      const p = byId.get(id);
-      if (!p) continue;
-      if (p.system === system.id) same.add(id);
-      else cross.push(p);
+  // Catalog part ids grouped by system (stable for the catalog lifetime).
+  const partIdsBySystem = useMemo(() => {
+    const m = new Map<SystemId, string[]>();
+    for (const p of catalog.parts) {
+      const arr = m.get(p.system) ?? [];
+      arr.push(p.id);
+      m.set(p.system, arr);
     }
-    return { sameSystemExtras: same, crossSystemExtras: cross };
-  }, [extras, system, catalog]);
+    return m;
+  }, [catalog]);
 
-  // Index parts by id so we can match an anchor's `text` against its owning
-  // part's display name to drop the "whole-bone" label (e.g. a "Femur"
-  // anchor on the Femur part - we only want subpart labels).
   const partsById = useMemo(() => {
     const m = new Map<string, Part>();
     for (const p of catalog.parts) m.set(p.id, p);
     return m;
   }, [catalog]);
 
-  // Aggregated anchor list - flattened from per-source slices, then filtered
-  // per-part against `labelsByPartId`, with the whole-bone anchor dropped.
-  const visibleAnchors = useMemo(() => {
+  // One SystemLayer per system that has ≥1 visible part (active + extras).
+  const systemRenders = useMemo<SystemRender[]>(() => {
+    const bySystem = new Map<SystemId, Set<string>>();
+    const add = (id: string) => {
+      const p = partsById.get(id);
+      if (!p) return;
+      let s = bySystem.get(p.system);
+      if (!s) { s = new Set(); bySystem.set(p.system, s); }
+      s.add(id);
+    };
+    if (activePartId) add(activePartId);
+    for (const id of extras) add(id);
+
+    const activeSystem = activePartId ? partsById.get(activePartId)?.system ?? null : null;
+    const out: SystemRender[] = [];
+    for (const [sysId, visibleParts] of bySystem) {
+      const system = catalog.systems.find((s) => s.id === sysId);
+      if (!system) continue;
+      out.push({
+        system,
+        visibleParts,
+        activePartId: sysId === activeSystem ? activePartId : null,
+        systemPartIds: partIdsBySystem.get(sysId) ?? [],
+      });
+    }
+    return out;
+  }, [activePartId, extras, catalog, partsById, partIdsBySystem]);
+
+  // Aggregate anchors across systems, then drop the whole-bone anchor (its text
+  // equals the owning part's own name — we only want subpart labels).
+  const anchors = useMemo(() => {
     const flat: LandmarkAnchor[] = [];
-    for (const list of Object.values(anchorsBySrc)) flat.push(...list);
+    for (const list of Object.values(anchorsBySystem)) flat.push(...list);
     return flat.filter((a) => {
-      if (!labelsByPartId.has(a.partId)) return false;
       const part = partsById.get(a.partId);
       if (part) {
         const text = a.text.trim().toLowerCase();
@@ -81,89 +105,150 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
       }
       return true;
     });
-  }, [anchorsBySrc, labelsByPartId, partsById]);
+  }, [anchorsBySystem, partsById]);
 
-  // Cache per-srcKey handlers so the function identity passed to SystemModel /
-  // ExtraPart is stable across renders. Without this, every render created a
-  // fresh `onAnchors` function, which re-fired SystemModel's isolation effect,
-  // which called `fitOrthoToObject` (resetting zoom and pan to fit) - making
-  // it impossible for the user to zoom or move away from center.
-  const handlersRef = useRef(new Map<string, (a: LandmarkAnchor[]) => void>());
-  const getSrcAnchors = useCallback((srcKey: string) => {
-    let fn = handlersRef.current.get(srcKey);
+  // Always-on name chips render only for parts whose labels are toggled on.
+  const chipAnchors = useMemo(
+    () => anchors.filter((a) => labelsByPartId.has(a.partId)),
+    [anchors, labelsByPartId],
+  );
+  // The active part's subpart anchors (with bone-surface points) drive the
+  // hover region-highlight — available regardless of the labels toggle.
+  const activeAnchors = useMemo(
+    () => (activePartId ? anchors.filter((a) => a.partId === activePartId) : []),
+    [anchors, activePartId],
+  );
+
+  // Stable per-system anchor handlers so SystemLayer effect identities don't
+  // churn (a fresh function would re-fire its visibility/anchor effect).
+  const anchorHandlersRef = useRef(new Map<SystemId, (a: LandmarkAnchor[]) => void>());
+  const getAnchorHandler = useCallback((sysId: SystemId) => {
+    let fn = anchorHandlersRef.current.get(sysId);
     if (!fn) {
       fn = (a: LandmarkAnchor[]) => {
-        setAnchorsBySrc((prev) => {
-          if (a.length === 0 && !(srcKey in prev)) return prev;
-          return { ...prev, [srcKey]: a };
+        setAnchorsBySystem((prev) => {
+          if (a.length === 0 && !(sysId in prev)) return prev;
+          return { ...prev, [sysId]: a };
         });
       };
-      handlersRef.current.set(srcKey, fn);
+      anchorHandlersRef.current.set(sysId, fn);
     }
     return fn;
   }, []);
 
-  // Stable onFit handler - same reasoning as above. The inline arrow form was
-  // a fresh ref every render, also re-firing the isolation/fit effect.
-  const handleFit = useCallback((info: FitInfo | null) => {
-    fitInfoRef.current = info;
-  }, []);
+  // Prune anchors for systems no longer rendered.
+  useEffect(() => {
+    const live = new Set(systemRenders.map((r) => r.system.id as string));
+    setAnchorsBySystem((prev) => {
+      let changed = false;
+      const next: Record<string, LandmarkAnchor[]> = {};
+      for (const [k, v] of Object.entries(prev)) {
+        if (live.has(k)) next[k] = v;
+        else changed = true;
+      }
+      return changed ? next : prev;
+    });
+  }, [systemRenders]);
 
-  // Lookup table from sanitized GLB node name to catalog Part. Used by the
-  // 3D click handler to translate `event.object` into a Part.
+  // Lookup from sanitized GLB node name to catalog Part for click resolution.
   const partsByName = useMemo(() => {
     const m = new Map<string, Part>();
     for (const p of catalog.parts) m.set(sanitizeNodeName(p.id), p);
     return m;
   }, [catalog]);
 
-  // Sanitized names of every "whole-bone" connector mesh - the `-line` mesh
-  // paired with the part's own labelText (e.g. "Femur-line" on the Femur).
-  // We never want to render these: the whole-bone label is filtered out of
-  // `visibleAnchors`, so the connector would dangle into empty space.
-  const wholeBoneLineNames = useMemo(() => {
-    const s = new Set<string>();
-    for (const p of catalog.parts) {
-      s.add(sanitizeNodeName(p.name_en) + '-line');
-      if (p.name_lat) s.add(sanitizeNodeName(p.name_lat) + '-line');
-    }
-    return s;
-  }, [catalog]);
-
-  // Walk the clicked object's parents until we find a node whose name matches
-  // a catalog Part. Only act if the part is currently rendered (active or
-  // toggled on as an extra) - three.js raycaster hits hidden meshes too, so
-  // without this gate the user could focus parts that aren't visible.
-  const handleObjectClick = useCallback((obj: THREE.Object3D) => {
+  // Walk a clicked/hovered object up to the nearest node matching a catalog
+  // Part. Returns the Part only if it's currently rendered (active or an extra)
+  // — the raycaster skips hidden meshes, but a visible mesh can resolve to a
+  // non-selected ancestor, so we gate.
+  const resolvePart = useCallback((obj: THREE.Object3D): Part | null => {
     let cur: THREE.Object3D | null = obj;
     while (cur) {
       const part = partsByName.get(cur.name);
       if (part) {
-        if (part.id === activePartId || extras.has(part.id)) {
-          onPartClick(part);
-        }
-        return;
+        return part.id === activePartId || extras.has(part.id) ? part : null;
       }
       cur = cur.parent;
     }
-  }, [partsByName, onPartClick, activePartId, extras]);
+    return null;
+  }, [partsByName, activePartId, extras]);
 
-  // Drop anchors for cross-system extras that are no longer mounted.
-  useEffect(() => {
-    setAnchorsBySrc((prev) => {
-      const allowed = new Set(['active', ...crossSystemExtras.map((p) => `extra:${p.id}`)]);
-      let changed = false;
-      const next: Record<string, LandmarkAnchor[]> = {};
-      for (const [k, v] of Object.entries(prev)) {
-        if (allowed.has(k)) next[k] = v;
-        else changed = true;
+  const handleObjectClick = useCallback((obj: THREE.Object3D) => {
+    const part = resolvePart(obj);
+    if (part) onPartClick(part);
+  }, [resolvePart, onPartClick]);
+
+  // Hover. The name shows in a cursor-following tooltip (text written straight
+  // to the DOM to avoid a re-render per pointermove). When the cursor is over
+  // the ACTIVE part near a labeled landmark's bone-surface point, that small
+  // region glows (`hoverRegion`) and the tooltip shows the subpart name;
+  // otherwise the tooltip shows the whole-part name (no mesh highlight).
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [hoverRegion, setHoverRegion] = useState<THREE.Vector3 | null>(null);
+  const SNAP_DIST = 0.035; // m — how close the cursor must be to snap to a subpart
+  const handleHover = useCallback(
+    (obj: THREE.Object3D | null, ev: PointerEvent | null, point: THREE.Vector3 | null) => {
+      const tip = tooltipRef.current;
+      const part = obj ? resolvePart(obj) : null;
+      if (!part || !ev) {
+        if (tip) tip.style.display = 'none';
+        setHoverRegion((r) => (r === null ? r : null));
+        return;
       }
-      return changed ? next : prev;
-    });
-  }, [crossSystemExtras]);
+      // Subpart snap: nearest active-part landmark surface point to the hit.
+      let label: string | null = null;
+      let region: THREE.Vector3 | null = null;
+      if (part.id === activePartId && point) {
+        let bestD = SNAP_DIST * SNAP_DIST;
+        for (const a of activeAnchors) {
+          if (!a.surface) continue;
+          const d = a.surface.distanceToSquared(point);
+          if (d < bestD) {
+            bestD = d;
+            label = a.text;
+            region = a.surface;
+          }
+        }
+      }
+      if (tip) {
+        tip.textContent =
+          label ??
+          (part.name_lat && part.name_lat !== part.name_en
+            ? `${part.name_en} · ${part.name_lat}`
+            : part.name_en);
+        tip.style.left = `${ev.clientX + 14}px`;
+        tip.style.top = `${ev.clientY + 14}px`;
+        tip.style.display = 'block';
+      }
+      setHoverRegion((prev) => (prev === region ? prev : region));
+    },
+    [resolvePart, activePartId, activeAnchors],
+  );
+
+  const registerRoot = useCallback((sysId: SystemId, root: THREE.Object3D | null) => {
+    if (root) rootsRef.current.set(sysId, root);
+    else rootsRef.current.delete(sysId);
+  }, []);
+
+  const getRoots = useCallback(() => Array.from(rootsRef.current.values()), []);
+  const handleFit = useCallback((info: FitInfo | null) => {
+    fitInfoRef.current = info;
+  }, []);
+
+  const fitKey = useMemo(() => {
+    const sys = systemRenders.map((r) => r.system.id).sort().join(',');
+    const ex = Array.from(extras).sort().join(',');
+    return `${activePartId ?? ''}|${ex}|${sys}`;
+  }, [systemRenders, extras, activePartId]);
 
   return (
-    <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+    <div className="relative h-full w-full">
+      <div
+        ref={tooltipRef}
+        className="pointer-events-none fixed z-50 hidden whitespace-nowrap rounded-md border border-border/70 bg-surface/95 px-2 py-1 text-xs font-medium text-text-strong shadow-lg backdrop-blur"
+        style={{ left: 0, top: 0 }}
+      />
+      <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
       <ambientLight intensity={0.7} />
       <directionalLight position={[5, 10, 5]} intensity={0.85} />
       <directionalLight position={[-5, -3, -5]} intensity={0.3} />
@@ -182,60 +267,48 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
       <PanClamp fitInfoRef={fitInfoRef} />
 
       <Suspense fallback={null}>
-        {system ? (
-          <>
-            <SystemModel
-              ref={modelRef}
-              system={system}
-              activePartId={activePartId}
-              sameSystemExtras={sameSystemExtras}
-              labelsByPartId={labelsByPartId}
-              wholeBoneLineNames={wholeBoneLineNames}
-              onAnchors={getSrcAnchors('active')}
-              onFit={handleFit}
-              onObjectClick={handleObjectClick}
-            />
-            {crossSystemExtras.map((p) => {
-              const sys = catalog.systems.find((s) => s.id === p.system);
-              if (!sys) return null;
-              return (
-                <ExtraPart
-                  key={p.id}
-                  partId={p.id}
-                  system={sys}
-                  labelsOn={labelsByPartId.has(p.id)}
-                  wholeBoneLineNames={wholeBoneLineNames}
-                  onAnchors={getSrcAnchors(`extra:${p.id}`)}
-                  onObjectClick={handleObjectClick}
-                />
-              );
-            })}
-            {visibleAnchors.map((a) => (
-              <Html
-                key={a.key}
-                position={a.position}
-                center
-                zIndexRange={[10, 0]}
-                style={{ pointerEvents: 'none', userSelect: 'none' }}
-              >
-                <div className="whitespace-nowrap rounded-md border border-border/60 bg-surface/70 px-1.5 py-0.5 text-[10px] text-text-strong shadow-sm backdrop-blur-sm">
-                  {a.text}
-                </div>
-              </Html>
-            ))}
-          </>
-        ) : null}
+        {systemRenders.map((r) => (
+          <SystemLayer
+            key={r.system.id}
+            system={r.system}
+            systemPartIds={r.systemPartIds}
+            visibleParts={r.visibleParts}
+            activePartId={r.activePartId}
+            labelsByPartId={labelsByPartId}
+            onAnchors={getAnchorHandler(r.system.id)}
+            onObjectClick={handleObjectClick}
+            onObjectHover={handleHover}
+            registerRoot={registerRoot}
+          />
+        ))}
+        <CameraRig ref={rigRef} fitKey={fitKey} getRoots={getRoots} onFit={handleFit} />
+        {/* Hovering a labeled region of the active bone glows just that spot. */}
+        {hoverRegion && <RegionHighlight position={hoverRegion} />}
+        {/* "Labels on" → always-on name chips at the label anchor positions. */}
+        {chipAnchors.map((a) => (
+          <Html
+            key={a.key}
+            position={a.position}
+            center
+            zIndexRange={[10, 0]}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            <div className="whitespace-nowrap rounded-md border border-border/60 bg-surface/70 px-1.5 py-0.5 text-[10px] text-text-strong shadow-sm backdrop-blur-sm">
+              {a.text}
+            </div>
+          </Html>
+        ))}
       </Suspense>
-    </Canvas>
+      </Canvas>
+    </div>
   );
 });
 
 export default AnatomyScene;
 
 /** Subscribes to OrbitControls 'change' and clamps `controls.target` to a
- *  sphere around the fit center. The radius is `fit.panRadius / camera.zoom`,
- *  so as the user zooms in the allowed pan distance shrinks proportionally -
- *  the part body always stays at least partially in view. */
+ *  sphere around the fit center, so the part body always stays partially in
+ *  view. Radius shrinks with zoom. */
 function PanClamp({ fitInfoRef }: { fitInfoRef: React.MutableRefObject<FitInfo | null> }) {
   const { controls } = useThree();
   useEffect(() => {

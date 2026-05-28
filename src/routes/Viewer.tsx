@@ -27,10 +27,6 @@ export default function Viewer() {
   /** Set of partIds for which to render landmark labels. Default empty -
    *  labels are off for every selected part on first toggle/search. */
   const [labelsByPartId, setLabelsByPartId] = useState<Set<string>>(new Set());
-  /** Per-system BFS expansion stacks. Each entry is the list of partIds that
-   *  one "+" click added at that step, so a "−" click can pop the latest
-   *  ring back out. Reset on active change / fresh search / clear. */
-  const [layerStacks, setLayerStacks] = useState<Record<string, string[][]>>({});
 
   useEffect(() => {
     loadNeighbors()
@@ -76,57 +72,53 @@ export default function Viewer() {
       }
       return new Set();
     });
-    setLayerStacks({});
   }
 
-  /** Push the next BFS layer of `systemId` neighbours onto `extras` and
-   *  record it on the per-system stack so a "−" click can undo this step. */
-  function expandLayer(systemId: SystemId) {
+  const STEP = 6;
+
+  /** Reveal more (dir +1) or fewer (dir −1) structures of one system, anchored
+   *  to the ACTIVE part's neighbour list (sorted by distance). Predictable and
+   *  per-system independent — `+` adds the next `STEP` nearest of that system
+   *  not yet shown; `−` removes the `STEP` farthest currently shown. */
+  function stepSystem(systemId: SystemId, dir: 1 | -1) {
     if (!neighbors || !active) return;
-    const selected = new Set<string>([active.id, ...extras]);
-    const frontier = new Set<string>();
-    for (const id of selected) {
-      const list = neighbors[id] ?? [];
-      for (const n of list) {
-        if (n.system === systemId && !selected.has(n.id)) frontier.add(n.id);
-      }
-    }
-    if (frontier.size === 0) return;
-    setExtras((prev) => {
-      const next = new Set(prev);
-      for (const id of frontier) next.add(id);
-      return next;
-    });
-    setLayerStacks((prev) => ({
-      ...prev,
-      [systemId]: [...(prev[systemId] ?? []), Array.from(frontier)],
-    }));
-  }
+    const ids = (neighbors[active.id] ?? [])
+      .filter((n) => n.system === systemId)
+      .map((n) => n.id); // already sorted nearest → farthest
+    if (ids.length === 0) return;
 
-  /** Pop the latest expansion ring for `systemId`. Removes those parts from
-   *  `extras` (and from labels). Manually-toggled extras and other systems'
-   *  layers are untouched. */
-  function collapseLayer(systemId: SystemId) {
-    const stack = layerStacks[systemId];
-    if (!stack || stack.length === 0) return;
-    const top = stack[stack.length - 1]!;
-    setExtras((prev) => {
-      const next = new Set(prev);
-      for (const id of top) next.delete(id);
-      return next;
-    });
-    setLabelsByPartId((prev) => {
-      let changed = false;
-      const next = new Set(prev);
-      for (const id of top) {
-        if (next.delete(id)) changed = true;
+    if (dir > 0) {
+      const toAdd: string[] = [];
+      for (const id of ids) {
+        if (!extras.has(id)) {
+          toAdd.push(id);
+          if (toAdd.length >= STEP) break;
+        }
       }
-      return changed ? next : prev;
-    });
-    setLayerStacks((prev) => ({
-      ...prev,
-      [systemId]: stack.slice(0, -1),
-    }));
+      if (toAdd.length === 0) return;
+      setExtras((prev) => {
+        const next = new Set(prev);
+        for (const id of toAdd) next.add(id);
+        return next;
+      });
+    } else {
+      const toRemove: string[] = [];
+      for (let i = ids.length - 1; i >= 0 && toRemove.length < STEP; i--) {
+        if (extras.has(ids[i]!)) toRemove.push(ids[i]!);
+      }
+      if (toRemove.length === 0) return;
+      setExtras((prev) => {
+        const next = new Set(prev);
+        for (const id of toRemove) next.delete(id);
+        return next;
+      });
+      setLabelsByPartId((prev) => {
+        let changed = false;
+        const next = new Set(prev);
+        for (const id of toRemove) if (next.delete(id)) changed = true;
+        return changed ? next : prev;
+      });
+    }
   }
 
   /** Promote a neighbor to active without clearing the rest of the scene.
@@ -143,7 +135,6 @@ export default function Viewer() {
       return n;
     });
     setActive(part);
-    setLayerStacks({});
     setDrawerOpen(false);
   }
 
@@ -152,7 +143,6 @@ export default function Viewer() {
   function freshSearch(part: Part) {
     setExtras(new Set());
     setLabelsByPartId(new Set());
-    setLayerStacks({});
     setActive(part);
     setDrawerOpen(false);
   }
@@ -167,7 +157,6 @@ export default function Viewer() {
   ) {
     setExtras(nextExtras);
     setLabelsByPartId(nextLabels);
-    setLayerStacks({});
     setActive(part);
   }
 
@@ -175,7 +164,6 @@ export default function Viewer() {
   function clearAll() {
     setExtras(new Set());
     setLabelsByPartId(new Set());
-    setLayerStacks({});
     setActive(null);
     setLandingQuery('');
     setDrawerOpen(false);
@@ -271,23 +259,17 @@ export default function Viewer() {
     return fuzzyMatch(landingQuery, pdfIndex.allTerms, 3);
   }, [pdfIndex, landingQuery]);
 
-  // Union of neighbors across active + every extra, deduped (min dist wins),
-  // excluding parts that are themselves selected. As more extras are toggled
-  // on, more neighbors become available - the "branching" model.
-  const unionedNeighbors = useMemo<Neighbor[]>(() => {
+  // The active part's neighbours, sorted nearest → farthest, excluding only the
+  // active itself. Anchored to the active part (not the shifting union of
+  // extras) so per-system stepping is predictable. Already-ticked parts stay in
+  // the list so they show ticked and can be unticked inline.
+  const activeNeighbors = useMemo<Neighbor[]>(() => {
     if (!neighbors || !active) return [];
-    const selected = new Set<string>([active.id, ...extras]);
-    const byId = new Map<string, Neighbor>();
-    for (const id of selected) {
-      const list = neighbors[id] ?? [];
-      for (const n of list) {
-        if (selected.has(n.id)) continue;
-        const prev = byId.get(n.id);
-        if (!prev || n.dist < prev.dist) byId.set(n.id, n);
-      }
-    }
-    return Array.from(byId.values()).sort((a, b) => a.dist - b.dist);
-  }, [neighbors, active, extras]);
+    return (neighbors[active.id] ?? [])
+      .filter((n) => n.id !== active.id)
+      .slice()
+      .sort((a, b) => a.dist - b.dist);
+  }, [neighbors, active]);
 
   if (error) {
     return (
@@ -489,15 +471,13 @@ export default function Viewer() {
           <NeighborsPanel
             active={active}
             catalog={catalog}
-            rows={unionedNeighbors}
+            rows={activeNeighbors}
             extras={extras}
             labelsByPartId={labelsByPartId}
-            layerStacks={layerStacks}
             onToggle={toggleExtra}
             onToggleLabels={toggleLabels}
             onFocus={focusFromNeighbor}
-            onExpandLayer={expandLayer}
-            onCollapseLayer={collapseLayer}
+            onStep={stepSystem}
           />
         )}
       </aside>
@@ -506,7 +486,6 @@ export default function Viewer() {
         <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-surface">
           <AnatomyScene
             ref={sceneRef}
-            system={activeSystem}
             activePartId={active.id}
             catalog={catalog}
             extras={extras}
