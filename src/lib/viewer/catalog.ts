@@ -13,6 +13,10 @@ export async function loadCatalog(): Promise<PartsCatalog> {
     const r = await fetch(CATALOG_URL);
     if (!r.ok) throw new Error(`parts-catalog.json missing: ${r.status}`);
     const data = (await r.json()) as PartsCatalog;
+    // Drop Z-Anatomy top-level group container nodes (e.g. "Skeletal system.g")
+    // — they're not real anatomical parts and otherwise pollute search results
+    // and the neighbours list.
+    data.parts = data.parts.filter((p) => !p.id.endsWith('.g'));
     cache = data;
     return data;
   })();

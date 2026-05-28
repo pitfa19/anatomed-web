@@ -217,27 +217,30 @@ A custom `<PanClamp>` listens to OrbitControls `change` and snaps `controls.targ
 
 Deep-linking `/viewer?part=<id>` can show a blank/half-framed canvas. Cause: `OrbitControls.update()` runs every frame and re-derives camera position from internal spherical state; on a fresh mount it hasn't settled (drei's `<OrthographicCamera makeDefault>` swaps the default camera once). Fix: `CameraRig` runs a `useFrame` post-fit loop calling the fit for the first **6 frames** after each `fitKey` change (runs after OrbitControls, overriding drift). `fitKey` includes `camera.uuid` so a StrictMode camera remount re-fits.
 
-### Hover → name tooltip + subpart region glow (NO mesh recolor)
+### Hover → name tooltip only (NO mesh recolor, NO subpart highlight)
 
-`SystemLayer` forwards r3f `onPointerMove`/`onPointerOut` to `AnatomyScene.handleHover(obj, ev, point)` (`point` = `e.point`, the world hit). `resolvePart` (shared with click; walks parents to a catalog node, gated on active/extra — raycaster already skips `visible===false`) gives the Part. The part **name** is written straight to a cursor-following `<div>` (a ref, not React state — no re-render per pointermove; lives in `AnatomyScene`'s wrapper, outside `<Canvas>`).
+`SystemLayer` forwards r3f `onPointerMove`/`onPointerOut` to `AnatomyScene.handleHover(obj, ev)`. `resolvePart` (shared with click; walks parents to a catalog node, gated on active/extra — raycaster already skips `visible===false`) gives the Part. The part **name** is written straight to a cursor-following `<div>` (a ref, not React state — no re-render per pointermove; lives in `AnatomyScene`'s wrapper, outside `<Canvas>`).
 
-**Whole parts are deliberately never recolored on hover** (an earlier full-bone blue tint was rejected). The only highlight is the subpart region glow below.
+**Whole parts are deliberately never recolored on hover** (an earlier full-bone blue tint was rejected), and there is **no subpart highlight on hover** — the earlier `RegionHighlight` glow disc was removed (it read as ugly). Subpart landmarks are revealed only via the labels toggle (chips + connector lines, below).
 
-### Landmark subparts — region glow on hover (`RegionHighlight`)
+### Landmark subparts — chips + connector lines on the labels toggle
 
-A bone's subparts (femur head/neck/condyles…) are NOT separate geometry — they're `<Landmark>.t` anchor nodes (`extras.labelText`) parented to the `.r` bone, each with a `-line` connector running to a point on the bone surface. `collectAnchors` (`isolate.ts`) returns each anchor's `position` (the `.t` label point) **and** `surface` (the connector's far vertex = the spot on the bone). `SystemLayer` always emits the **active** part's anchors (so this works with labels off).
+A bone's subparts (femur head/neck/condyles…) are NOT separate geometry — they're `<Landmark>.t` anchor nodes (`extras.labelText`) parented to the `.r` bone, each with a `-line` connector running to a point on the bone surface. `collectAnchors` (`isolate.ts`) returns each anchor's `position` (the `.t` label point) **and** `surface` (the connector's far vertex = the spot on the bone). `SystemLayer` emits the active part's anchors plus any part whose labels are on; the whole-bone anchor (text === the part's own name) is dropped in `AnatomyScene`.
 
-On hover over the active bone, `handleHover` finds the nearest active anchor `surface` within `SNAP_DIST` (0.035 m) of the hit `point`; if found, `<RegionHighlight>` (a flat single-color disc sprite in the app accent `#2f6df6`, `depthTest:false`, ~0.85 opacity) snaps to that surface point and the tooltip shows the subpart name. Otherwise the tooltip shows the whole-part name and nothing is marked. **No leader lines, no dots** (both removed — the earlier versions were rejected). Connector `-line` meshes are no longer rendered at all.
+When a part's labels are toggled on, `chipAnchors` (anchors filtered by `labelsByPartId`) render two things together:
 
-"Labels on" still renders always-on `<Html>` name chips at the `.t` positions for any part in `labelsByPartId` (`chipAnchors`) — the "names just on" option, independent of the hover disc.
+- **Name chips** — always-on `<Html>` chips at each `.t` `position`.
+- **Connector lines** — one `<lineSegments>` (built in `AnatomyScene` from each chip anchor's `surface` → `position`, grey `#6b6b6b` `LineBasicMaterial`, `opacity 0.5`, `depthWrite:false`) draws a thin leader from the bone surface to each chip. Degenerate anchors (no `-line` connector → `surface ≈ position`) are skipped. Keyed on the anchor-set so r3f rebuilds and disposes the buffer on change.
+
+Nothing renders on hover, and nothing renders when labels are off.
 
 #### Whole-bone anchor dropped
 
 Each bone has a "whole-bone" `.t` anchor (`Femur.t` → labelText `Femur`). We drop it: `AnatomyScene` filters anchors whose `text` equals the owning Part's `name_en`/`name_lat`, so the active card's name isn't duplicated as a subpart.
 
-### Connector lines — not rendered
+### Connector lines — drawn from anchor data, not the GLB `-line` meshes
 
-`-line`/`-lin` Mesh nodes are kept hidden in every `SystemLayer` visibility pass (the leader-line look was removed in favour of the hover region glow). `collectAnchors` still reads their geometry to derive each landmark's `surface` point. The shared `getSystemMaterials().line` material is still assigned (harmless) but nothing shows it.
+The raw `-line`/`-lin` GLB Mesh nodes stay hidden in every `SystemLayer` visibility pass (the shared `getSystemMaterials().line` material is still assigned to them, harmless). Instead, `collectAnchors` reads each `-line`'s geometry to derive the landmark's `surface` point, and `AnatomyScene` draws the visible leader as a single `<lineSegments>` from `surface` → chip `position` for every labeled chip anchor (see "Landmark subparts" above). This keeps the connector exactly aligned with the rendered chip and auto-excludes the whole-bone connector (its anchor is dropped before `chipAnchors`).
 
 ### Neighbours — per-system stepper anchored to the active part
 

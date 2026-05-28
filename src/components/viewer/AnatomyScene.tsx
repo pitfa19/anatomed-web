@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import SystemLayer from './SystemLayer';
 import CameraRig, { type CameraRigHandle } from './CameraRig';
-import RegionHighlight from './RegionHighlight';
 import { sanitizeNodeName } from '../../lib/viewer/isolate';
 import type { FitInfo } from '../../lib/viewer/fit';
 import type { LandmarkAnchor, Part, PartsCatalog, SystemId, SystemMeta } from '../../lib/viewer/types';
@@ -107,17 +106,24 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
     });
   }, [anchorsBySystem, partsById]);
 
-  // Always-on name chips render only for parts whose labels are toggled on.
+  // Name chips + their connector lines render only for parts whose labels are
+  // toggled on.
   const chipAnchors = useMemo(
     () => anchors.filter((a) => labelsByPartId.has(a.partId)),
     [anchors, labelsByPartId],
   );
-  // The active part's subpart anchors (with bone-surface points) drive the
-  // hover region-highlight — available regardless of the labels toggle.
-  const activeAnchors = useMemo(
-    () => (activePartId ? anchors.filter((a) => a.partId === activePartId) : []),
-    [anchors, activePartId],
-  );
+  // Thin grey leader lines from each labeled landmark's bone-surface point to
+  // its chip. Skips degenerate anchors (no `-line` connector → surface ===
+  // position). Keyed so r3f rebuilds (and disposes) the buffer on change.
+  const connectors = useMemo(() => {
+    const pts: number[] = [];
+    for (const a of chipAnchors) {
+      if (!a.surface || a.surface.distanceToSquared(a.position) < 1e-8) continue;
+      pts.push(a.surface.x, a.surface.y, a.surface.z, a.position.x, a.position.y, a.position.z);
+    }
+    if (pts.length === 0) return null;
+    return { positions: new Float32Array(pts), key: chipAnchors.map((a) => a.key).join(',') };
+  }, [chipAnchors]);
 
   // Stable per-system anchor handlers so SystemLayer effect identities don't
   // churn (a fresh function would re-fire its visibility/anchor effect).
@@ -178,51 +184,29 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
     if (part) onPartClick(part);
   }, [resolvePart, onPartClick]);
 
-  // Hover. The name shows in a cursor-following tooltip (text written straight
-  // to the DOM to avoid a re-render per pointermove). When the cursor is over
-  // the ACTIVE part near a labeled landmark's bone-surface point, that small
-  // region glows (`hoverRegion`) and the tooltip shows the subpart name;
-  // otherwise the tooltip shows the whole-part name (no mesh highlight).
+  // Hover → cursor-following name tooltip (text written straight to the DOM to
+  // avoid a re-render per pointermove). No mesh/region highlight on hover —
+  // subpart landmarks are revealed via the labels toggle (chips + connector
+  // lines), not on hover.
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [hoverRegion, setHoverRegion] = useState<THREE.Vector3 | null>(null);
-  const SNAP_DIST = 0.035; // m — how close the cursor must be to snap to a subpart
   const handleHover = useCallback(
-    (obj: THREE.Object3D | null, ev: PointerEvent | null, point: THREE.Vector3 | null) => {
+    (obj: THREE.Object3D | null, ev: PointerEvent | null) => {
       const tip = tooltipRef.current;
+      if (!tip) return;
       const part = obj ? resolvePart(obj) : null;
       if (!part || !ev) {
-        if (tip) tip.style.display = 'none';
-        setHoverRegion((r) => (r === null ? r : null));
+        tip.style.display = 'none';
         return;
       }
-      // Subpart snap: nearest active-part landmark surface point to the hit.
-      let label: string | null = null;
-      let region: THREE.Vector3 | null = null;
-      if (part.id === activePartId && point) {
-        let bestD = SNAP_DIST * SNAP_DIST;
-        for (const a of activeAnchors) {
-          if (!a.surface) continue;
-          const d = a.surface.distanceToSquared(point);
-          if (d < bestD) {
-            bestD = d;
-            label = a.text;
-            region = a.surface;
-          }
-        }
-      }
-      if (tip) {
-        tip.textContent =
-          label ??
-          (part.name_lat && part.name_lat !== part.name_en
-            ? `${part.name_en} · ${part.name_lat}`
-            : part.name_en);
-        tip.style.left = `${ev.clientX + 14}px`;
-        tip.style.top = `${ev.clientY + 14}px`;
-        tip.style.display = 'block';
-      }
-      setHoverRegion((prev) => (prev === region ? prev : region));
+      tip.textContent =
+        part.name_lat && part.name_lat !== part.name_en
+          ? `${part.name_en} · ${part.name_lat}`
+          : part.name_en;
+      tip.style.left = `${ev.clientX + 14}px`;
+      tip.style.top = `${ev.clientY + 14}px`;
+      tip.style.display = 'block';
     },
-    [resolvePart, activePartId, activeAnchors],
+    [resolvePart],
   );
 
   const registerRoot = useCallback((sysId: SystemId, root: THREE.Object3D | null) => {
@@ -282,8 +266,16 @@ const AnatomyScene = forwardRef<AnatomySceneHandle, Props>(function AnatomyScene
           />
         ))}
         <CameraRig ref={rigRef} fitKey={fitKey} getRoots={getRoots} onFit={handleFit} />
-        {/* Hovering a labeled region of the active bone glows just that spot. */}
-        {hoverRegion && <RegionHighlight position={hoverRegion} />}
+        {/* "Labels on" → thin grey connector lines from each landmark's bone
+            surface to its chip. */}
+        {connectors && (
+          <lineSegments key={connectors.key}>
+            <bufferGeometry>
+              <bufferAttribute attach="attributes-position" args={[connectors.positions, 3]} />
+            </bufferGeometry>
+            <lineBasicMaterial color="#6b6b6b" transparent opacity={0.5} depthWrite={false} />
+          </lineSegments>
+        )}
         {/* "Labels on" → always-on name chips at the label anchor positions. */}
         {chipAnchors.map((a) => (
           <Html

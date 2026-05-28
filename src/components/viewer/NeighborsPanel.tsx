@@ -177,7 +177,6 @@ export default function NeighborsPanel({
         {activeGroup.rows.map(({ neighbor, part }) => {
           const ticked = extras.has(part.id);
           const labelsOn = labelsByPartId.has(part.id);
-          const distCm = Math.round(neighbor.dist * 100);
           const sys = systemsById.get(neighbor.system);
           return (
             <li key={part.id}>
@@ -216,7 +215,6 @@ export default function NeighborsPanel({
                       </span>
                     )}
                   </span>
-                  <span className="shrink-0 text-[10px] text-text-muted">{distCm} cm</span>
                 </button>
                 {ticked && (
                   <button
