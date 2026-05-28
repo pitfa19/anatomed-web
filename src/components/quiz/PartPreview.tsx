@@ -81,6 +81,9 @@ function thinAxisAligned(m: THREE.Mesh, f: number) {
 }
 
 function thinIfElongated(m: THREE.Mesh, sid: SystemId) {
+  // nerves/vessels now ship as real thin curve-tubes (re-exported from the
+  // Z-Anatomy Startup.blend); collapsing them would re-fatten genuine geometry.
+  if (sid === 'nerves' || sid === 'vessels') return;
   if (!m.geometry.boundingBox) m.geometry.computeBoundingBox();
   const b = m.geometry.boundingBox;
   if (!b) return;

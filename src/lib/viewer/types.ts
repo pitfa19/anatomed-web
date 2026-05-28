@@ -34,7 +34,11 @@ export interface PartsCatalog {
 export interface LandmarkAnchor {
   key: string;
   text: string;
+  /** The `.t` label-anchor world position (off the bone, where a chip sits). */
   position: THREE.Vector3;
+  /** The landmark's point ON the bone surface (far end of its `-line`
+   *  connector). Used to snap the hover region-highlight to the actual spot. */
+  surface: THREE.Vector3;
   /** 'active' = belongs to the centered/isolated part. 'extra' = belongs to a
    *  part the user ticked in the neighbors panel. Kept for cleanup tracking,
    *  but per-part visibility is now driven by `partId` matched against

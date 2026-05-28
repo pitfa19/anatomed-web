@@ -263,6 +263,9 @@ function applyMiniTint(root: THREE.Object3D, tint: string, systemId: SystemId) {
 }
 
 function thinIfElongated(m: THREE.Mesh, systemId: SystemId) {
+  // nerves/vessels now ship as real thin curve-tubes (re-exported from the
+  // Z-Anatomy Startup.blend); collapsing them would re-fatten genuine geometry.
+  if (systemId === 'nerves' || systemId === 'vessels') return;
   if (m.geometry.boundingBox === null) m.geometry.computeBoundingBox();
   const b = m.geometry.boundingBox;
   if (!b) return;

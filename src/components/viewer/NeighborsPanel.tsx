@@ -15,16 +15,15 @@ interface Props {
   catalog: PartsCatalog;
   /** Precomputed union of neighbors across active + all extras, deduped by
    *  min distance, with selected parts already filtered out. */
+  /** The active part's neighbours, sorted nearest→farthest (includes ticked). */
   rows: Neighbor[];
   extras: Set<string>;
   labelsByPartId: ReadonlySet<string>;
-  /** Per-system BFS expansion stacks; depth = layerStacks[systemId].length. */
-  layerStacks: Record<string, string[][]>;
   onToggle: (partId: string) => void;
   onToggleLabels: (partId: string) => void;
   onFocus: (part: Part) => void;
-  onExpandLayer: (systemId: SystemId) => void;
-  onCollapseLayer: (systemId: SystemId) => void;
+  /** Reveal more (+1) / fewer (−1) of a system, anchored to the active part. */
+  onStep: (systemId: SystemId, dir: 1 | -1) => void;
 }
 
 interface Group {
@@ -38,12 +37,10 @@ export default function NeighborsPanel({
   rows,
   extras,
   labelsByPartId,
-  layerStacks,
   onToggle,
   onToggleLabels,
   onFocus,
-  onExpandLayer,
-  onCollapseLayer,
+  onStep,
 }: Props) {
   const t = useT();
   const partsById = useMemo(() => {
@@ -99,11 +96,10 @@ export default function NeighborsPanel({
   }
 
   const activeGroup = groups.find((g) => g.system.id === selected) ?? groups[0]!;
-  const layerDepth = (layerStacks[activeGroup.system.id] ?? []).length;
-  // Frontier === rows: `rows` already excludes selected parts, so a non-empty
-  // active group implies there's something to expand into.
-  const canExpand = activeGroup.rows.length > 0;
-  const canCollapse = layerDepth > 0;
+  const shownInSystem = activeGroup.rows.filter((r) => extras.has(r.part.id)).length;
+  const totalInSystem = activeGroup.rows.length;
+  const canExpand = shownInSystem < totalInSystem;
+  const canCollapse = shownInSystem > 0;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden">
@@ -148,13 +144,13 @@ export default function NeighborsPanel({
 
       <div className="flex items-center justify-between px-1">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">
-          {t('viewer.layer', { n: layerDepth })}
+          {t('viewer.shown', { n: shownInSystem, total: totalInSystem })}
           <span className="ml-1 text-text-muted/70 normal-case tracking-normal">· {activeGroup.system.label_hr}</span>
         </span>
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => onCollapseLayer(activeGroup.system.id)}
+            onClick={() => onStep(activeGroup.system.id, -1)}
             disabled={!canCollapse}
             title={t('viewer.collapseLayerTitle')}
             aria-label={t('viewer.collapseLayer')}
@@ -165,7 +161,7 @@ export default function NeighborsPanel({
           </button>
           <button
             type="button"
-            onClick={() => onExpandLayer(activeGroup.system.id)}
+            onClick={() => onStep(activeGroup.system.id, 1)}
             disabled={!canExpand}
             title={t('viewer.expandLayerTitle')}
             aria-label={t('viewer.expandLayer')}

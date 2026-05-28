@@ -18,14 +18,14 @@
       "id": "nerves",
       "label_en": "Nerves",
       "label_hr": "Živci",
-      "glb": "/models/glb/nerves.glb?v=36ff7f65",
+      "glb": "/models/glb/nerves.glb?v=0714f715",
       "tint": "#e6c84d"
     },
     {
       "id": "vessels",
       "label_en": "Vessels",
       "label_hr": "Krvne žile",
-      "glb": "/models/glb/vessels.glb?v=b96b9aa3",
+      "glb": "/models/glb/vessels.glb?v=21ebbc69",
       "tint": "#a4203c"
     },
     {
