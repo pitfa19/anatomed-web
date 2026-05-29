@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, X as XIcon } from 'lucide-react';
+import { ArrowLeft, Loader2, X as XIcon, Boxes } from 'lucide-react';
 import { loadCatalog, getSystem } from '../lib/viewer/catalog';
 import type { Part, PartsCatalog } from '../lib/viewer/types';
 import { gradeAnswer, type QuizAnswer, type QuizQuestion } from '../lib/quiz';
+import { REGION_LABEL_KEY } from '../lib/quizLabels';
 import {
   clearQuizSession,
   loadQuizSession,
@@ -58,10 +59,12 @@ export default function QuizGame() {
     return session.questions[session.currentIdx] ?? null;
   }, [session]);
 
+  // All quiz groups are skeleton bones for now; the system only supplies the
+  // glb + tint for the scene.
   const system = useMemo(() => {
-    if (!catalog || !session) return null;
-    return getSystem(catalog, session.config.systemId);
-  }, [catalog, session]);
+    if (!catalog) return null;
+    return getSystem(catalog, 'skeleton');
+  }, [catalog]);
 
   function handlePartClick(part: Part) {
     if (!session || !currentQ || phase !== 'guess') return;
@@ -136,8 +139,9 @@ export default function QuizGame() {
   const correctSoFar = session.answers.filter((a) => a.correct).length;
   const total = session.questions.length;
   const idx = session.currentIdx + 1;
-  // During reveal, show the correct part highlighted regardless of right/wrong.
-  const highlightPartId = phase === 'reveal' ? currentQ.canonicalId : null;
+  // During reveal, highlight the correct answer (both sides for paired bones)
+  // regardless of right/wrong.
+  const highlightPartIds = phase === 'reveal' ? [...currentQ.acceptableIds] : [];
   const flashTone =
     phase === 'reveal' && lastAnswer
       ? lastAnswer.correct
@@ -170,6 +174,9 @@ export default function QuizGame() {
       <div className="border-b border-border bg-bg px-4 py-3">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div>
+            <span className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-text-muted">
+              <Boxes size={11} /> {t(REGION_LABEL_KEY[currentQ.regionKey])}
+            </span>
             <p className="text-[10px] uppercase tracking-wider text-text-muted">
               {t('quiz.find')}
             </p>
@@ -196,8 +203,8 @@ export default function QuizGame() {
         <QuizScene
           system={system}
           catalog={catalog}
-          questionEpoch={session.currentIdx}
-          highlightPartId={highlightPartId}
+          groupMemberIds={currentQ.groupMemberIds}
+          highlightPartIds={highlightPartIds}
           onPartClick={handlePartClick}
         />
         {phase === 'reveal' && lastAnswer && (

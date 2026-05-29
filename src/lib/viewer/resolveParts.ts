@@ -82,7 +82,10 @@ const matchMetacarpus = (p: Part) =>
 
 const matchHandPhalanges = (p: Part) =>
   p.system === 'skeleton' &&
-  /^(Proximal|Middle|Distal) phalanx of (1st|2d|3rd|4th|5th) finger$/.test(
+  // The source data is inconsistent: the 3rd-finger distal phalanx is named
+  // "3d finger" while its middle/proximal use "3rd finger" - accept both so
+  // the middle finger's tip isn't dropped from the hand.
+  /^(Proximal|Middle|Distal) phalanx of (1st|2d|3rd|3d|4th|5th) finger$/.test(
     p.name_en,
   );
 

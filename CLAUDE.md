@@ -11,17 +11,17 @@ A React 19 + Vite 8 + Tailwind 4 prototype of an anatomy-study web app. Bilingua
 | `/` | Home / landing (scroll-reveal hero, bento feature tiles). |
 | `/docs` | PDF viewer for the 5 indexed skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe). Search bar + per-doc hit list + rendered PDF pages with highlight overlay + local-PDF upload. |
 | `/agent` | Streaming LLM chat assistant (anatomy-only, answers in the UI language) with two tools: `search_skripte` + `prikaz_3d`. Copy/Regenerate/Stop actions. |
-| `/revise` | Revision hub — picks **Theory** or **Practical**. Shows the XP/level/streak strip + today's due count. |
-| `/revise/teorija` | Theory: topics grouped by region with SRS due-badges, XP bar, Today card, My-decks card. |
+| `/revise` | Revision hub — picks **Theory** or **Practical**. Shows an overall learning-progress (mastery) bar + today's due count. |
+| `/revise/teorija` | Theory: topics grouped by region with SRS due-badges, a per-topic mastery bar (known/learning/new), Today card, My-decks card. |
 | `/revise/today` | Cross-topic due-card deck (Leitner SRS). |
 | `/revise/:topicId` | One topic's Q&A set (expand-to-grade). |
 | `/revise/my-decks`, `/revise/deck/:id`, `/revise/deck/:id/edit` | User-created decks (manual or AI-generated via `/api/decks/generate`). |
-| `/revise/praksa` (`/play`, `/results`) | Practical quiz — pick a count + system, then find-the-structure on the 3D model. |
+| `/revise/praksa` (`/play`, `/results`) | Practical "spotter" quiz — pick a count + **region** (hand/foot/spine/skull/mixed); each question isolates the **whole region** on the 3D model and you click the named structure inside it. |
 | `/viewer` | three.js anatomy viewer. Search a body part → load that part's system .glb → isolate just that part. |
 | `/login` | Username + password sign-in / sign-up. |
 | `/profile` | User profile: username + a daily AI-usage meter (tokens used today / `DAILY_TOKEN_LIMIT`, resets at UTC midnight). |
 
-> Legacy `/quiz*` paths redirect to `/revise/praksa*`. XP/streak live in `src/lib/xp.ts` (localStorage); SRS in `src/lib/srs.ts`.
+> Legacy `/quiz*` paths redirect to `/revise/praksa*`. Spaced repetition (Leitner) lives in `src/lib/srs.ts` (localStorage). There is **no XP/level/streak system** (removed); progress is shown as a "mastery" bar (known/learning/new) computed from the SRS boxes, and grading a card reports the next review interval.
 
 ## Building / running
 
@@ -508,7 +508,11 @@ type CardState = {
 };
 ```
 
-Box → next interval: `1d / 3d / 7d / 14d / 30d`. `Krivo` → box 1; `Teško` → `min(prev+1, 3)`; `Znam` → `min(prev+1, 5)`.
+Box → next interval: `1d / 3d / 7d / 14d / 30d`. `Krivo` → box 1; `Teško` → `min(prev+1, 3)`; `Znam` → `min(5, max(prev+1, KNOWN_BOX))` — reaches the "known" box (3) on the **first** grade so one "I know it" marks a card known (matches its "7+ days" hint), then advances 4 → 5.
+
+### Progress (mastery) — no XP
+
+There is **no XP/level/streak system** (removed as confusing — `lib/xp.ts` is gone). Progress is a "mastery" view derived straight from the Leitner boxes: `topicProgress()` (`srs.ts`) returns `{known, learning, fresh, due}` per topic, where **known = box ≥ `KNOWN_BOX` (3)**, learning = seen but below that, fresh = never graded. `reviseSummary.ts#loadDueSummary` aggregates this per topic + overall (`progress` map + `totals`). `<MasteryBar>` draws a segmented known/learning/new bar (overall on `/revise` + `/revise/teorija`, and per topic row). After grading, the walkers (`ReviseToday`, `DeckStudy`) show a "next review in N days" popup via `intervalDaysForBox(newBox)`. Don't re-add a points/level layer.
 
 ### Legacy migration
 
@@ -518,7 +522,9 @@ Old `pona_<topicId>_q<i>` boolean keys migrate to `box: 2` on first read in `mig
 
 | File | Role |
 |------|------|
-| `src/lib/srs.ts` | Pure Leitner: `loadCard`, `saveCard`, `gradeCard`, `isDue`, `dueCardsForTopic`, `dueCountForTopic`, `migrateLegacyKey`, `resetTopic`, deterministic `shuffle`. |
+| `src/lib/srs.ts` | Pure Leitner: `loadCard`, `saveCard`, `gradeCard`, `isDue`, `dueCardsForTopic`, `dueCountForTopic`, `migrateLegacyKey`, `resetTopic`, `shuffle`, plus `topicProgress`/`KNOWN_BOX`/`intervalDaysForBox` (mastery + next-review). |
+| `src/lib/reviseSummary.ts` | `loadDueSummary` → per-topic + overall `{known,learning,fresh,due}` (warms the topic cache). |
+| `src/components/revise/MasteryBar.tsx` | Segmented known/learning/new progress bar (replaced the old XP bar). |
 | `src/components/revise/GradeButtons.tsx` | Three pill buttons with hint label. |
 | `src/components/revise/DueBadge.tsx` | "X" pill, `null` when 0. |
 | `src/routes/ReviseToday.tsx` | Cross-topic walker. |
@@ -531,6 +537,34 @@ Old `pona_<topicId>_q<i>` boolean keys migrate to `box: 2` on first read in `mig
 - `QuestionsTab` keeps a `tick` counter to force the `dueOnly`-filtered list to recompute after each grade.
 - `Revise.tsx` lazy-loads each topic's question count via `loadReviseTopic` (cached) on mount - pre-warms the cache.
 - Source-chip deep links use `/docs?q=&doc=&page=`. `Question.source.doc` holds a short slug (`skripta_a1`) mapped to full PDF doc-name inside `QuestionsTab`/`ReviseToday`.
+
+## Practical quiz — spotter (`/revise/praksa`, `/play`, `/results`)
+
+A find-the-structure "spotter" quiz over the 3D skeleton. The lobby picks a **count** (5/10/20) and a **region**; each question **isolates the whole region** (camera-fit to it) and asks the player to **click** one named structure inside it. **Skeleton-only** for now — it's the only system with grouping data. (Legacy `/quiz*` redirect here; `Quiz.tsx`/`QuizGame.tsx`/`QuizResults.tsx` are the route components, still file-named `Quiz*` for history.)
+
+### Region/group model (`src/lib/quiz.ts`)
+
+- Regions: `hand | foot | spine | skull | mixed` (`QuizRegion`). A region's bones = the **union** of group aliases in `REGION_GROUPS`, resolved via `resolveQueryToParts` (the same `GROUP_SPECS` the agent/viewer use) — so the quiz adds **no** new anatomy data, just reuses the catalog group machinery. `mixed` interleaves the four base regions, one whole region per question.
+- `buildDeck(catalog, {region,count,seed})` → deterministic `QuizQuestion[]`. Each question carries `regionKey` (context chip), `groupMemberIds` (every id to render = the whole region), `prompt`/`promptSecondary` (Latin/EN), `acceptableIds` (target + its L/R mirror), `canonicalId`.
+- Counts: **hand 27, foot 26, spine 26, skull 14, mixed 93**. Best score per `(region,count)` in `localStorage`; session persisted in `sessionStorage` under `anatomed.quiz.session.v3` (`quizSession.ts` — bump the version on any `QuizQuestion`/`QuizConfig` schema change).
+- No SRS wiring yet (the theory side uses spaced repetition; the quiz only keeps a per-config best score).
+
+| File | Role |
+|------|------|
+| `src/lib/quiz.ts` | `REGION_GROUPS`, `buildDeck`, `regionMembers`, `renderIds`, `gradeAnswer`, best-score, `cleanName`, `hasUsableName`. |
+| `src/lib/quizSession.ts` | `sessionStorage` (de)serialize (`acceptableIds` Set ↔ array). |
+| `src/lib/quizLabels.ts` | `REGION_LABEL_KEY` (region → i18n `TKey`). |
+| `src/components/quiz/QuizScene.tsx` | The r3f canvas: clone → tint → isolate region → camera-fit → click resolution + reveal highlight. |
+| `src/routes/Quiz.tsx` | Lobby (count + region picker). `QuizGame.tsx` plays; `QuizResults.tsx` scores + per-question rows. |
+
+### Pitfalls / invariants
+
+- **Click resolution gates on the isolated group.** The three.js raycaster **ignores `.visible`**, so a hidden occluder (e.g. the sternum in front of the spine) is still hit. `QuizScene.handleClick` iterates **all** `e.intersections` (near→far) and accepts only the first whose resolved part is in `memberIdSet` (= the rendered region), skipping occluders and falling through to the visible bone behind them. Don't revert to "topmost hit only" — that's the "I click but can't select it" bug and the wrong-pick (sternum/mandible) bug.
+- **Camera fit re-tries until it succeeds, and re-arms on resize.** `QuizScene` keeps calling `fitOrthoToVisible` (returns `false` if the canvas is unmeasured or no geometry is visible yet) every frame until ~8 successful fits land, **re-armed on group change, camera identity change, AND viewport `size` change**. A fixed frame counter raced the GLB/layout (blank canvas) and never re-fit on resize (the ortho frustum is aspect-dependent → the structure vanished when the window resized). Mirrors the viewer's `CameraRig` (which keys its fit on the viewport for the same reason).
+- **`QuizScene` clones the GLB scene** (`source.clone(true)`) because it mutates per-question `.visible`. Don't render the shared `useGLTF` instance here (the rest of CLAUDE.md assumes quiz clones).
+- **Skull renders BOTH sides.** `BOTH_SIDES_REGIONS = {skull}` + `renderIds()` pull in each paired bone's L/R mirror, because `expandGroup` side-dedups to the right side — correct for a single hand/foot limb, **wrong for the midline skull** (was a lopsided half-skull). The reveal highlights all of `acceptableIds`, so clicking either side lights up.
+- **The axis (C2) is kept despite its `.001` name.** It's stored as `Axis (C2).001` (the only copy, not a Blender dup). `hasUsableName` only rejects empty names now; `cleanName()` strips the trailing `.NNN` for display. **Do not re-add a blanket `.NNN` drop** — it silently removes the axis from the cervical spine.
+- Anatomy audit (skeleton): every region member is correct for its section; the spine includes cervical+thoracic+lumbar+sacrum+coccyx. Foot sesamoids are intentionally excluded.
 
 ## Question generation (`tools/generate_questions.py`)
 

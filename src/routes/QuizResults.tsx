@@ -4,6 +4,7 @@ import { Check, X as XIcon, RotateCcw, ChevronRight, Loader2, Trophy } from 'luc
 import { loadCatalog, getSystem } from '../lib/viewer/catalog';
 import type { Part, PartsCatalog, SystemMeta } from '../lib/viewer/types';
 import { saveBestScore, thumbnailUrl, type QuizQuestion } from '../lib/quiz';
+import { REGION_LABEL_KEY } from '../lib/quizLabels';
 import {
   clearQuizSession,
   loadQuizSession,
@@ -37,14 +38,14 @@ export default function QuizResults() {
   useEffect(() => {
     if (!session) return;
     const correct = session.answers.filter((a) => a.correct).length;
-    const beat = saveBestScore(session.config.systemId, session.config.count, correct);
+    const beat = saveBestScore(session.config.region, session.config.count, correct);
     setIsNewBest(beat);
   }, [session]);
 
   const system: SystemMeta | null = useMemo(() => {
-    if (!catalog || !session) return null;
-    return getSystem(catalog, session.config.systemId);
-  }, [catalog, session]);
+    if (!catalog) return null;
+    return getSystem(catalog, 'skeleton');
+  }, [catalog]);
 
   function retry() {
     if (!catalog || !session) return;
@@ -94,7 +95,7 @@ export default function QuizResults() {
           {correct} / {total}
         </h1>
         <p className="text-sm text-text-muted">
-          {system.label_hr} · {t('quiz.percentCorrect', { pct })}
+          {t(REGION_LABEL_KEY[session.config.region])} · {t('quiz.percentCorrect', { pct })}
           {isNewBest && (
             <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-medium text-accent">
               {t('quiz.newBest')}
