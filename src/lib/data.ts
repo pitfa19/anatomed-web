@@ -28,7 +28,6 @@ const BUNDLED_SOURCES: SourceMeta[] = [
   { doc: 'Skripta A2 ispravljena.pdf', label: 'Skripta A2', badge: 'A2', color: '#7c5cff' },
   { doc: 'Skripta A3 ispravljena.pdf', label: 'Skripta A3', badge: 'A3', color: '#ff5cb1' },
   { doc: 'Hand-Out - A1 (Ivan Banovac).pdf', label: 'Hand-Out A1', badge: 'HO', color: '#ff9f3d' },
-  { doc: 'Duale Reihe_Searchable.pdf', label: 'Duale Reihe', badge: 'DR', color: '#16a34a' },
 ];
 
 const BUNDLED_DOC_NAMES = new Set(BUNDLED_SOURCES.map((s) => s.doc));
@@ -38,7 +37,6 @@ const PDF_FILES: Record<string, string> = {
   'Skripta A2 ispravljena.pdf': '/data/skripta_a2.json',
   'Skripta A3 ispravljena.pdf': '/data/skripta_a3.json',
   'Hand-Out - A1 (Ivan Banovac).pdf': '/data/handout_a1.json',
-  'Duale Reihe_Searchable.pdf': '/data/duale_reihe.json',
 };
 
 const PDF_URLS: Record<string, string> = {
@@ -46,7 +44,6 @@ const PDF_URLS: Record<string, string> = {
   'Skripta A2 ispravljena.pdf': `${PDFS_BASE_URL}/Skripta%20A2%20ispravljena.pdf`,
   'Skripta A3 ispravljena.pdf': `${PDFS_BASE_URL}/Skripta%20A3%20ispravljena.pdf`,
   'Hand-Out - A1 (Ivan Banovac).pdf': `${PDFS_BASE_URL}/Hand-Out%20-%20A1%20(Ivan%20Banovac).pdf`,
-  'Duale Reihe_Searchable.pdf': `${PDFS_BASE_URL}/Duale%20Reihe_Searchable.pdf`,
 };
 
 export function getPdfUrlForDoc(doc: string): string | undefined {
@@ -58,7 +55,6 @@ const RENDERED_SLUGS: Record<string, string> = {
   'Skripta A2 ispravljena.pdf': 'skripta_a2',
   'Skripta A3 ispravljena.pdf': 'skripta_a3',
   'Hand-Out - A1 (Ivan Banovac).pdf': 'handout_a1',
-  'Duale Reihe_Searchable.pdf': 'duale_reihe',
 };
 
 export function getRenderedSlug(doc: string): string | undefined {
