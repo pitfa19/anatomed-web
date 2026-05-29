@@ -4,17 +4,24 @@ Scoped guidance for the React/Vite web prototype. The Unity project's `CLAUDE.md
 
 ## Project Overview
 
-A React 19 + Vite 8 + Tailwind 4 prototype of an anatomy-study web app. Seven routes:
+A React 19 + Vite 8 + Tailwind 4 prototype of an anatomy-study web app. Bilingual (HR/EN, see `src/lib/i18n`). Routes (all lazy-loaded except `/` — see `main.tsx`):
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Home / landing |
-| `/docs` | PDF viewer for the 5 indexed skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe). Search bar + per-doc hit list + rendered PDF pages with highlight overlay. |
-| `/agent` | LLM chat assistant (Croatian, anatomy-only) with one tool: `search_skripte`. |
-| `/revise` | Ponavljanje (study Q&A) with Leitner-box SRS. `/revise/today` = cross-topic due-card deck. |
+| `/` | Home / landing (scroll-reveal hero, bento feature tiles). |
+| `/docs` | PDF viewer for the 5 indexed skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe). Search bar + per-doc hit list + rendered PDF pages with highlight overlay + local-PDF upload. |
+| `/agent` | Streaming LLM chat assistant (anatomy-only, answers in the UI language) with two tools: `search_skripte` + `prikaz_3d`. Copy/Regenerate/Stop actions. |
+| `/revise` | Revision hub — picks **Theory** or **Practical**. Shows the XP/level/streak strip + today's due count. |
+| `/revise/teorija` | Theory: topics grouped by region with SRS due-badges, XP bar, Today card, My-decks card. |
+| `/revise/today` | Cross-topic due-card deck (Leitner SRS). |
+| `/revise/:topicId` | One topic's Q&A set (expand-to-grade). |
+| `/revise/my-decks`, `/revise/deck/:id`, `/revise/deck/:id/edit` | User-created decks (manual or AI-generated via `/api/decks/generate`). |
+| `/revise/praksa` (`/play`, `/results`) | Practical quiz — pick a count + system, then find-the-structure on the 3D model. |
 | `/viewer` | three.js anatomy viewer. Search a body part → load that part's system .glb → isolate just that part. |
 | `/login` | Username + password sign-in / sign-up. |
 | `/profile` | User profile: username + AI-credits balance + three fake-purchase packets (2 €/5 €/10 €). |
+
+> Legacy `/quiz*` paths redirect to `/revise/praksa*`. XP/streak live in `src/lib/xp.ts` (localStorage); SRS in `src/lib/srs.ts`.
 
 ## Building / running
 
