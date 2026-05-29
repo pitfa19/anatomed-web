@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Loader2, ChevronRight, Sparkles, Layers, Plus } from 'lucide-react';
-import { loadReviseIndex, loadReviseTopic } from '../lib/data';
+import { loadReviseIndex } from '../lib/data';
 import type { ReviseGroup } from '../lib/types';
-import { dueCountForTopic } from '../lib/srs';
+import { loadDueSummary } from '../lib/reviseSummary';
 import { loadXP, type XPState } from '../lib/xp';
 import { loadDecks, dueCardsForUserDeck } from '../lib/userDecks';
 import DueBadge from '../components/revise/DueBadge';
@@ -35,25 +35,10 @@ export default function ReviseTheory() {
   useEffect(() => {
     if (!groups) return;
     let cancelled = false;
-    const ids = groups.flatMap((g) => g.topics).map((t) => t.id);
-    Promise.all(
-      ids.map((id) =>
-        loadReviseTopic(id)
-          .then((t) => ({ id, count: t.questions.length }))
-          .catch(() => null),
-      ),
-    ).then((rs) => {
+    loadDueSummary(groups).then((s) => {
       if (cancelled) return;
-      const cMap: Record<string, number> = {};
-      const dMap: Record<string, number> = {};
-      const now = Date.now();
-      for (const r of rs) {
-        if (!r) continue;
-        cMap[r.id] = r.count;
-        dMap[r.id] = dueCountForTopic(r.id, r.count, now);
-      }
-      setCounts(cMap);
-      setDueCounts(dMap);
+      setCounts(s.counts);
+      setDueCounts(s.dueCounts);
     });
     return () => {
       cancelled = true;
