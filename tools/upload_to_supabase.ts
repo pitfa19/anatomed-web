@@ -51,11 +51,10 @@ const SOURCE_PDFS = [
   'Skripta A2 ispravljena.pdf',
   'Skripta A3 ispravljena.pdf',
   'Hand-Out - A1 (Ivan Banovac).pdf',
-  'Duale Reihe_Searchable.pdf',
 ];
 
 const RENDERED_DIR = join(ROOT, 'public', 'pdfs-rendered');
-const RENDERED_SLUGS = ['skripta_a1', 'skripta_a2', 'skripta_a3', 'handout_a1', 'duale_reihe'];
+const RENDERED_SLUGS = ['skripta_a1', 'skripta_a2', 'skripta_a3', 'handout_a1'];
 
 const SOURCE_BUCKET = 'pdfs';
 const RENDERED_BUCKET = 'pdfs-rendered';

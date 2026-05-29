@@ -29,7 +29,6 @@ const DOC_SLUG_TO_FULL: Record<string, string> = {
   skripta_a2: 'Skripta A2 ispravljena.pdf',
   skripta_a3: 'Skripta A3 ispravljena.pdf',
   handout_a1: 'Hand-Out - A1 (Ivan Banovac).pdf',
-  duale_reihe: 'Duale Reihe_Searchable.pdf',
 };
 
 const DOC_SLUG_TO_LABEL: Record<string, string> = {
@@ -37,7 +36,6 @@ const DOC_SLUG_TO_LABEL: Record<string, string> = {
   skripta_a2: 'Skripta A2',
   skripta_a3: 'Skripta A3',
   handout_a1: 'Hand-Out A1',
-  duale_reihe: 'Duale Reihe',
 };
 
 function buildDocsLink(doc: string, page: number, q?: string): string {

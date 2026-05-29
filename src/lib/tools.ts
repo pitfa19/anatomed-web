@@ -9,7 +9,7 @@ export const TOOL_DEFINITIONS: Anthropic.Tool[] = [
   {
     name: 'search_skripte',
     description:
-      'Pretražuje sve indeksirane skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe) za anatomski termin. ' +
+      'Pretražuje sve indeksirane skripte (Skripta A1/A2/A3, Hand-Out A1) za anatomski termin. ' +
       'Koristi ga kad korisnik pita o anatomskoj strukturi ili terminu. ' +
       'Vraća do 3 najbolje pogođena termina, s do 5 izvadaka po terminu, te markdown link na konkretnu stranicu skripte (otvara se s terminom u tražilici i istaknutim na stranici).',
     input_schema: {

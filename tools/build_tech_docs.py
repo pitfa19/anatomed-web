@@ -361,7 +361,7 @@ def build_story():
         "<b>Anatom3D</b> je web aplikacija za studente medicine koja na "
         "jednom mjestu objedinjuje tri stupa učenja anatomije: "
         "(a) interaktivni 3D atlas izgrađen nad Z-Anatomy modelom, "
-        "(b) indeksirane skripte (Skripta A1/A2/A3, Hand-Out A1, Duale Reihe) "
+        "(b) indeksirane skripte (Skripta A1/A2/A3, Hand-Out A1) "
         "s pretragom i deep-link navigacijom na konkretnu stranicu, te "
         "(c) AI asistenta koji odgovara na hrvatskom standardnom jeziku, "
         "citira pronađene izvore i u chatu može renderirati 3D vizualizacije."
