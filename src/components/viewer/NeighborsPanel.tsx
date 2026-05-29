@@ -24,6 +24,8 @@ interface Props {
   onFocus: (part: Part) => void;
   /** Reveal more (+1) / fewer (−1) of a system, anchored to the active part. */
   onStep: (systemId: SystemId, dir: 1 | -1) => void;
+  /** Reveal every neighbour of a system at once, or clear them all. */
+  onToggleAll: (systemId: SystemId) => void;
 }
 
 interface Group {
@@ -41,6 +43,7 @@ export default function NeighborsPanel({
   onToggleLabels,
   onFocus,
   onStep,
+  onToggleAll,
 }: Props) {
   const t = useT();
   const partsById = useMemo(() => {
@@ -148,6 +151,24 @@ export default function NeighborsPanel({
           <span className="ml-1 text-text-muted/70 normal-case tracking-normal">· {activeGroup.system.label_hr}</span>
         </span>
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onToggleAll(activeGroup.system.id)}
+            aria-pressed={!canExpand}
+            title={
+              canExpand
+                ? t('viewer.showAllSystemTitle', { system: activeGroup.system.label_hr })
+                : t('viewer.clearSystemTitle', { system: activeGroup.system.label_hr })
+            }
+            className={
+              'mr-0.5 flex h-9 items-center rounded-md border px-2 text-[11px] font-medium transition-colors lg:h-6 ' +
+              (!canExpand
+                ? 'border-accent bg-accent/15 text-accent'
+                : 'border-border bg-surface text-text-muted hover:bg-surface-2 hover:text-text-strong')
+            }
+          >
+            {t('viewer.showAllSystem')}
+          </button>
           <button
             type="button"
             onClick={() => onStep(activeGroup.system.id, -1)}

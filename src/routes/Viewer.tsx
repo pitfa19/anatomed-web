@@ -121,6 +121,38 @@ export default function Viewer() {
     }
   }
 
+  /** One-shot version of stepSystem: reveal EVERY neighbour of a system at
+   *  once, or clear them all if already fully shown. The ±STEP stepper stays
+   *  for fine control; this is for users who find it too slow. Cheap because
+   *  reveal is just `.visible` flips (see the rendering architecture). */
+  function toggleSystemAll(systemId: SystemId) {
+    if (!neighbors || !active) return;
+    const ids = (neighbors[active.id] ?? [])
+      .filter((n) => n.system === systemId)
+      .map((n) => n.id);
+    if (ids.length === 0) return;
+    const allShown = ids.every((id) => extras.has(id));
+    if (allShown) {
+      setExtras((prev) => {
+        const next = new Set(prev);
+        for (const id of ids) next.delete(id);
+        return next;
+      });
+      setLabelsByPartId((prev) => {
+        let changed = false;
+        const next = new Set(prev);
+        for (const id of ids) if (next.delete(id)) changed = true;
+        return changed ? next : prev;
+      });
+    } else {
+      setExtras((prev) => {
+        const next = new Set(prev);
+        for (const id of ids) next.add(id);
+        return next;
+      });
+    }
+  }
+
   /** Promote a neighbor to active without clearing the rest of the scene.
    *  The previous active becomes an extra so the user keeps their context as
    *  they walk anatomically (femur → tibia → patella → …). Labels-state for
@@ -476,6 +508,7 @@ export default function Viewer() {
             labelsByPartId={labelsByPartId}
             onToggle={toggleExtra}
             onToggleLabels={toggleLabels}
+            onToggleAll={toggleSystemAll}
             onFocus={focusFromNeighbor}
             onStep={stepSystem}
           />
