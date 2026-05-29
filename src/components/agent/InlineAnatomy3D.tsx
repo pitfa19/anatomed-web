@@ -128,7 +128,7 @@ export default function InlineAnatomy3D({ config }: Props) {
       </div>
       {config.unmatched.length > 0 && (
         <div className="border-t border-border bg-surface-2/40 px-3 py-1.5 text-[10px] text-text-muted">
-          Ne nalazim: {config.unmatched.join(', ')}
+          {t('agent.notFound', { parts: config.unmatched.join(', ') })}
         </div>
       )}
     </div>

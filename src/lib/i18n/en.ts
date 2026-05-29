@@ -389,6 +389,7 @@ const en: Dict = {
     loading3d: 'Loading 3D…',
     loadingCatalog: 'Loading catalog…',
     cannotLoad3d: 'Could not load the 3D model for the selected parts.',
+    notFound: 'Not found: {parts}',
     openInViewer: 'Open in 3D viewer',
     open3d: 'Open 3D',
     thinking: 'Thinking',
