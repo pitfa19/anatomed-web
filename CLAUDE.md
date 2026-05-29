@@ -165,7 +165,13 @@ Both system prompts forbid markdown tables, require bullet lists with **bold** l
 
 The Anthropic SDK is **dev-only**: when `VITE_ANTHROPIC_API_KEY` is set, plain `npm run dev` calls Anthropic directly from the browser (`dangerouslyAllowBrowser: true`). `import.meta.env.DEV` gates this so the SDK is dead-code-eliminated from production builds. **Prod routes every LLM call through `/api/agent/chat`** (a Vercel Node function holding `ANTHROPIC_API_KEY` server-side). Same pattern in `aiGenerate.ts` → `/api/decks/generate`.
 
-⚠️ Remaining hole: the proxy **trusts the entire client payload** (model, system, tools, messages) and has no server-side token gate — anyone can POST arbitrary prompts and bill them to the deployer's key. There's a `TODO(server-side gate)` in `api/agent/chat.ts`; close it (re-check the user's balance via the service role, pin the model/system) before any non-demo deploy.
+`/api/agent/chat` is **hardened** (no longer an open proxy):
+
+- **Hard caps** — model allowlist (`claude-sonnet-4-6` / `claude-haiku-4-5`), `max_tokens` clamped to 4096, message-count + body-size caps. Bounds the cost of any single call.
+- **Token gate** — every call must carry a `userId` of a real `public.users` row, verified via the **Supabase service role** (`SUPABASE_SERVICE_ROLE_KEY`, bypasses RLS). Billed (Sonnet answer) calls atomically decrement 1 credit (`gte` conditional update); Haiku summary calls just need a valid user. Anonymous → `401 auth_required`; broke → `402 no_tokens`. The client (`agent.ts`) forwards `user?.id` and maps these to `AuthRequiredError` / `NoTokensError`; `Agent.tsx` reconciles the balance via `refreshCredits()` after each turn.
+- **Fails closed**: if the service-role env is missing the gate denies (`gate_unavailable`) rather than reopening the hole — so **prod must set `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_URL`** (falls back to `VITE_SUPABASE_URL`) alongside `ANTHROPIC_API_KEY`.
+
+Notes: the gate is the single source of truth, so the client no longer pre-charges — the dev browser-direct path (no proxy) is therefore **ungated** (developer's machine). Billing is **per Sonnet call**, so a tool-using turn (3D/search → 2 Sonnet round-trips) costs 2 credits. The system prompt is **not** pinned server-side (it would break the rolling-summary context, which the client prepends); model-pinning + the auth gate already make abuse low-value. `api/decks/generate` still has the same `TODO(server-side gate)` — it's lower-risk (it builds its own prompt/model server-side, so it only ever emits Haiku anatomy cards) but should get the same gate.
 
 ## Docs Deep Linking (`src/routes/Docs.tsx`)
 

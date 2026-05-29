@@ -411,6 +411,7 @@ const en: Dict = {
     creditCheckError: 'Error checking credits: {error}',
     noCredits:
       "You don't have enough credits for AI chat. Open the purchase window or go to Profile.",
+    signInRequired: 'Sign in to use the assistant.',
     missingApiKey:
       'The API key is not set on the server. Add `ANTHROPIC_API_KEY` to your Vercel env vars (or to `.env.local` for `vercel dev`).',
     genericError: 'Error: {error}',

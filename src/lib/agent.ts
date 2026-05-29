@@ -50,6 +50,7 @@ function getBrowserClient(): Promise<BrowserAnthropic> | null {
 
 async function callAnthropic(
   payload: Anthropic.MessageCreateParamsNonStreaming,
+  userId?: string,
 ): Promise<Anthropic.Message> {
   const direct = getBrowserClient();
   if (direct) {
@@ -60,7 +61,7 @@ async function callAnthropic(
   const r = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, userId }),
   });
   if (!r.ok) {
     let body: { error?: string; code?: string } = {};
@@ -69,10 +70,7 @@ async function callAnthropic(
     } catch {
       // ignore
     }
-    if (r.status === 500 && body.code === 'missing_key') {
-      throw new MissingApiKeyError();
-    }
-    throw new Error(`Agent proxy ${r.status}: ${body.error ?? r.statusText}`);
+    throw proxyError(r.status, body);
   }
   return (await r.json()) as Anthropic.Message;
 }
@@ -87,6 +85,7 @@ async function streamAnthropic(
   payload: Anthropic.MessageCreateParamsNonStreaming,
   onText: (snapshot: string) => void,
   signal?: AbortSignal,
+  userId?: string,
 ): Promise<Anthropic.Message> {
   const direct = getBrowserClient();
   if (direct) {
@@ -99,7 +98,7 @@ async function streamAnthropic(
   const r = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...payload, stream: true }),
+    body: JSON.stringify({ ...payload, stream: true, userId }),
     signal,
   });
   if (!r.ok || !r.body) {
@@ -109,10 +108,7 @@ async function streamAnthropic(
     } catch {
       // ignore
     }
-    if (r.status === 500 && body.code === 'missing_key') {
-      throw new MissingApiKeyError();
-    }
-    throw new Error(`Agent proxy ${r.status}: ${body.error ?? r.statusText}`);
+    throw proxyError(r.status, body);
   }
 
   const reader = r.body.getReader();
@@ -372,6 +368,30 @@ export class MissingApiKeyError extends Error {
   }
 }
 
+/** Server token gate: the signed-in user is out of credits. */
+export class NoTokensError extends Error {
+  constructor() {
+    super('Not enough credits.');
+    this.name = 'NoTokensError';
+  }
+}
+
+/** Server token gate: no valid signed-in user (anonymous request rejected). */
+export class AuthRequiredError extends Error {
+  constructor() {
+    super('Sign in to use the assistant.');
+    this.name = 'AuthRequiredError';
+  }
+}
+
+/** Map a non-OK proxy response to a typed error the UI can react to. */
+function proxyError(status: number, body: { error?: string; code?: string }): Error {
+  if (body.code === 'missing_key') return new MissingApiKeyError();
+  if (body.code === 'no_tokens') return new NoTokensError();
+  if (body.code === 'auth_required') return new AuthRequiredError();
+  return new Error(`Agent proxy ${status}: ${body.error ?? 'request failed'}`);
+}
+
 const MAX_TOOL_ITERATIONS = 5;
 
 type ApiMessage = Anthropic.MessageParam;
@@ -395,12 +415,16 @@ export interface ChatOptions {
   lang?: Lang;
   /** Abort the in-flight request (Stop button). */
   signal?: AbortSignal;
+  /** Signed-in user id, forwarded to the proxy for the server-side token
+   *  gate. Ignored on the dev browser-direct path. */
+  userId?: string;
 }
 
 export async function summarizeMessages(
   toSummarize: ChatMessage[],
   existingSummary: string,
   lang: Lang = 'hr',
+  userId?: string,
 ): Promise<string> {
   if (toSummarize.length === 0) return existingSummary;
 
@@ -418,11 +442,14 @@ export async function summarizeMessages(
         ? `Postojeći sažetak razgovora:\n${existingSummary}\n\nNovi dio razgovora koji treba uključiti u sažetak:\n${conversation}\n\nVrati novi cjelokupni sažetak razgovora u 3-5 rečenica na hrvatskom. Sačuvaj sve ključne anatomske termine i kontekst koji bi mogao biti potreban za nastavak razgovora.`
         : `Sažmi sljedeći razgovor između studenta medicine i AI asistenta za anatomiju u 3-5 rečenica na hrvatskom. Sačuvaj ključne anatomske termine i kontekst:\n\n${conversation}`;
 
-  const response = await callAnthropic({
-    model: SUMMARY_MODEL,
-    max_tokens: 400,
-    messages: [{ role: 'user', content: userPrompt }],
-  });
+  const response = await callAnthropic(
+    {
+      model: SUMMARY_MODEL,
+      max_tokens: 400,
+      messages: [{ role: 'user', content: userPrompt }],
+    },
+    userId,
+  );
 
   return response.content
     .filter((b): b is Anthropic.TextBlock => b.type === 'text')
@@ -435,7 +462,7 @@ export async function chat(
   history: ChatMessage[],
   opts: ChatOptions = {},
 ): Promise<string> {
-  const { onStatus, onDelta, summary, lang = 'hr', signal } = opts;
+  const { onStatus, onDelta, summary, lang = 'hr', signal, userId } = opts;
 
   const basePrompt = systemPromptFor(lang);
   const summaryHeading =
@@ -492,6 +519,7 @@ export async function chat(
         },
         (snapshot) => onDelta?.(snapshot),
         signal,
+        userId,
       );
 
       if (response.stop_reason === 'tool_use') {
