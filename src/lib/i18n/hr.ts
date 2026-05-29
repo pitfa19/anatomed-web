@@ -29,7 +29,7 @@ const hr = {
     openNav: 'Otvori navigaciju',
   },
   home: {
-    eyebrow: 'Anatom3d · za studente medicine',
+    eyebrow: 'Anatom3D · za studente medicine',
     subhead:
       'Tvoje skripte, 3D model i AI agent na jednom mjestu. Radi u pregledniku, bez instalacije.',
     openNotes: 'Otvori skripte',
