@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, type ReactNode } from 'react';
+import { Suspense, lazy, memo, useEffect, useRef, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,9 @@ interface Props {
   messages: ChatMessage[];
   pending: boolean;
   status?: ToolStatus;
+  /** The answer currently streaming in, if any. Rendered as a live assistant
+   *  bubble; empty while the model is still thinking / running a tool. */
+  streamingText?: string;
 }
 
 const TOOL_LABEL_KEYS: Record<string, TKey> = {
@@ -57,205 +60,230 @@ function statusLabel(status: ToolStatus, t: TFn): { text: string; detail?: strin
   };
 }
 
-export default function ChatLog({ messages, pending, status }: Props) {
+// Markdown rendering is memoized per message so a streaming answer (which
+// re-renders this component ~100×) doesn't force every completed message to
+// re-parse its markdown on each token. `t` is referentially stable (memoized
+// in useT), so completed bubbles skip re-render entirely while text streams.
+const Markdown = memo(function Markdown({ text, t }: { text: string; t: TFn }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p: (props) => <p className="my-1.5 first:mt-0 last:mb-0">{props.children}</p>,
+        h1: (props) => (
+          <h2 className="mb-1.5 mt-4 text-base font-semibold text-text-strong first:mt-0">
+            {props.children}
+          </h2>
+        ),
+        h2: (props) => (
+          <h2 className="mb-1.5 mt-4 text-base font-semibold text-text-strong first:mt-0">
+            {props.children}
+          </h2>
+        ),
+        h3: (props) => (
+          <h3 className="mb-1 mt-3 text-sm font-semibold text-text-strong first:mt-0">
+            {props.children}
+          </h3>
+        ),
+        h4: (props) => (
+          <h4 className="mb-1 mt-3 text-sm font-semibold text-text-strong first:mt-0">
+            {props.children}
+          </h4>
+        ),
+        ul: (props) => (
+          <ul className="my-1.5 list-disc space-y-0.5 pl-5 marker:text-text-muted">
+            {props.children}
+          </ul>
+        ),
+        ol: (props) => (
+          <ol className="my-1.5 list-decimal space-y-0.5 pl-5 marker:text-text-muted">
+            {props.children}
+          </ol>
+        ),
+        li: (props) => <li className="leading-relaxed">{props.children}</li>,
+        hr: () => <hr className="my-3 border-border" />,
+        blockquote: (props) => (
+          <blockquote className="my-2 border-l-2 border-border pl-3 text-text-muted">
+            {props.children}
+          </blockquote>
+        ),
+        table: (props) => (
+          <div className="my-2 overflow-x-auto">
+            <table className="min-w-full border-collapse text-xs">{props.children}</table>
+          </div>
+        ),
+        thead: (props) => (
+          <thead className="border-b border-border bg-surface text-left text-text-strong">
+            {props.children}
+          </thead>
+        ),
+        tbody: (props) => <tbody>{props.children}</tbody>,
+        tr: (props) => (
+          <tr className="border-b border-border/50 last:border-b-0">{props.children}</tr>
+        ),
+        th: (props) => (
+          <th className="px-2 py-1.5 font-semibold align-top">{props.children}</th>
+        ),
+        td: (props) => <td className="px-2 py-1.5 align-top">{props.children}</td>,
+        strong: (props) => (
+          <strong className="font-semibold text-text-strong">{props.children}</strong>
+        ),
+        em: (props) => <em className="text-text-muted">{props.children}</em>,
+        code: (props) => {
+          const className = (props as { className?: string }).className ?? '';
+          if (/\blanguage-anatomy-3d\b/.test(className)) {
+            const raw = extractText(props.children).trim();
+            try {
+              const parsed = JSON.parse(raw);
+              if (isAnatomy3DConfig(parsed)) {
+                return (
+                  <Suspense
+                    fallback={
+                      <div className="my-3 flex h-72 items-center justify-center rounded-xl border border-border bg-surface text-xs text-text-muted">
+                        <Loader2 size={14} className="mr-2 animate-spin" />
+                        {t('agent.loading3d')}
+                      </div>
+                    }
+                  >
+                    <InlineAnatomy3D config={parsed} />
+                  </Suspense>
+                );
+              }
+            } catch {
+              /* fall through to <code> — partial JSON while streaming */
+            }
+            // The anatomy-3d block hasn't fully arrived yet: show a quiet
+            // placeholder instead of a wall of half-streamed JSON.
+            return (
+              <div className="my-3 flex h-72 items-center justify-center rounded-xl border border-border bg-surface text-xs text-text-muted">
+                <Loader2 size={14} className="mr-2 animate-spin" />
+                {t('agent.loading3d')}
+              </div>
+            );
+          }
+          return (
+            <code className="rounded bg-surface px-1 py-0.5 text-xs text-accent">
+              {props.children}
+            </code>
+          );
+        },
+        pre: (props) => {
+          const child = props.children as ReactNode;
+          const childClass =
+            (child as { props?: { className?: string } } | null | undefined)?.props
+              ?.className ?? '';
+          if (/\blanguage-anatomy-3d\b/.test(String(childClass))) {
+            return <>{props.children}</>;
+          }
+          return (
+            <pre className="my-2 overflow-x-auto rounded-md bg-surface p-2 text-xs text-text-muted">
+              {props.children}
+            </pre>
+          );
+        },
+        a: (props) => {
+          const href = props.href ?? '';
+          const isDocsLink = href.startsWith('/docs?');
+          const isInternal = href.startsWith('/');
+          if (isDocsLink) {
+            return (
+              <Link
+                to={href}
+                className="my-0.5 mr-1.5 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent no-underline transition-colors hover:border-accent/60 hover:bg-accent/20"
+              >
+                <BookOpen size={12} className="shrink-0" />
+                <span className="truncate">{props.children}</span>
+                <ChevronRight size={12} className="shrink-0 opacity-60" />
+              </Link>
+            );
+          }
+          if (isInternal) {
+            return (
+              <Link to={href} className="text-accent underline hover:text-accent-2">
+                {props.children}
+              </Link>
+            );
+          }
+          return (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline hover:text-accent-2"
+            >
+              {props.children}
+            </a>
+          );
+        },
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+});
+
+function Avatar({ role }: { role: 'user' | 'assistant' }) {
+  return (
+    <div
+      className={
+        'mt-1 flex size-8 shrink-0 items-center justify-center rounded-full ' +
+        (role === 'user'
+          ? 'bg-surface-2 text-text-muted'
+          : 'bg-gradient-to-br from-accent to-accent-2 text-white')
+      }
+    >
+      {role === 'user' ? <User size={15} /> : <Bot size={15} />}
+    </div>
+  );
+}
+
+export default function ChatLog({ messages, pending, status, streamingText }: Props) {
   const t = useT();
   const endRef = useRef<HTMLDivElement>(null);
+  const streaming = pending && !!streamingText;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length, pending]);
 
+  // Keep the growing answer in view as it streams (instant, not smooth, so it
+  // doesn't lag behind the text).
+  useEffect(() => {
+    if (streamingText) endRef.current?.scrollIntoView({ behavior: 'auto' });
+  }, [streamingText]);
+
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 sm:px-6">
       {messages.map((m) => (
         <div key={m.id} className="flex gap-3">
-          <div
-            className={
-              'mt-1 flex size-8 shrink-0 items-center justify-center rounded-full ' +
-              (m.role === 'user'
-                ? 'bg-surface-2 text-text-muted'
-                : 'bg-gradient-to-br from-accent to-accent-2 text-white')
-            }
-          >
-            {m.role === 'user' ? <User size={15} /> : <Bot size={15} />}
-          </div>
+          <Avatar role={m.role} />
           <div className="min-w-0 flex-1">
             <div className="text-xs text-text-muted">
               {m.role === 'user' ? t('agent.you') : t('nav.agent')}
             </div>
             <div className="mt-1 max-w-prose text-sm leading-relaxed text-text break-words">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  p: (props) => (
-                    <p className="my-1.5 first:mt-0 last:mb-0">{props.children}</p>
-                  ),
-                  h1: (props) => (
-                    <h2 className="mb-1.5 mt-4 text-base font-semibold text-text-strong first:mt-0">
-                      {props.children}
-                    </h2>
-                  ),
-                  h2: (props) => (
-                    <h2 className="mb-1.5 mt-4 text-base font-semibold text-text-strong first:mt-0">
-                      {props.children}
-                    </h2>
-                  ),
-                  h3: (props) => (
-                    <h3 className="mb-1 mt-3 text-sm font-semibold text-text-strong first:mt-0">
-                      {props.children}
-                    </h3>
-                  ),
-                  h4: (props) => (
-                    <h4 className="mb-1 mt-3 text-sm font-semibold text-text-strong first:mt-0">
-                      {props.children}
-                    </h4>
-                  ),
-                  ul: (props) => (
-                    <ul className="my-1.5 list-disc space-y-0.5 pl-5 marker:text-text-muted">
-                      {props.children}
-                    </ul>
-                  ),
-                  ol: (props) => (
-                    <ol className="my-1.5 list-decimal space-y-0.5 pl-5 marker:text-text-muted">
-                      {props.children}
-                    </ol>
-                  ),
-                  li: (props) => <li className="leading-relaxed">{props.children}</li>,
-                  hr: () => <hr className="my-3 border-border" />,
-                  blockquote: (props) => (
-                    <blockquote className="my-2 border-l-2 border-border pl-3 text-text-muted">
-                      {props.children}
-                    </blockquote>
-                  ),
-                  table: (props) => (
-                    <div className="my-2 overflow-x-auto">
-                      <table className="min-w-full border-collapse text-xs">
-                        {props.children}
-                      </table>
-                    </div>
-                  ),
-                  thead: (props) => (
-                    <thead className="border-b border-border bg-surface text-left text-text-strong">
-                      {props.children}
-                    </thead>
-                  ),
-                  tbody: (props) => <tbody>{props.children}</tbody>,
-                  tr: (props) => (
-                    <tr className="border-b border-border/50 last:border-b-0">
-                      {props.children}
-                    </tr>
-                  ),
-                  th: (props) => (
-                    <th className="px-2 py-1.5 font-semibold align-top">{props.children}</th>
-                  ),
-                  td: (props) => (
-                    <td className="px-2 py-1.5 align-top">{props.children}</td>
-                  ),
-                  strong: (props) => (
-                    <strong className="font-semibold text-text-strong">
-                      {props.children}
-                    </strong>
-                  ),
-                  em: (props) => <em className="text-text-muted">{props.children}</em>,
-                  code: (props) => {
-                    const className =
-                      (props as { className?: string }).className ?? '';
-                    if (/\blanguage-anatomy-3d\b/.test(className)) {
-                      const raw = extractText(props.children).trim();
-                      try {
-                        const parsed = JSON.parse(raw);
-                        if (isAnatomy3DConfig(parsed)) {
-                          return (
-                            <Suspense
-                              fallback={
-                                <div className="my-3 flex h-72 items-center justify-center rounded-xl border border-border bg-surface text-xs text-text-muted">
-                                  <Loader2
-                                    size={14}
-                                    className="mr-2 animate-spin"
-                                  />
-                                  {t('agent.loading3d')}
-                                </div>
-                              }
-                            >
-                              <InlineAnatomy3D config={parsed} />
-                            </Suspense>
-                          );
-                        }
-                      } catch {
-                        /* fall through to <code> */
-                      }
-                    }
-                    return (
-                      <code className="rounded bg-surface px-1 py-0.5 text-xs text-accent">
-                        {props.children}
-                      </code>
-                    );
-                  },
-                  pre: (props) => {
-                    const child = props.children as ReactNode;
-                    const childClass =
-                      (
-                        child as
-                          | { props?: { className?: string } }
-                          | null
-                          | undefined
-                      )?.props?.className ?? '';
-                    if (/\blanguage-anatomy-3d\b/.test(String(childClass))) {
-                      return <>{props.children}</>;
-                    }
-                    return (
-                      <pre className="my-2 overflow-x-auto rounded-md bg-surface p-2 text-xs text-text-muted">
-                        {props.children}
-                      </pre>
-                    );
-                  },
-                  a: (props) => {
-                    const href = props.href ?? '';
-                    const isDocsLink = href.startsWith('/docs?');
-                    const isInternal = href.startsWith('/');
-                    if (isDocsLink) {
-                      return (
-                        <Link
-                          to={href}
-                          className="my-0.5 mr-1.5 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent no-underline transition-colors hover:border-accent/60 hover:bg-accent/20"
-                        >
-                          <BookOpen size={12} className="shrink-0" />
-                          <span className="truncate">{props.children}</span>
-                          <ChevronRight size={12} className="shrink-0 opacity-60" />
-                        </Link>
-                      );
-                    }
-                    if (isInternal) {
-                      return (
-                        <Link to={href} className="text-accent underline hover:text-accent-2">
-                          {props.children}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent underline hover:text-accent-2"
-                      >
-                        {props.children}
-                      </a>
-                    );
-                  },
-                }}
-              >
-                {m.text}
-              </ReactMarkdown>
+              <Markdown text={m.text} t={t} />
             </div>
           </div>
         </div>
       ))}
-      {pending && (
+
+      {streaming && (
         <div className="flex gap-3">
-          <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 text-white">
-            <Bot size={15} />
+          <Avatar role="assistant" />
+          <div className="min-w-0 flex-1">
+            <div className="text-xs text-text-muted">{t('nav.agent')}</div>
+            <div className="mt-1 max-w-prose text-sm leading-relaxed text-text break-words">
+              <Markdown text={streamingText!} t={t} />
+              <span className="ml-0.5 inline-block h-3.5 w-[2px] -mb-0.5 animate-pulse bg-accent align-baseline" />
+            </div>
           </div>
+        </div>
+      )}
+
+      {pending && !streaming && (
+        <div className="flex gap-3">
+          <Avatar role="assistant" />
           <div className="flex flex-col gap-1.5 pt-1.5">
             <PendingIndicator status={status ?? null} />
           </div>

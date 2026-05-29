@@ -39,6 +39,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  // Streaming path: the client sets `stream: true` and reads a tiny SSE feed
+  // (`delta` text increments, then one `final` with the full message so the
+  // tool-use loop can inspect `stop_reason`/`content`, or `error`).
+  if ((payload as { stream?: unknown }).stream === true) {
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // don't let any proxy buffer it
+    res.flushHeaders?.();
+
+    const stream = client.messages.stream(payload);
+    // If the browser disconnects (Stop, navigation), stop the upstream call.
+    req.on('close', () => {
+      try {
+        stream.abort();
+      } catch {
+        // already settled
+      }
+    });
+
+    try {
+      stream.on('text', (delta) => {
+        res.write(`event: delta\ndata: ${JSON.stringify({ text: delta })}\n\n`);
+      });
+      const final = await stream.finalMessage();
+      res.write(`event: final\ndata: ${JSON.stringify(final)}\n\n`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      res.write(`event: error\ndata: ${JSON.stringify({ error: message })}\n\n`);
+    } finally {
+      res.end();
+    }
+    return;
+  }
+
   try {
     const response = await client.messages.create(payload);
     res.status(200).json(response);
