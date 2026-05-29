@@ -22,4 +22,4 @@ Parent map: `../CLAUDE.md`. `TEHNICKA_DOKUMENTACIJA.md` is a frozen LUMEN compet
 - What to run before calling a task done: `mem:task_completion`
 
 ## Big subsystems (detail lives in CLAUDE.md)
-3D viewer isolation (`lib/viewer/isolate.ts`, ported from Unity), agent hybrid Haiku-route/Sonnet-answer flow (`lib/agent.ts`), `/docs` PDF deep-linking + rendered-page viewer, local-PDF upload pipeline (`uploadIndexer.ts` mirrors Python `build_pdf_index.py`), Leitner SRS (`lib/srs.ts`), Supabase hackathon-grade auth + credits.
+3D viewer isolation (`lib/viewer/`, ported from Unity; one `SystemLayer` per system), agent streaming flow where Sonnet drives the whole turn and Haiku only summarizes (`lib/agent.ts`), `/docs` PDF deep-linking + rendered-page viewer, local-PDF upload pipeline (`uploadIndexer.ts` mirrors Python `build_pdf_index.py`), Leitner SRS (`lib/srs.ts`), Supabase hackathon-grade auth + a server-side daily AI-token usage gate (`api/` Functions + `lib/usage.ts`).
