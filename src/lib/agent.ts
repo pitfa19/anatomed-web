@@ -181,6 +181,8 @@ FORMAT ODGOVORA - radi čitljivosti na uskom chat ekranu:
 - Kad nabrajaš strukture, prolaze, odnose ili dijelove, koristi bullet listu (\`-\`) s **podebljanim** nazivom na početku stavke, npr. \`- **Caput femoris**: glava femura, ulazi u acetabulum.\`
 - NE koristi markdown tablice (\`| Dio | Opis |\`). Tablice loše izgledaju u uskom chat sučelju.
 - Ne koristi emoji ikone (🦴, 🦵, 📚, ✨ itd.) - samo običan tekst i listu.
+- Ne koristi crtice (— ili –). Umjesto njih koristi zarez, točku ili zagrade.
+- Piši prirodno i izravno: kratke, jasne rečenice, kao da objašnjavaš kolegi. Bez reklamnog tona i bez praznog hoda.
 - Ne koristi naslove (\`#\`) za kratke odgovore. Za duže odgovore smiješ koristiti \`### Naslov\`.
 - Ne ponavljaj korisničko pitanje.
 
@@ -280,6 +282,8 @@ RESPONSE FORMAT - for readability on a narrow chat screen:
 - When listing structures, pathways, relationships or parts, use a bullet list (\`-\`) with a **bold** name at the start of each item, e.g. \`- **Caput femoris**: the head of the femur, fits into the acetabulum.\`
 - Do NOT use markdown tables (\`| Part | Description |\`). Tables look bad in a narrow chat interface.
 - Do NOT use emoji icons (🦴, 🦵, 📚, ✨ etc.) - plain text and lists only.
+- Do NOT use em-dashes (— or –). Use a comma, a period, or parentheses instead.
+- Write in a plain, natural voice: short, direct sentences, the way you'd explain something to a fellow student. No marketing tone, no filler.
 - Do NOT use headings (\`#\`) for short answers. For longer answers you may use \`### Heading\`.
 - Do not repeat the user's question.
 
