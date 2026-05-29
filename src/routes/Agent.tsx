@@ -7,6 +7,8 @@ import LowBalanceBanner from '../components/ai/LowBalanceBanner';
 import {
   chat,
   MissingApiKeyError,
+  NoTokensError,
+  AuthRequiredError,
   summarizeMessages,
   type ToolStatus,
 } from '../lib/agent';
@@ -74,7 +76,7 @@ export default function Agent() {
   const [streamingText, setStreamingText] = useState('');
   const [seed, setSeed] = useState<string | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, consumeTokens } = useAuth();
+  const { user, refreshCredits } = useAuth();
   const [showBuyModal, setShowBuyModal] = useState(false);
   // Abort controller for the in-flight turn (Stop button). `latestStream` keeps
   // the partial answer so Stop can commit what streamed in so far.
@@ -110,37 +112,11 @@ export default function Agent() {
   // Run one assistant turn against `history` (which already ends with the
   // user message to answer). Shared by send() and regenerate().
   async function runTurn(history: ChatMessage[]) {
-    // Token gate. Signed-out users keep the existing free-prototype path
-    // (no balance attached) so the agent stays usable without an account.
-    if (user) {
-      let result;
-      try {
-        result = await consumeTokens('agent_chat');
-      } catch (err) {
-        const errText = t('agent.creditCheckError', {
-          error: err instanceof Error ? err.message : String(err),
-        });
-        setMessages((m) => [
-          ...m,
-          { id: uid(), role: 'assistant', text: errText, ts: Date.now() },
-        ]);
-        return;
-      }
-      if (!result.ok) {
-        setShowBuyModal(true);
-        setMessages((m) => [
-          ...m,
-          {
-            id: uid(),
-            role: 'assistant',
-            text: t('agent.noCredits'),
-            ts: Date.now(),
-          },
-        ]);
-        return;
-      }
-    }
-
+    // The token gate is now server-authoritative: the `/api/agent/chat` proxy
+    // verifies the user + decrements credits via the service role (see
+    // api/agent/chat.ts). We just forward `user?.id` and reconcile the
+    // displayed balance afterward. On the dev browser-direct path there's no
+    // proxy, so it's ungated (developer's machine).
     setPending(true);
     setStreamingText('');
     latestStream.current = '';
@@ -157,7 +133,7 @@ export default function Agent() {
       if (targetSummarizedThrough > activeSummarizedThrough) {
         const toSummarize = history.slice(activeSummarizedThrough, targetSummarizedThrough);
         setStatus({ phase: 'summarizing' });
-        activeSummary = await summarizeMessages(toSummarize, activeSummary, t.lang);
+        activeSummary = await summarizeMessages(toSummarize, activeSummary, t.lang, user?.id);
         activeSummarizedThrough = targetSummarizedThrough;
         setSummary(activeSummary);
         setSummarizedThrough(activeSummarizedThrough);
@@ -173,6 +149,7 @@ export default function Agent() {
         summary: activeSummary || undefined,
         lang: t.lang,
         signal: controller.signal,
+        userId: user?.id,
       });
       const replyMsg: ChatMessage = {
         id: uid(),
@@ -193,12 +170,23 @@ export default function Agent() {
         }
         return;
       }
+      // Out of credits — surface the buy modal, same as the old client gate.
+      if (err instanceof NoTokensError) {
+        setShowBuyModal(true);
+        setMessages((m) => [
+          ...m,
+          { id: uid(), role: 'assistant', text: t('agent.noCredits'), ts: Date.now() },
+        ]);
+        return;
+      }
       const errText =
-        err instanceof MissingApiKeyError
-          ? t('agent.missingApiKey')
-          : t('agent.genericError', {
-              error: err instanceof Error ? err.message : String(err),
-            });
+        err instanceof AuthRequiredError
+          ? t('agent.signInRequired')
+          : err instanceof MissingApiKeyError
+            ? t('agent.missingApiKey')
+            : t('agent.genericError', {
+                error: err instanceof Error ? err.message : String(err),
+              });
       setMessages((m) => [
         ...m,
         { id: uid(), role: 'assistant', text: errText, ts: Date.now() },
@@ -208,6 +196,8 @@ export default function Agent() {
       setStatus(null);
       setStreamingText('');
       abortRef.current = null;
+      // The server may have decremented credits — reconcile the header chip.
+      void refreshCredits();
     }
   }
 

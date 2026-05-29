@@ -417,6 +417,7 @@ const hr = {
     creditCheckError: 'Greška pri provjeri kredita: {error}',
     noCredits:
       'Nemaš dovoljno kredita za AI razgovor. Otvori prozor za kupnju ili idi na Profil.',
+    signInRequired: 'Prijavi se za korištenje asistenta.',
     missingApiKey:
       'API ključ nije postavljen na poslužitelju. Dodaj `ANTHROPIC_API_KEY` u Vercel env vars (ili u `.env.local` za `vercel dev`).',
     genericError: 'Greška: {error}',
