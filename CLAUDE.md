@@ -169,7 +169,7 @@ Before `send()`: if `nextHistory.length - summarizedThrough > 6`, call `summariz
 
 `chat()` accepts `onStatus(status: ToolStatus)` - `null | {phase: 'thinking'} | {phase: 'tool', name, input} | {phase: 'summarizing'}`. `Agent.tsx` renders it as a chip via `ChatLog`'s `PendingIndicator` (only until the first streamed delta arrives, after which the streaming bubble takes over). Cleared in the `finally` block.
 
-Both system prompts forbid markdown tables, require bullet lists with **bold** labels, no emoji, ~4–8 lines + max-4 reference chips. If formatting rules change, also update the markdown component overrides in `src/components/agent/ChatLog.tsx`.
+Both system prompts forbid markdown tables, require bullet lists with **bold** labels, no emoji, no em-dashes (plain, natural voice), ~4–8 lines + max-4 reference chips. If formatting rules change, also update the markdown component overrides in `src/components/agent/ChatLog.tsx`.
 
 ### Security posture
 
