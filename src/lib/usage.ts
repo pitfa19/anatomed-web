@@ -2,9 +2,11 @@
 //
 // We meter *real* Anthropic token usage (input + output) per user per day,
 // like Claude's own usage limit: one flat daily allowance, no tiers, no
-// purchases. The server (`api/_gate.ts`) is authoritative and keeps its OWN
-// copy of DAILY_TOKEN_LIMIT — it can't import from `src/` — so if you change
-// the number here, change it there too.
+// purchases. The server is authoritative; the gate is inlined in BOTH
+// `api/agent/chat.ts` and `api/decks/generate.ts` (they can't import from
+// `src/`, and Vercel won't bundle a shared sibling file), each with its own
+// copy of DAILY_TOKEN_LIMIT — so if you change the number here, change it in
+// both of those too.
 //
 // The budget resets at UTC midnight. Usage is logged as `consumption` rows in
 // `public.token_transactions` (delta = -tokens); "used today" is the sum of

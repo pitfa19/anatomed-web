@@ -49,9 +49,9 @@ Plain username/password backed by a single Supabase table. **Not real auth** - n
 
 Metering works like Claude's own usage limit: each user gets **one flat daily allowance of real Anthropic tokens** (`DAILY_TOKEN_LIMIT`, default **200 000**, in `src/lib/usage.ts`), reset at **UTC midnight**. No tiers, no packages, no buying. There is no per-call "price" — we meter the *actual* `input_tokens + output_tokens` each call costs and add it up.
 
-- **Source of truth is the server.** `api/_gate.ts` (shared by `api/agent/chat.ts` + `api/decks/generate.ts`) checks the user has budget left *before* the call and records the real token cost *after*. The client display is advisory.
+- **Source of truth is the server.** `api/agent/chat.ts` + `api/decks/generate.ts` each `gateDaily()` the user has budget left *before* the call and `recordUsage()` the real token cost *after*. The client display is advisory. (The gate is **inlined** in both files, not a shared module — Vercel's `@vercel/node` bundler drops sibling non-route files, so a `../_gate` import 500s with `ERR_MODULE_NOT_FOUND`.)
 - **Storage reuses `public.token_transactions`** (no schema migration): each AI call writes one `consumption` row with `delta = -tokens`. "Used today" = `sum(-delta)` for that user since the start of the current UTC day. `balance_after` holds the estimated remaining-for-today (informational). The old credit-era `consume_tokens` RPC + `users.credits` column are now **unused** (left in place, harmless).
-- Client reads its own usage with the anon key (`fetchUsageToday` in `auth.ts`) — the table's `anon_read` RLS allows it. `DAILY_TOKEN_LIMIT` is duplicated in `api/_gate.ts` (it can't import `src/`); keep the two in sync.
+- Client reads its own usage with the anon key (`fetchUsageToday` in `auth.ts`) — the table's `anon_read` RLS allows it. `DAILY_TOKEN_LIMIT` is duplicated in **three** places (`src/lib/usage.ts` + both API files, which can't import `src/`); keep them in sync.
 
 ### Supabase project
 
@@ -175,7 +175,7 @@ Both system prompts forbid markdown tables, require bullet lists with **bold** l
 
 The Anthropic SDK is **dev-only**: when `VITE_ANTHROPIC_API_KEY` is set, plain `npm run dev` calls Anthropic directly from the browser (`dangerouslyAllowBrowser: true`). `import.meta.env.DEV` gates this so the SDK is dead-code-eliminated from production builds. **Prod routes every LLM call through `/api/agent/chat`** (a Vercel Node function holding `ANTHROPIC_API_KEY` server-side). Same pattern in `aiGenerate.ts` → `/api/decks/generate`.
 
-`/api/agent/chat` and `/api/decks/generate` are **hardened** (no longer open proxies) and share `api/_gate.ts`:
+`/api/agent/chat` and `/api/decks/generate` are **hardened** (no longer open proxies); each inlines the same `gateDaily`/`recordUsage` gate:
 
 - **Hard caps** — model allowlist (`claude-sonnet-4-6` / `claude-haiku-4-5`), `max_tokens` clamped to 4096, message-count + body-size caps. Bounds the cost of any single call.
 - **Daily usage gate** — every call must carry a `userId` of a real `public.users` row, verified via the **Supabase service role** (`SUPABASE_SERVICE_ROLE_KEY`, bypasses RLS). `gateDaily()` rejects if the user has already spent `DAILY_TOKEN_LIMIT` tokens today (UTC day); otherwise the call proceeds and `recordUsage()` logs its real `input_tokens + output_tokens` afterward. Anonymous → `401 auth_required`; over budget → `429 daily_limit`. The client (`agent.ts` / `aiGenerate.ts`) forwards `user?.id` and maps these to `AuthRequiredError` / `DailyLimitError`; `Agent.tsx` refreshes the meter via `refreshUsage()` after each turn, `DeckEditor.tsx` shows the gate error inline.
