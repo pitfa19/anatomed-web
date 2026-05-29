@@ -43,3 +43,9 @@ public/models/thumbs/
 *.njsproj
 *.sln
 *.sw?
+
+# Competition / business deliverables - keep out of the public repo
+Anatom3D_Poslovni_Model.pdf
+tehnicka_dokumentacija.pdf
+TEHNICKA_DOKUMENTACIJA.md
+Pravilnik Natjecanje LUMEN Development  2025._2026. (1).pdf
