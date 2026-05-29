@@ -1,8 +1,9 @@
-// TODO(server-side gate): re-check the user's token balance via the
-// Supabase service role and return 402 before invoking the LLM. Today the
-// gate is enforced client-side in AuthContext.consumeTokens.
+// Generates anatomy flashcards (Haiku, Croatian). Gated by the shared daily
+// usage budget (see `api/_gate.ts`): a real signed-in user with budget left;
+// the call's real token cost is recorded after.
 import Anthropic from '@anthropic-ai/sdk';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { gateDaily, recordUsage } from '../_gate';
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const client = apiKey ? new Anthropic({ apiKey }) : null;
@@ -22,6 +23,7 @@ Pravila:
 interface GenerateBody {
   topic?: unknown;
   count?: unknown;
+  userId?: unknown;
 }
 
 interface GeneratedCard {
@@ -64,6 +66,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const rawCount = typeof body.count === 'number' ? body.count : 8;
   const count = Math.max(1, Math.min(20, Math.floor(rawCount)));
 
+  // --- Usage gate ---
+  const userId = typeof body.userId === 'string' ? body.userId : undefined;
+  const g = await gateDaily(userId);
+  if ('denied' in g) {
+    res.status(g.denied.status).json({ error: g.denied.error, code: g.denied.code });
+    return;
+  }
+
   try {
     const msg = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -76,6 +86,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         },
       ],
     });
+    if (userId) {
+      await recordUsage(
+        userId,
+        (msg.usage?.input_tokens ?? 0) + (msg.usage?.output_tokens ?? 0),
+        'deck_generate',
+        g.usedToday,
+      );
+    }
 
     const text = msg.content.find((b) => b.type === 'text')?.text ?? '';
     const match = text.match(/\[[\s\S]*\]/);

@@ -12,13 +12,13 @@ import {
   X,
   User as UserIcon,
   LogIn,
-  Coins,
+  Zap,
   Loader2,
 } from 'lucide-react';
 import { cn } from './lib/cn';
 import { useTheme } from './lib/theme';
 import { useAuth } from './lib/AuthContext';
-import { LOW_BALANCE_THRESHOLD } from './lib/packages';
+import { DAILY_TOKEN_LIMIT, LOW_REMAINING_FRACTION, formatTokens } from './lib/usage';
 import { useT, useLang } from './lib/i18n';
 import type { TKey } from './lib/i18n';
 
@@ -168,30 +168,34 @@ export default function App() {
           )}
 
           {user ? (
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                cn(
-                  'ml-1 flex items-center gap-1.5 rounded-md border border-border bg-surface px-2 py-1.5 text-xs transition-colors hover:bg-surface-2',
-                  isActive ? 'text-accent' : 'text-text',
-                )
-              }
-              title={`${user.username} · ${user.credits} ${t('common.aiTokens')}`}
-            >
-              <UserIcon size={13} />
-              <span className="hidden max-w-[110px] truncate sm:inline">{user.username}</span>
-              <span
-                className={cn(
-                  'flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium',
-                  user.credits <= LOW_BALANCE_THRESHOLD
-                    ? 'bg-warn/15 text-warn'
-                    : 'bg-accent/15 text-accent',
-                )}
-              >
-                <Coins size={10} />
-                {user.credits}
-              </span>
-            </NavLink>
+            (() => {
+              const remaining = Math.max(0, DAILY_TOKEN_LIMIT - user.tokensUsedToday);
+              const low = remaining <= DAILY_TOKEN_LIMIT * LOW_REMAINING_FRACTION;
+              return (
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    cn(
+                      'ml-1 flex items-center gap-1.5 rounded-md border border-border bg-surface px-2 py-1.5 text-xs transition-colors hover:bg-surface-2',
+                      isActive ? 'text-accent' : 'text-text',
+                    )
+                  }
+                  title={`${user.username} · ${formatTokens(remaining)} / ${formatTokens(DAILY_TOKEN_LIMIT)} ${t('common.aiTokens')}`}
+                >
+                  <UserIcon size={13} />
+                  <span className="hidden max-w-[110px] truncate sm:inline">{user.username}</span>
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium',
+                      low ? 'bg-warn/15 text-warn' : 'bg-accent/15 text-accent',
+                    )}
+                  >
+                    <Zap size={10} />
+                    {formatTokens(remaining)}
+                  </span>
+                </NavLink>
+              );
+            })()
           ) : (
             <NavLink
               to="/login"

@@ -19,7 +19,7 @@ A React 19 + Vite 8 + Tailwind 4 prototype of an anatomy-study web app. Bilingua
 | `/revise/praksa` (`/play`, `/results`) | Practical quiz — pick a count + system, then find-the-structure on the 3D model. |
 | `/viewer` | three.js anatomy viewer. Search a body part → load that part's system .glb → isolate just that part. |
 | `/login` | Username + password sign-in / sign-up. |
-| `/profile` | User profile: username + AI-credits balance + three fake-purchase packets (2 €/5 €/10 €). |
+| `/profile` | User profile: username + a daily AI-usage meter (tokens used today / `DAILY_TOKEN_LIMIT`, resets at UTC midnight). |
 
 > Legacy `/quiz*` paths redirect to `/revise/praksa*`. XP/streak live in `src/lib/xp.ts` (localStorage); SRS in `src/lib/srs.ts`.
 
@@ -41,14 +41,22 @@ PDF + indexed-data sourcing:
 - The 5 bundled source PDFs and rendered page WebPs come from **Supabase Storage public buckets** (`pdfs`, `pdfs-rendered`) when `VITE_PDFS_BASE_URL` / `VITE_PDFS_RENDERED_BASE_URL` are set - which is the default for both local dev and prod. Without those env vars, `src/lib/data.ts` falls back to `/pdfs` and `/pdfs-rendered` paths under `public/`, which are gitignored and won't exist on a fresh clone.
 - `public/pdfs-rendered/<slug>/` may exist locally as a development cache; `tools/upload_to_supabase.ts` reads from it to push to Supabase. `files/` (gitignored) holds the 5 source PDFs for the same uploader.
 
-## Auth + credits (Supabase, hackathon-grade)
+## Auth + daily AI usage (Supabase, hackathon-grade)
 
 Plain username/password backed by a single Supabase table. **Not real auth** - no Supabase Auth, no email, no OAuth, no JWTs. Built for a hackathon demo.
+
+### AI usage model — one daily token budget (no tiers, no purchases)
+
+Metering works like Claude's own usage limit: each user gets **one flat daily allowance of real Anthropic tokens** (`DAILY_TOKEN_LIMIT`, default **200 000**, in `src/lib/usage.ts`), reset at **UTC midnight**. No tiers, no packages, no buying. There is no per-call "price" — we meter the *actual* `input_tokens + output_tokens` each call costs and add it up.
+
+- **Source of truth is the server.** `api/_gate.ts` (shared by `api/agent/chat.ts` + `api/decks/generate.ts`) checks the user has budget left *before* the call and records the real token cost *after*. The client display is advisory.
+- **Storage reuses `public.token_transactions`** (no schema migration): each AI call writes one `consumption` row with `delta = -tokens`. "Used today" = `sum(-delta)` for that user since the start of the current UTC day. `balance_after` holds the estimated remaining-for-today (informational). The old credit-era `consume_tokens` RPC + `users.credits` column are now **unused** (left in place, harmless).
+- Client reads its own usage with the anon key (`fetchUsageToday` in `auth.ts`) — the table's `anon_read` RLS allows it. `DAILY_TOKEN_LIMIT` is duplicated in `api/_gate.ts` (it can't import `src/`); keep the two in sync.
 
 ### Supabase project
 
 - Project: `anatom3d` (id `uafyfwyyqzunabpuftue`, eu-west-1).
-- One table: `public.users` with `id uuid pk`, `username text unique`, `password_hash text`, `credits int default 0`, `created_at timestamptz`.
+- One table: `public.users` with `id uuid pk`, `username text unique`, `password_hash text`, `credits int default 0` (legacy, unused), `created_at timestamptz`. Usage lives in `public.token_transactions`.
 - RLS enabled with three permissive policies (`anon_read` / `anon_insert` / `anon_update`, all `using (true)`). The browser hits the table directly with the publishable anon key. Don't lock these down without first replacing the auth shim.
 
 ### Files
@@ -56,20 +64,22 @@ Plain username/password backed by a single Supabase table. **Not real auth** - n
 | File | Purpose |
 |------|---------|
 | `src/lib/supabase.ts` | Singleton `createClient`. `auth.persistSession: false` because we don't use Supabase Auth. |
-| `src/lib/auth.ts` | `hashPassword` (WebCrypto SHA-256 with module-level `SALT`), `signup`, `login`, `getUserById`, `addCredits`. `signup` maps Postgres `23505` to a Croatian "Korisničko ime je već zauzeto." |
-| `src/lib/AuthContext.tsx` | `useAuth()`. Persists `userId` only under `anatom3d.auth.userId.v1`; on mount, refetches via `getUserById` so manual DB credit edits are visible after reload. |
+| `src/lib/usage.ts` | `DAILY_TOKEN_LIMIT`, `LOW_REMAINING_FRACTION`, `formatTokens`, `startOfUtcDayISO`, `nextDailyReset`. Client-side single source of truth for the budget. |
+| `src/lib/auth.ts` | `hashPassword` (WebCrypto SHA-256 with module-level `SALT`), `signup`, `login`, `getUserById`, `fetchUsageToday`. `User` carries `tokensUsedToday`. `signup` maps Postgres `23505` to a Croatian "Korisničko ime je već zauzeto." |
+| `src/lib/AuthContext.tsx` | `useAuth()` → `{ user, loading, syncing, login, signup, logout, refreshUsage }`. Persists `userId` only under `anatom3d.auth.userId.v1`; on mount, refetches via `getUserById` (incl. today's usage). |
+| `src/lib/agentErrors.ts` | `MissingApiKeyError` / `DailyLimitError` / `AuthRequiredError` + `proxyError()` mapper, shared by `agent.ts` and `aiGenerate.ts`. |
 | `src/routes/Login.tsx` | Single screen with `[Prijava \| Registracija]` toggle. |
-| `src/routes/Profile.tsx` | Profile card + buy buttons. Packets hardcoded as `[{2, 20}, {5, 60}, {10, 150}]`. Each click calls `addCredits` + 2.2 s toast. Redirects to `/login` if not signed in. |
+| `src/routes/Profile.tsx` | Account card + a daily-usage meter (progress bar, used / limit, "Resets at HH:MM", remaining). Redirects to `/login` if not signed in. No buy UI. |
 
 ### Wiring
 
 - `main.tsx` wraps `<RouterProvider>` in `<AuthProvider>` (above the router so `useAuth` works in `App.tsx`'s header).
-- `App.tsx` renders the right-side header chip: signed-out → `Prijava` link; signed-in → `<NavLink to="/profile">` showing username + live credit count from context.
+- `App.tsx` renders the right-side header chip: signed-out → `Prijava` link; signed-in → `<NavLink to="/profile">` showing username + remaining daily tokens (`Zap` icon, warn-tinted under `LOW_REMAINING_FRACTION`).
 - `/profile` is **intentionally not in the main `NAV` array** - it lives next to the theme toggle on the right.
 
 ### Non-security note
 
-`SALT` is a fixed string. No per-user salt, no slow KDF, no rate limit. This stops *plaintext over the wire* and *trivial DB-dump-as-rainbow-table* - nothing else. Treat the credits balance as cosmetic state, not entitlement. Real auth = replace the shim with Supabase Auth and tighten RLS to `auth.uid()`.
+`SALT` is a fixed string. No per-user salt, no slow KDF, no rate limit. This stops *plaintext over the wire* and *trivial DB-dump-as-rainbow-table* - nothing else. Real auth = replace the shim with Supabase Auth and tighten RLS to `auth.uid()`. (The usage gate itself is server-authoritative via the service role, so it doesn't depend on the client trust model.)
 
 ## Storage backend (Supabase)
 
@@ -165,13 +175,13 @@ Both system prompts forbid markdown tables, require bullet lists with **bold** l
 
 The Anthropic SDK is **dev-only**: when `VITE_ANTHROPIC_API_KEY` is set, plain `npm run dev` calls Anthropic directly from the browser (`dangerouslyAllowBrowser: true`). `import.meta.env.DEV` gates this so the SDK is dead-code-eliminated from production builds. **Prod routes every LLM call through `/api/agent/chat`** (a Vercel Node function holding `ANTHROPIC_API_KEY` server-side). Same pattern in `aiGenerate.ts` → `/api/decks/generate`.
 
-`/api/agent/chat` is **hardened** (no longer an open proxy):
+`/api/agent/chat` and `/api/decks/generate` are **hardened** (no longer open proxies) and share `api/_gate.ts`:
 
 - **Hard caps** — model allowlist (`claude-sonnet-4-6` / `claude-haiku-4-5`), `max_tokens` clamped to 4096, message-count + body-size caps. Bounds the cost of any single call.
-- **Token gate** — every call must carry a `userId` of a real `public.users` row, verified via the **Supabase service role** (`SUPABASE_SERVICE_ROLE_KEY`, bypasses RLS). Billed (Sonnet answer) calls atomically decrement 1 credit (`gte` conditional update); Haiku summary calls just need a valid user. Anonymous → `401 auth_required`; broke → `402 no_tokens`. The client (`agent.ts`) forwards `user?.id` and maps these to `AuthRequiredError` / `NoTokensError`; `Agent.tsx` reconciles the balance via `refreshCredits()` after each turn.
+- **Daily usage gate** — every call must carry a `userId` of a real `public.users` row, verified via the **Supabase service role** (`SUPABASE_SERVICE_ROLE_KEY`, bypasses RLS). `gateDaily()` rejects if the user has already spent `DAILY_TOKEN_LIMIT` tokens today (UTC day); otherwise the call proceeds and `recordUsage()` logs its real `input_tokens + output_tokens` afterward. Anonymous → `401 auth_required`; over budget → `429 daily_limit`. The client (`agent.ts` / `aiGenerate.ts`) forwards `user?.id` and maps these to `AuthRequiredError` / `DailyLimitError`; `Agent.tsx` refreshes the meter via `refreshUsage()` after each turn, `DeckEditor.tsx` shows the gate error inline.
 - **Fails closed**: if the service-role env is missing the gate denies (`gate_unavailable`) rather than reopening the hole — so **prod must set `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_URL`** (falls back to `VITE_SUPABASE_URL`) alongside `ANTHROPIC_API_KEY`.
 
-Notes: the gate is the single source of truth, so the client no longer pre-charges — the dev browser-direct path (no proxy) is therefore **ungated** (developer's machine). Billing is **per Sonnet call**, so a tool-using turn (3D/search → 2 Sonnet round-trips) costs 2 credits. The system prompt is **not** pinned server-side (it would break the rolling-summary context, which the client prepends); model-pinning + the auth gate already make abuse low-value. `api/decks/generate` still has the same `TODO(server-side gate)` — it's lower-risk (it builds its own prompt/model server-side, so it only ever emits Haiku anatomy cards) but should get the same gate.
+Notes: the gate is server-authoritative, so the dev browser-direct path (no proxy) is **ungated + unmetered** (developer's machine — usage only accrues through the prod proxy). Every metered call counts (Sonnet answers, the Haiku summary, deck generation) against the one shared daily budget, so a tool-using turn (multiple Sonnet round-trips) burns proportionally more. The system prompt is **not** pinned server-side (it would break the rolling-summary context, which the client prepends); model-pinning + the auth gate already make abuse low-value.
 
 ## Docs Deep Linking (`src/routes/Docs.tsx`)
 
