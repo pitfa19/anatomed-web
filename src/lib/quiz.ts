@@ -1,23 +1,68 @@
-import type { Part, PartsCatalog, SystemId } from './viewer/types';
+import { resolveQueryToParts } from './viewer/resolveParts';
+import type { Part, PartsCatalog } from './viewer/types';
+
+/** Lobby regions. Each maps to one or more anatomical groups; "mixed" draws
+ *  from all of them. Skeleton-only for now (the only system with grouping). */
+export type QuizRegion = 'hand' | 'foot' | 'spine' | 'skull' | 'mixed';
+
+export const QUIZ_REGIONS: readonly QuizRegion[] = [
+  'hand',
+  'foot',
+  'spine',
+  'skull',
+  'mixed',
+] as const;
+
+/** Regions that map to a concrete anatomical structure (everything except the
+ *  "mixed" meta-region). */
+export type QuizBaseRegion = Exclude<QuizRegion, 'mixed'>;
+
+/** Each region is shown WHOLE (the entire hand & wrist, foot, spine, or skull)
+ *  and the player clicks one element within it - the full structure is
+ *  recognizable enough to locate a single bone precisely. The strings are
+ *  group aliases understood by `resolveQueryToParts` (see GROUP_SPECS in
+ *  `viewer/resolveParts.ts`); a region's membership is the union of its
+ *  groups. */
+const REGION_GROUPS: Record<QuizBaseRegion, readonly string[]> = {
+  hand: ['carpus', 'metacarpus', 'phalanges of hand'],
+  foot: ['tarsus', 'metatarsus', 'phalanges of foot'],
+  // The vertebral column includes the sacrum and coccyx; 'sacrum'/'coccyx'
+  // resolve to single midline bones via resolveQueryToParts.
+  spine: ['cervical spine', 'thoracic spine', 'lumbar spine', 'sacrum', 'coccyx'],
+  skull: ['neurocranium', 'viscerocranium'],
+};
+
+const BASE_REGIONS: readonly QuizBaseRegion[] = ['hand', 'foot', 'spine', 'skull'];
+
+/** Regions rendered with BOTH sides of paired bones. A hand or foot is a single
+ *  limb (one of each bone), but the skull is one midline structure built from
+ *  left+right pairs - showing only the right half renders a lopsided skull. */
+const BOTH_SIDES_REGIONS: ReadonlySet<QuizBaseRegion> = new Set(['skull']);
 
 export interface QuizQuestion {
   /** Stable key for React lists. */
   key: string;
+  /** The region this question lives in (context label). */
+  regionKey: QuizBaseRegion;
+  /** Catalog ids of every part rendered for this question - the WHOLE region
+   *  (hand/foot/spine/skull). One per name for limbs/spine; both left+right for
+   *  the skull's paired bones. The scene isolates exactly these, so the player
+   *  picks the asked-for bone within the full structure. */
+  groupMemberIds: string[];
   /** Display name shown in the prompt. Latin if available, else English. */
   prompt: string;
   /** Secondary line (English when prompt is Latin, else empty). */
   promptSecondary: string;
-  /** Every catalog id that's an acceptable answer (e.g. both `.l` and `.r`).
-   *  We accept either side because the user is asked for the bone, not the
-   *  laterality. A future "side" mode would split these. */
+  /** Acceptable answer ids: the target plus its left/right mirror, so a click
+   *  on either side counts (we render the canonical/right side). */
   acceptableIds: ReadonlySet<string>;
-  /** Single id used to render the thumbnail / illustrate the answer in the
-   *  results screen. Prefers the `.r` side. */
+  /** Single id used to highlight the answer on reveal + render the results
+   *  thumbnail. */
   canonicalId: string;
 }
 
 export interface QuizConfig {
-  systemId: SystemId;
+  region: QuizRegion;
   count: number;
   /** Stable random seed for the deck (reset on retry). */
   seed: number;
@@ -30,45 +75,101 @@ export interface QuizAnswer {
   correct: boolean;
 }
 
-/** Build a deck of `cfg.count` questions for the chosen system, deterministic
- *  in (seed, system, catalog). Each question groups parts that share an
- *  English+Latin name pair so left/right counterparts collapse into one
- *  acceptable-ids set - the user is asked for the bone, not the laterality. */
-export function buildDeck(catalog: PartsCatalog, cfg: QuizConfig): QuizQuestion[] {
-  const inSystem = catalog.parts.filter((p) => p.system === cfg.systemId);
-  const groups = new Map<string, Part[]>();
-  for (const p of inSystem) {
-    if (!hasUsableName(p)) continue;
-    const groupKey = `${p.name_en}|${p.name_lat ?? ''}`;
-    const arr = groups.get(groupKey);
-    if (arr) arr.push(p);
-    else groups.set(groupKey, [p]);
+/** A region needs at least this many members to make a meaningful
+ *  "find one among several" question. */
+const MIN_REGION_MEMBERS = 2;
+
+/** All distinct parts that make up a region - the union of its groups,
+ *  de-duplicated by id and filtered to usable names (one per name, right side
+ *  preferred via `resolveQueryToParts`). */
+function regionMembers(catalog: PartsCatalog, region: QuizBaseRegion): Part[] {
+  const seen = new Set<string>();
+  const out: Part[] = [];
+  for (const alias of REGION_GROUPS[region]) {
+    const resolved = resolveQueryToParts(catalog, alias);
+    if (!resolved) continue;
+    for (const p of resolved.parts) {
+      if (!hasUsableName(p) || seen.has(p.id)) continue;
+      seen.add(p.id);
+      out.push(p);
+    }
   }
-  const questions: QuizQuestion[] = [];
-  for (const [groupKey, parts] of groups) {
-    const canonical = parts.find((p) => p.side === 'r') ?? parts[0]!;
-    const lat = canonical.name_lat?.trim();
-    const en = canonical.name_en.trim();
-    const useLat = !!lat && lat.length > 0;
-    questions.push({
-      key: groupKey,
-      prompt: useLat ? lat! : en,
-      promptSecondary: useLat && lat !== en ? en : '',
-      acceptableIds: new Set(parts.map((p) => p.id)),
-      canonicalId: canonical.id,
-    });
-  }
-  shuffleInPlace(questions, cfg.seed);
-  return questions.slice(0, cfg.count);
+  return out;
 }
 
-/** Drop parts whose names are auto-generated suffixes (e.g. `Axis (C2).001`)
- *  or empty. Without this the deck includes a handful of garbled prompts. */
+/** Catalog ids to render for a region. Normally that's just the (one-per-name,
+ *  right-side) members; for a both-sides region (skull) it also pulls in each
+ *  bone's left/right mirror so the whole structure renders, not a half. */
+function renderIds(
+  catalog: PartsCatalog,
+  members: Part[],
+  bothSides: boolean,
+): string[] {
+  if (!bothSides) return members.map((p) => p.id);
+  const byName = new Map<string, Part[]>();
+  for (const p of catalog.parts) {
+    const arr = byName.get(p.name_en);
+    if (arr) arr.push(p);
+    else byName.set(p.name_en, [p]);
+  }
+  const ids = new Set<string>();
+  for (const m of members) {
+    for (const sib of byName.get(m.name_en) ?? [m]) ids.add(sib.id);
+  }
+  return [...ids];
+}
+
+/** Build a deck of `cfg.count` questions, deterministic in (seed, region,
+ *  catalog). Every question shows the WHOLE region it belongs to and asks for
+ *  one element inside it; "mixed" interleaves all four regions. */
+export function buildDeck(catalog: PartsCatalog, cfg: QuizConfig): QuizQuestion[] {
+  const regions = cfg.region === 'mixed' ? BASE_REGIONS : [cfg.region];
+  const candidates: QuizQuestion[] = [];
+  for (const region of regions) {
+    const members = regionMembers(catalog, region);
+    if (members.length < MIN_REGION_MEMBERS) continue;
+    const memberIds = renderIds(catalog, members, BOTH_SIDES_REGIONS.has(region));
+    for (const target of members) {
+      const lat = target.name_lat?.trim();
+      const en = cleanName(target.name_en);
+      const useLat = !!lat && lat.length > 0;
+      candidates.push({
+        key: `${region}|${target.id}`,
+        regionKey: region,
+        groupMemberIds: memberIds,
+        prompt: useLat ? lat! : en,
+        promptSecondary: useLat && lat !== en ? en : '',
+        acceptableIds: new Set(siblingIds(target.id)),
+        canonicalId: target.id,
+      });
+    }
+  }
+  shuffleInPlace(candidates, cfg.seed);
+  return candidates.slice(0, cfg.count);
+}
+
+/** A part id and its left/right mirror. We render the canonical (right) side,
+ *  but accept either id in case the opposite side is also clickable. */
+function siblingIds(id: string): string[] {
+  if (id.endsWith('.r')) return [id, id.slice(0, -2) + '.l'];
+  if (id.endsWith('.l')) return [id, id.slice(0, -2) + '.r'];
+  return [id];
+}
+
+/** Strip a trailing Blender duplicate suffix (".001") for display. Most ".NNN"
+ *  names are throwaway duplicates, but a few are the ONLY copy of a real bone -
+ *  notably the axis, stored as "Axis (C2).001". We keep such bones (see
+ *  `hasUsableName`) and just clean the label. */
+function cleanName(name: string): string {
+  return name.replace(/\.\d{3}$/, '').trim();
+}
+
+/** Drop parts with empty names. (We deliberately keep ".NNN"-suffixed names
+ *  like "Axis (C2).001" - within the quiz regions the only such bone is the
+ *  axis, a real vertebra, not a duplicate - and clean the label via
+ *  `cleanName`.) */
 function hasUsableName(p: Part): boolean {
-  const en = p.name_en.trim();
-  if (en.length === 0) return false;
-  if (/\.\d{3}$/.test(en)) return false;
-  return true;
+  return cleanName(p.name_en).length > 0;
 }
 
 /** Mulberry32 - small, deterministic, good enough for shuffling a quiz deck. */
@@ -99,13 +200,13 @@ export function gradeAnswer(q: QuizQuestion, pickedId: string | null): QuizAnswe
   };
 }
 
-function bestScoreKey(systemId: SystemId, count: number): string {
-  return `anatomed.quiz.identify.${systemId}.${count}.best`;
+function bestScoreKey(region: QuizRegion, count: number): string {
+  return `anatomed.quiz.identify.${region}.${count}.best`;
 }
 
-export function loadBestScore(systemId: SystemId, count: number): number {
+export function loadBestScore(region: QuizRegion, count: number): number {
   try {
-    const v = localStorage.getItem(bestScoreKey(systemId, count));
+    const v = localStorage.getItem(bestScoreKey(region, count));
     if (!v) return 0;
     const n = parseInt(v, 10);
     return Number.isFinite(n) && n >= 0 && n <= count ? n : 0;
@@ -114,11 +215,11 @@ export function loadBestScore(systemId: SystemId, count: number): number {
   }
 }
 
-export function saveBestScore(systemId: SystemId, count: number, score: number): boolean {
-  const prev = loadBestScore(systemId, count);
+export function saveBestScore(region: QuizRegion, count: number, score: number): boolean {
+  const prev = loadBestScore(region, count);
   if (score <= prev) return false;
   try {
-    localStorage.setItem(bestScoreKey(systemId, count), String(score));
+    localStorage.setItem(bestScoreKey(region, count), String(score));
     return true;
   } catch {
     return false;
@@ -140,8 +241,3 @@ export function thumbnailUrl(canonicalId: string): string {
 function sanitizeId(id: string): string {
   return id.replace(/\s/g, '_').replace(/[^\w-]/g, '');
 }
-
-/** Systems that have enough distinct, visually-recognizable parts for an
- *  identify-style quiz. Excludes overlapping/dense systems where clicking the
- *  exact part is luck. */
-export const QUIZ_SYSTEMS: readonly SystemId[] = ['skeleton', 'muscles', 'organs'] as const;

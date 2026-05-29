@@ -2,20 +2,24 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, GraduationCap, Target } from 'lucide-react';
 import { useT, plural } from '../lib/i18n';
-import { loadXP, type XPState } from '../lib/xp';
 import { loadDueSummary } from '../lib/reviseSummary';
-import XPBar from '../components/revise/XPBar';
+import type { TopicProgress } from '../lib/srs';
+import MasteryBar from '../components/revise/MasteryBar';
 import DueBadge from '../components/revise/DueBadge';
 
 export default function Revise() {
   const t = useT();
-  const [xpState] = useState<XPState>(() => loadXP());
   const [totalDue, setTotalDue] = useState<number | null>(null);
+  const [totals, setTotals] = useState<TopicProgress | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     loadDueSummary()
-      .then((s) => !cancelled && setTotalDue(s.totalDue))
+      .then((s) => {
+        if (cancelled) return;
+        setTotalDue(s.totalDue);
+        setTotals(s.totals);
+      })
       .catch(() => {});
     return () => {
       cancelled = true;
@@ -38,7 +42,16 @@ export default function Revise() {
         <p className="mt-1 text-sm text-text-muted">{t('revise.chooseMode')}</p>
       </header>
 
-      <XPBar state={xpState} className="mb-4" />
+      {totals && totals.total > 0 && (
+        <MasteryBar
+          className="mb-4 rounded-xl border border-border bg-surface p-3"
+          label={t('revise.masteryOverall')}
+          known={totals.known}
+          learning={totals.learning}
+          total={totals.total}
+          showCounts
+        />
+      )}
 
       <div className="flex flex-col gap-3">
         <Link

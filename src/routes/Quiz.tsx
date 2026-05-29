@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, ChevronRight, Target, Trophy } from 'lucide-react';
-import { loadCatalog } from '../lib/viewer/catalog';
-import type { PartsCatalog, SystemId } from '../lib/viewer/types';
-import { QUIZ_SYSTEMS, buildDeck, loadBestScore } from '../lib/quiz';
+import { ArrowLeft, Loader2, ChevronRight, Boxes, Trophy } from 'lucide-react';
+import { loadCatalog, getSystem } from '../lib/viewer/catalog';
+import type { PartsCatalog } from '../lib/viewer/types';
+import { QUIZ_REGIONS, buildDeck, loadBestScore, type QuizRegion } from '../lib/quiz';
+import { REGION_LABEL_KEY } from '../lib/quizLabels';
 import { startQuizSession } from '../lib/quizSession';
 import { cn } from '../lib/cn';
 import { useT } from '../lib/i18n';
@@ -24,21 +25,26 @@ export default function Quiz() {
       .catch((e) => setError(e.message ?? String(e)));
   }, []);
 
-  // Per-system part counts so we don't show systems with too few options.
-  const systemSizes = useMemo(() => {
-    if (!catalog) return new Map<SystemId, number>();
-    const m = new Map<SystemId, number>();
-    for (const sys of catalog.systems) {
-      const deck = buildDeck(catalog, { systemId: sys.id, count: 1000, seed: 1 });
-      m.set(sys.id, deck.length);
+  // Total distinct questions available per region (the full pool, before we
+  // slice it down to `count`). Used to disable a region with too few items.
+  const regionSizes = useMemo(() => {
+    const m = new Map<QuizRegion, number>();
+    if (!catalog) return m;
+    for (const region of QUIZ_REGIONS) {
+      m.set(region, buildDeck(catalog, { region, count: 100000, seed: 1 }).length);
     }
     return m;
   }, [catalog]);
 
-  function startQuiz(systemId: SystemId) {
+  const skeletonTint = useMemo(
+    () => (catalog ? getSystem(catalog, 'skeleton')?.tint ?? '#cbb893' : '#cbb893'),
+    [catalog],
+  );
+
+  function startQuiz(region: QuizRegion) {
     if (!catalog) return;
     const seed = (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
-    const cfg = { systemId, count, seed };
+    const cfg = { region, count, seed };
     const questions = buildDeck(catalog, cfg);
     if (questions.length === 0) return;
     startQuizSession({ config: cfg, questions, answers: [], currentIdx: 0 });
@@ -56,10 +62,6 @@ export default function Quiz() {
     );
   }
 
-  const systems = catalog.systems.filter((s) =>
-    QUIZ_SYSTEMS.includes(s.id),
-  );
-
   return (
     <div className="mx-auto h-full w-full max-w-3xl overflow-y-auto px-4 py-6 sm:px-6">
       <Link
@@ -70,9 +72,7 @@ export default function Quiz() {
       </Link>
       <header className="mb-6">
         <h1 className="text-2xl font-semibold text-text-strong">{t('quiz.title')}</h1>
-        <p className="mt-1 text-sm text-text-muted">
-          {t('quiz.subhead')}
-        </p>
+        <p className="mt-1 text-sm text-text-muted">{t('quiz.subhead')}</p>
       </header>
 
       <section className="mb-5">
@@ -100,19 +100,19 @@ export default function Quiz() {
 
       <section>
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-          {t('quiz.system')}
+          {t('quiz.region')}
         </h2>
         <ul className="flex flex-col gap-2">
-          {systems.map((sys) => {
-            const total = systemSizes.get(sys.id) ?? 0;
+          {QUIZ_REGIONS.map((region) => {
+            const total = regionSizes.get(region) ?? 0;
             const tooFew = total < count;
-            const best = loadBestScore(sys.id, count);
+            const best = loadBestScore(region, count);
             return (
-              <li key={sys.id}>
+              <li key={region}>
                 <button
                   type="button"
                   disabled={tooFew}
-                  onClick={() => startQuiz(sys.id)}
+                  onClick={() => startQuiz(region)}
                   className={cn(
                     'flex w-full items-center justify-between gap-3 rounded-2xl border p-4 text-left transition-colors',
                     tooFew
@@ -123,14 +123,14 @@ export default function Quiz() {
                   <div className="flex items-center gap-3">
                     <span
                       className="flex size-10 items-center justify-center rounded-xl"
-                      style={{ backgroundColor: sys.tint }}
+                      style={{ backgroundColor: skeletonTint }}
                       aria-hidden
                     >
-                      <Target size={18} className="text-white" />
+                      <Boxes size={18} className="text-white" />
                     </span>
                     <div>
                       <div className="text-sm font-medium text-text-strong">
-                        {sys.label_hr}
+                        {t(REGION_LABEL_KEY[region])}
                       </div>
                       <div className="text-xs text-text-muted">
                         {tooFew

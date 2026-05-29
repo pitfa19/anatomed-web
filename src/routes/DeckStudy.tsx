@@ -3,12 +3,10 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowLeft,
-  Flame,
   Loader2,
   Pencil,
   RotateCcw,
   Sparkles,
-  Star,
 } from 'lucide-react';
 import {
   dueCardsForUserDeck,
@@ -18,11 +16,9 @@ import {
   type UserCard,
   type UserDeck,
 } from '../lib/userDecks';
-import { awardXP, getLevelProgress, loadXP, type XPState } from '../lib/xp';
-import { shuffle } from '../lib/srs';
+import { intervalDaysForBox, shuffle } from '../lib/srs';
 import type { Grade } from '../lib/types';
 import GradeButtons from '../components/revise/GradeButtons';
-import { cn } from '../lib/cn';
 import { useT, plural } from '../lib/i18n';
 
 interface StudyItem {
@@ -41,9 +37,7 @@ export default function DeckStudy() {
   const [pos, setPos] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [graded, setGraded] = useState(0);
-  const [sessionXP, setSessionXP] = useState(0);
-  const [xpState, setXPState] = useState<XPState>(() => loadXP());
-  const [xpPopups, setXPPopups] = useState<Array<{ id: number; amount: number; leveledUp: boolean }>>([]);
+  const [popups, setPopups] = useState<Array<{ id: number; days: number }>>([]);
   const popupRef = useRef(0);
 
   useEffect(() => {
@@ -68,12 +62,9 @@ export default function DeckStudy() {
 
   function handleGrade(grade: Grade) {
     if (!current || !deck) return;
-    gradeUserCard(deck.id, current.card.id, grade);
-    const { gained, newState, leveledUp } = awardXP(grade);
-    setXPState(newState);
-    setSessionXP((s) => s + gained);
+    const updated = gradeUserCard(deck.id, current.card.id, grade);
     popupRef.current += 1;
-    setXPPopups((prev) => [...prev, { id: popupRef.current, amount: gained, leveledUp }]);
+    setPopups((prev) => [...prev, { id: popupRef.current, days: intervalDaysForBox(updated.box) }]);
     setGraded((g) => g + 1);
     setRevealed(false);
     setPos((p) => p + 1);
@@ -87,10 +78,7 @@ export default function DeckStudy() {
     setPos(0);
     setRevealed(false);
     setGraded(0);
-    setSessionXP(0);
   }
-
-  const { level, pct } = getLevelProgress(xpState.xp);
 
   if (!deck || !items) {
     return (
@@ -110,28 +98,13 @@ export default function DeckStudy() {
           >
             <ArrowLeft size={12} /> {t('decks.studyMyDecks')}
           </Link>
-          <div className="flex items-center gap-2">
-            {xpState.streak > 1 && (
-              <span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-xs text-orange-400">
-                <Flame size={11} />
-                {xpState.streak}
-              </span>
-            )}
-            <span
-              className="flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
-              title={`${xpState.xp} XP`}
-            >
-              <Star size={11} className="fill-accent" />
-              {t('revise.level', { level })}
-            </span>
-            <Link
-              to={`/revise/deck/${deck.id}/edit`}
-              className="flex size-6 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
-              title={t('decks.editDeck')}
-            >
-              <Pencil size={13} />
-            </Link>
-          </div>
+          <Link
+            to={`/revise/deck/${deck.id}/edit`}
+            className="flex size-6 items-center justify-center rounded-md text-text-muted hover:bg-surface-2 hover:text-text-strong"
+            title={t('decks.editDeck')}
+          >
+            <Pencil size={13} />
+          </Link>
         </div>
 
         <div className="flex items-start justify-between gap-3">
@@ -145,7 +118,6 @@ export default function DeckStudy() {
                 : t('decks.progressCards', {
                     done: Math.min(pos, total),
                     total,
-                    xp: graded > 0 ? ` · +${sessionXP} XP` : '',
                   })}
             </p>
           </div>
@@ -168,39 +140,28 @@ export default function DeckStudy() {
             />
           </div>
         )}
-
-        {/* XP level bar */}
-        <div className="mt-2 h-0.5 overflow-hidden rounded-full bg-surface-2">
-          <div
-            className="h-full rounded-full bg-accent/40 transition-all duration-500"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
       </header>
 
       <div className="relative flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-        {/* XP popups */}
+        {/* Next-review popups */}
         <div className="pointer-events-none absolute right-6 top-4 z-10 flex flex-col items-end gap-1">
           <AnimatePresence>
-            {xpPopups.map((p) => (
+            {popups.map((p) => (
               <motion.div
                 key={p.id}
                 initial={{ opacity: 1, y: 0, scale: 1 }}
-                animate={{ opacity: 0, y: -28, scale: 0.85 }}
-                transition={{ duration: 0.9, ease: 'easeOut' }}
+                animate={{ opacity: 0, y: -28, scale: 0.9 }}
+                transition={{ duration: 1.2, ease: 'easeOut' }}
                 onAnimationComplete={() =>
-                  setXPPopups((prev) => prev.filter((x) => x.id !== p.id))
+                  setPopups((prev) => prev.filter((x) => x.id !== p.id))
                 }
-                className={cn(
-                  'flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg',
-                  p.leveledUp
-                    ? 'bg-accent text-white'
-                    : 'bg-accent/15 text-accent',
-                )}
+                className="flex items-center gap-1 rounded-full bg-accent-2/15 px-3 py-1 text-xs font-medium text-accent-2 shadow-lg"
               >
-                <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
-                +{p.amount} XP
-                {p.leveledUp && t('revise.levelUp')}
+                {plural(t.lang, p.days, {
+                  one: t('revise.nextReviewOne', { n: p.days }),
+                  few: t('revise.nextReviewMany', { n: p.days }),
+                  many: t('revise.nextReviewMany', { n: p.days }),
+                })}
               </motion.div>
             ))}
           </AnimatePresence>
@@ -243,30 +204,6 @@ export default function DeckStudy() {
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">{t('revise.graded')}</span>
                 <span className="font-semibold text-text-strong">{t('decks.gradedCards', { n: graded })}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">{t('revise.earnedXP')}</span>
-                <span className="flex items-center gap-1 font-semibold text-accent">
-                  <Star size={13} className="fill-accent" />
-                  +{sessionXP} XP
-                </span>
-              </div>
-              {xpState.streak > 1 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">{t('revise.streak')}</span>
-                  <span className="flex items-center gap-1 font-semibold text-orange-400">
-                    <Flame size={13} />
-                    {plural(t.lang, xpState.streak, {
-                      one: t('revise.streakDaysOne', { n: xpState.streak }),
-                      few: t('revise.streakDaysMany', { n: xpState.streak }),
-                      many: t('revise.streakDaysMany', { n: xpState.streak }),
-                    })}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">{t('revise.levelLabel')}</span>
-                <span className="font-semibold text-text-strong">{level}</span>
               </div>
             </div>
             <div className="flex gap-2">

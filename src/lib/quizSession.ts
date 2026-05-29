@@ -7,7 +7,9 @@ export interface QuizSession {
   currentIdx: number;
 }
 
-const KEY = 'anatomed.quiz.session.v1';
+// v3: each question now isolates the WHOLE region (regionKey + the region's
+// full groupMemberIds); v2 was per-sub-group (groupKey).
+const KEY = 'anatomed.quiz.session.v3';
 
 interface SerializedQuestion extends Omit<QuizQuestion, 'acceptableIds'> {
   acceptableIds: string[];

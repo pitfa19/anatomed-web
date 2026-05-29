@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, BookOpen, Flame, Loader2, Sparkles, Star } from 'lucide-react';
+import { ArrowLeft, BookOpen, Loader2, Sparkles } from 'lucide-react';
 import {
   dueCardsForTopic,
   gradeCard,
+  intervalDaysForBox,
   loadCard,
   saveCard,
   shuffle,
@@ -12,7 +13,6 @@ import {
 } from '../lib/srs';
 import type { Grade, Question, ReviseTopic } from '../lib/types';
 import { loadReviseIndex, loadReviseTopic } from '../lib/data';
-import { awardXP, getLevelProgress, loadXP, type XPState } from '../lib/xp';
 import GradeButtons from '../components/revise/GradeButtons';
 import { cn } from '../lib/cn';
 import { useT, plural } from '../lib/i18n';
@@ -54,9 +54,7 @@ export default function ReviseToday() {
   const [pos, setPos] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [graded, setGraded] = useState(0);
-  const [sessionXP, setSessionXP] = useState(0);
-  const [xpState, setXPState] = useState<XPState>(() => loadXP());
-  const [xpPopups, setXPPopups] = useState<Array<{ id: number; amount: number; leveledUp: boolean }>>([]);
+  const [popups, setPopups] = useState<Array<{ id: number; days: number }>>([]);
   const popupRef = useRef(0);
 
   useEffect(() => {
@@ -106,11 +104,8 @@ export default function ReviseToday() {
     const updated = gradeCard(prev, grade, now);
     saveCard(current.topicId, current.qIndex, updated);
 
-    const { gained, newState, leveledUp } = awardXP(grade);
-    setXPState(newState);
-    setSessionXP((s) => s + gained);
     popupRef.current += 1;
-    setXPPopups((prev) => [...prev, { id: popupRef.current, amount: gained, leveledUp }]);
+    setPopups((prev) => [...prev, { id: popupRef.current, days: intervalDaysForBox(updated.box) }]);
 
     setGraded((g) => g + 1);
     setRevealed(false);
@@ -138,7 +133,6 @@ export default function ReviseToday() {
 
   const total = deck.length;
   const done = pos >= total;
-  const { level, pct } = getLevelProgress(xpState.xp);
 
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col">
@@ -150,21 +144,6 @@ export default function ReviseToday() {
           >
             <ArrowLeft size={12} /> {t('revise.allTopics')}
           </Link>
-          <div className="flex items-center gap-2">
-            {xpState.streak > 1 && (
-              <span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-xs text-orange-400">
-                <Flame size={11} />
-                {xpState.streak}
-              </span>
-            )}
-            <span
-              className="flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
-              title={t('revise.xpTotal', { xp: xpState.xp })}
-            >
-              <Star size={11} className="fill-accent" />
-              {t('revise.level', { level })}
-            </span>
-          </div>
         </div>
 
         <h1 className="text-xl font-semibold text-text-strong">{t('revise.today')}</h1>
@@ -174,7 +153,6 @@ export default function ReviseToday() {
             : t('revise.progressQuestions', {
                 done: Math.min(pos, total),
                 total,
-                xp: sessionXP > 0 ? ` · +${sessionXP} XP` : '',
               })}
         </p>
 
@@ -186,37 +164,28 @@ export default function ReviseToday() {
             />
           </div>
         )}
-
-        {/* XP level bar */}
-        <div className="mt-1.5 h-0.5 overflow-hidden rounded-full bg-surface-2">
-          <div
-            className="h-full rounded-full bg-accent/40 transition-all duration-500"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
       </header>
 
       <div className="relative flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-        {/* XP popups */}
+        {/* Next-review popups */}
         <div className="pointer-events-none absolute right-6 top-4 z-10 flex flex-col items-end gap-1">
           <AnimatePresence>
-            {xpPopups.map((p) => (
+            {popups.map((p) => (
               <motion.div
                 key={p.id}
                 initial={{ opacity: 1, y: 0, scale: 1 }}
-                animate={{ opacity: 0, y: -28, scale: 0.85 }}
-                transition={{ duration: 0.9, ease: 'easeOut' }}
+                animate={{ opacity: 0, y: -28, scale: 0.9 }}
+                transition={{ duration: 1.2, ease: 'easeOut' }}
                 onAnimationComplete={() =>
-                  setXPPopups((prev) => prev.filter((x) => x.id !== p.id))
+                  setPopups((prev) => prev.filter((x) => x.id !== p.id))
                 }
-                className={cn(
-                  'flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg',
-                  p.leveledUp ? 'bg-accent text-white' : 'bg-accent/15 text-accent',
-                )}
+                className="flex items-center gap-1 rounded-full bg-accent-2/15 px-3 py-1 text-xs font-medium text-accent-2 shadow-lg"
               >
-                <Star size={10} className={p.leveledUp ? 'fill-white' : 'fill-accent'} />
-                +{p.amount} XP
-                {p.leveledUp && t('revise.levelUp')}
+                {plural(t.lang, p.days, {
+                  one: t('revise.nextReviewOne', { n: p.days }),
+                  few: t('revise.nextReviewMany', { n: p.days }),
+                  many: t('revise.nextReviewMany', { n: p.days }),
+                })}
               </motion.div>
             ))}
           </AnimatePresence>
@@ -254,32 +223,6 @@ export default function ReviseToday() {
                     many: t('revise.gradedQuestionsMany', { n: graded }),
                   })}
                 </span>
-              </div>
-              {sessionXP > 0 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">{t('revise.earnedXP')}</span>
-                  <span className="flex items-center gap-1 font-semibold text-accent">
-                    <Star size={13} className="fill-accent" />
-                    +{sessionXP} XP
-                  </span>
-                </div>
-              )}
-              {xpState.streak > 1 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">{t('revise.streak')}</span>
-                  <span className="flex items-center gap-1 font-semibold text-orange-400">
-                    <Flame size={13} />
-                    {plural(t.lang, xpState.streak, {
-                      one: t('revise.streakDaysOne', { n: xpState.streak }),
-                      few: t('revise.streakDaysMany', { n: xpState.streak }),
-                      many: t('revise.streakDaysMany', { n: xpState.streak }),
-                    })}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">{t('revise.levelLabel')}</span>
-                <span className="font-semibold text-text-strong">{level}</span>
               </div>
             </div>
             <Link

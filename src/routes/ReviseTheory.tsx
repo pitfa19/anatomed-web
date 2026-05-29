@@ -4,10 +4,10 @@ import { ArrowLeft, Loader2, ChevronRight, Sparkles, Layers, Plus } from 'lucide
 import { loadReviseIndex } from '../lib/data';
 import type { ReviseGroup } from '../lib/types';
 import { loadDueSummary } from '../lib/reviseSummary';
-import { loadXP, type XPState } from '../lib/xp';
+import type { TopicProgress } from '../lib/srs';
 import { loadDecks, dueCardsForUserDeck } from '../lib/userDecks';
 import DueBadge from '../components/revise/DueBadge';
-import XPBar from '../components/revise/XPBar';
+import MasteryBar from '../components/revise/MasteryBar';
 import { cn } from '../lib/cn';
 import { useT, plural } from '../lib/i18n';
 
@@ -17,7 +17,8 @@ export default function ReviseTheory() {
   const [error, setError] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [dueCounts, setDueCounts] = useState<Record<string, number>>({});
-  const [xpState, setXPState] = useState<XPState>(() => loadXP());
+  const [progress, setProgress] = useState<Record<string, TopicProgress>>({});
+  const [totals, setTotals] = useState<TopicProgress | null>(null);
 
   const userDecks = loadDecks();
   const userDecksDue = useMemo(() => {
@@ -26,7 +27,6 @@ export default function ReviseTheory() {
   }, [userDecks]);
 
   useEffect(() => {
-    setXPState(loadXP());
     loadReviseIndex()
       .then(setGroups)
       .catch((e) => setError(e.message ?? String(e)));
@@ -39,6 +39,8 @@ export default function ReviseTheory() {
       if (cancelled) return;
       setCounts(s.counts);
       setDueCounts(s.dueCounts);
+      setProgress(s.progress);
+      setTotals(s.totals);
     });
     return () => {
       cancelled = true;
@@ -78,8 +80,17 @@ export default function ReviseTheory() {
         </p>
       </header>
 
-      {/* XP progress bar */}
-      <XPBar state={xpState} className="mb-4" />
+      {/* Overall learning progress */}
+      {totals && totals.total > 0 && (
+        <MasteryBar
+          className="mb-4 rounded-xl border border-border bg-surface p-3"
+          label={t('revise.masteryOverall')}
+          known={totals.known}
+          learning={totals.learning}
+          total={totals.total}
+          showCounts
+        />
+      )}
 
       {/* Today's review */}
       {Object.keys(counts).length > 0 && (
@@ -178,34 +189,46 @@ export default function ReviseTheory() {
             <ul className="flex flex-col gap-2">
               {g.topics.map((t) => {
                 const due = dueCounts[t.id] ?? 0;
+                const prog = progress[t.id];
                 return (
                   <li key={t.id}>
                     <Link to={`/revise/${t.id}`}>
-                      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-accent/40 hover:bg-surface-2">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={cn(
-                              'flex size-9 items-center justify-center rounded-lg text-[10px] font-semibold text-white',
-                              t.badge === 'A1'
-                                ? 'bg-accent'
-                                : t.badge === 'A1-Auto'
-                                  ? 'bg-accent/80'
-                                  : 'bg-accent-2/40',
-                            )}
-                          >
-                            {t.badge}
-                          </span>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-text-strong">
-                                {t.name}
-                              </span>
-                              {due > 0 && <DueBadge count={due} />}
+                      <div className="rounded-xl border border-border bg-surface p-3 transition-colors hover:border-accent/40 hover:bg-surface-2">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={cn(
+                                'flex size-9 items-center justify-center rounded-lg text-[10px] font-semibold text-white',
+                                t.badge === 'A1'
+                                  ? 'bg-accent'
+                                  : t.badge === 'A1-Auto'
+                                    ? 'bg-accent/80'
+                                    : 'bg-accent-2/40',
+                              )}
+                            >
+                              {t.badge}
+                            </span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-text-strong">
+                                  {t.name}
+                                </span>
+                                {due > 0 && <DueBadge count={due} />}
+                              </div>
+                              <div className="text-xs text-text-muted">{t.subtitle}</div>
                             </div>
-                            <div className="text-xs text-text-muted">{t.subtitle}</div>
                           </div>
+                          <ChevronRight size={16} className="text-text-muted" />
                         </div>
-                        <ChevronRight size={16} className="text-text-muted" />
+                        {prog && prog.total > 0 && (
+                          <MasteryBar
+                            className="mt-2.5"
+                            known={prog.known}
+                            learning={prog.learning}
+                            total={prog.total}
+                            showCounts
+                          />
+                        )}
                       </div>
                     </Link>
                   </li>

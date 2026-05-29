@@ -13,6 +13,9 @@ const BOX_INTERVAL_DAYS: Record<1 | 2 | 3 | 4 | 5, number> = {
   5: 30,
 };
 
+/** A card at this Leitner box or higher counts as "known" (weekly+ interval). */
+export const KNOWN_BOX = 3;
+
 function newKey(topicId: string, qIndex: number): string {
   return `${NEW_KEY_PREFIX}.${topicId}.${qIndex}`;
 }
@@ -60,7 +63,9 @@ export function gradeCard(prev: CardState | null, grade: Grade, now = Date.now()
   } else if (grade === 'hard') {
     nextBox = Math.min(3, prevBox + 1) as 1 | 2 | 3 | 4 | 5;
   } else {
-    nextBox = Math.min(5, prevBox + 1) as 1 | 2 | 3 | 4 | 5;
+    // "I know it" reaches the "known" box on the first grade (matches the
+    // "In 7+ days" button hint), then keeps advancing 3 → 4 → 5 on repeats.
+    nextBox = Math.min(5, Math.max(prevBox + 1, KNOWN_BOX)) as 1 | 2 | 3 | 4 | 5;
   }
   const dueAt = now + BOX_INTERVAL_DAYS[nextBox] * DAY;
   const history = [...(prev?.history ?? []), { at: now, grade }];
@@ -120,6 +125,44 @@ export function dueCountForTopic(
   now = Date.now(),
 ): number {
   return dueCardsForTopic(topicId, questionCount, now).length;
+}
+
+export interface TopicProgress {
+  total: number;
+  /** Cards in box >= KNOWN_BOX. */
+  known: number;
+  /** Cards seen at least once but not yet known. */
+  learning: number;
+  /** Cards never graded. */
+  fresh: number;
+  /** Cards due now (orthogonal to known/learning/fresh). */
+  due: number;
+}
+
+/** Per-topic learning breakdown derived from the stored Leitner boxes. */
+export function topicProgress(
+  topicId: string,
+  questionCount: number,
+  now = Date.now(),
+): TopicProgress {
+  let known = 0;
+  let learning = 0;
+  let fresh = 0;
+  let due = 0;
+  for (let i = 0; i < questionCount; i++) {
+    migrateLegacyKey(topicId, i, now);
+    const state = loadCard(topicId, i);
+    if (isDue(state, now)) due++;
+    if (!state) fresh++;
+    else if (state.box >= KNOWN_BOX) known++;
+    else learning++;
+  }
+  return { total: questionCount, known, learning, fresh, due };
+}
+
+/** Days until a card in the given box becomes due again (for "next review"). */
+export function intervalDaysForBox(box: 1 | 2 | 3 | 4 | 5): number {
+  return BOX_INTERVAL_DAYS[box];
 }
 
 export function shuffle<T>(arr: T[], seed = Date.now()): T[] {
