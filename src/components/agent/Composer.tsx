@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Square } from 'lucide-react';
 import { useT } from '../../lib/i18n';
 
 interface Props {
   onSend: (text: string) => void;
   pending: boolean;
   initial?: string;
+  /** Abort the in-flight answer. When pending, the send button becomes Stop. */
+  onStop?: () => void;
 }
 
-export default function Composer({ onSend, pending, initial }: Props) {
+export default function Composer({ onSend, pending, initial, onStop }: Props) {
   const t = useT();
   const [value, setValue] = useState(initial ?? '');
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -57,14 +59,24 @@ export default function Composer({ onSend, pending, initial }: Props) {
           placeholder={t('agent.composerPlaceholder')}
           className="max-h-[220px] flex-1 resize-none bg-transparent py-1 text-sm text-text-strong outline-none placeholder:text-text-muted"
         />
-        <button
-          onClick={send}
-          disabled={!value.trim() || pending}
-          className="flex size-8 items-center justify-center rounded-lg bg-accent text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
-          aria-label={t('agent.send')}
-        >
-          <ArrowUp size={16} />
-        </button>
+        {pending && onStop ? (
+          <button
+            onClick={onStop}
+            className="flex size-8 items-center justify-center rounded-lg bg-accent text-white transition-opacity hover:opacity-90"
+            aria-label={t('agent.stop')}
+          >
+            <Square size={14} fill="currentColor" />
+          </button>
+        ) : (
+          <button
+            onClick={send}
+            disabled={!value.trim() || pending}
+            className="flex size-8 items-center justify-center rounded-lg bg-accent text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label={t('agent.send')}
+          >
+            <ArrowUp size={16} />
+          </button>
+        )}
       </div>
     </div>
   );

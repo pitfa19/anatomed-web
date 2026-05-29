@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ChatLog from '../components/agent/ChatLog';
 import Composer from '../components/agent/Composer';
@@ -76,6 +76,10 @@ export default function Agent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, consumeTokens } = useAuth();
   const [showBuyModal, setShowBuyModal] = useState(false);
+  // Abort controller for the in-flight turn (Stop button). `latestStream` keeps
+  // the partial answer so Stop can commit what streamed in so far.
+  const abortRef = useRef<AbortController | null>(null);
+  const latestStream = useRef('');
 
   // Pre-fill the composer when navigated to with `?prompt=...` (e.g. from
   // the home page agent bento tile). Strip the param after consuming so a
@@ -103,15 +107,9 @@ export default function Agent() {
     }
   }, [messages, summary, summarizedThrough]);
 
-  async function send(text: string) {
-    // Add the user message first so it's always visible — without this,
-    // an early return below (out-of-tokens, RPC error) makes the typed
-    // message look like it silently vanished.
-    const userMsg: ChatMessage = { id: uid(), role: 'user', text, ts: Date.now() };
-    const nextHistory = [...messages, userMsg];
-    setMessages(nextHistory);
-    setSeed(undefined);
-
+  // Run one assistant turn against `history` (which already ends with the
+  // user message to answer). Shared by send() and regenerate().
+  async function runTurn(history: ChatMessage[]) {
     // Token gate. Signed-out users keep the existing free-prototype path
     // (no balance attached) so the agent stays usable without an account.
     if (user) {
@@ -145,6 +143,9 @@ export default function Agent() {
 
     setPending(true);
     setStreamingText('');
+    latestStream.current = '';
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     let activeSummary = summary;
     let activeSummarizedThrough = summarizedThrough;
@@ -152,12 +153,9 @@ export default function Agent() {
     try {
       // Roll the window: anything older than the last WINDOW_SIZE messages
       // gets folded into the summary before the API call.
-      const targetSummarizedThrough = Math.max(0, nextHistory.length - WINDOW_SIZE);
+      const targetSummarizedThrough = Math.max(0, history.length - WINDOW_SIZE);
       if (targetSummarizedThrough > activeSummarizedThrough) {
-        const toSummarize = nextHistory.slice(
-          activeSummarizedThrough,
-          targetSummarizedThrough,
-        );
+        const toSummarize = history.slice(activeSummarizedThrough, targetSummarizedThrough);
         setStatus({ phase: 'summarizing' });
         activeSummary = await summarizeMessages(toSummarize, activeSummary, t.lang);
         activeSummarizedThrough = targetSummarizedThrough;
@@ -165,12 +163,16 @@ export default function Agent() {
         setSummarizedThrough(activeSummarizedThrough);
       }
 
-      const windowed = nextHistory.slice(activeSummarizedThrough);
+      const windowed = history.slice(activeSummarizedThrough);
       const replyText = await chat(windowed, {
         onStatus: setStatus,
-        onDelta: setStreamingText,
+        onDelta: (s) => {
+          latestStream.current = s;
+          setStreamingText(s);
+        },
         summary: activeSummary || undefined,
         lang: t.lang,
+        signal: controller.signal,
       });
       const replyMsg: ChatMessage = {
         id: uid(),
@@ -180,6 +182,17 @@ export default function Agent() {
       };
       setMessages((m) => [...m, replyMsg]);
     } catch (err) {
+      // Stop button: keep whatever streamed in so far, no error bubble.
+      if (controller.signal.aborted) {
+        const partial = latestStream.current.trim();
+        if (partial) {
+          setMessages((m) => [
+            ...m,
+            { id: uid(), role: 'assistant', text: latestStream.current, ts: Date.now() },
+          ]);
+        }
+        return;
+      }
       const errText =
         err instanceof MissingApiKeyError
           ? t('agent.missingApiKey')
@@ -194,7 +207,34 @@ export default function Agent() {
       setPending(false);
       setStatus(null);
       setStreamingText('');
+      abortRef.current = null;
     }
+  }
+
+  async function send(text: string) {
+    // Add the user message first so it's always visible — without this,
+    // an early return inside runTurn (out-of-tokens, RPC error) makes the
+    // typed message look like it silently vanished.
+    const userMsg: ChatMessage = { id: uid(), role: 'user', text, ts: Date.now() };
+    const nextHistory = [...messages, userMsg];
+    setMessages(nextHistory);
+    setSeed(undefined);
+    await runTurn(nextHistory);
+  }
+
+  function regenerate() {
+    if (pending) return;
+    // Drop the trailing assistant message(s) and re-run from the last user turn.
+    let end = messages.length;
+    while (end > 0 && messages[end - 1]?.role === 'assistant') end--;
+    if (end === 0) return;
+    const history = messages.slice(0, end);
+    setMessages(history);
+    void runTurn(history);
+  }
+
+  function stop() {
+    abortRef.current?.abort();
   }
 
   function reset() {
@@ -226,13 +266,14 @@ export default function Agent() {
             pending={pending}
             status={status}
             streamingText={streamingText}
+            onRegenerate={regenerate}
           />
         )}
       </div>
       {user && user.credits > 0 && user.credits <= LOW_BALANCE_THRESHOLD && (
         <LowBalanceBanner credits={user.credits} onBuy={() => setShowBuyModal(true)} />
       )}
-      <Composer onSend={send} pending={pending} initial={seed} />
+      <Composer onSend={send} pending={pending} initial={seed} onStop={stop} />
       <OutOfTokensModal
         open={showBuyModal}
         onClose={() => setShowBuyModal(false)}

@@ -1,8 +1,18 @@
-import { Suspense, lazy, memo, useEffect, useRef, type ReactNode } from 'react';
+import { Suspense, lazy, memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
-import { Bot, BookOpen, ChevronRight, Loader2, Search, User } from 'lucide-react';
+import {
+  Bot,
+  BookOpen,
+  Check,
+  ChevronRight,
+  Copy,
+  Loader2,
+  RefreshCw,
+  Search,
+  User,
+} from 'lucide-react';
 import type { Anatomy3DConfig, ChatMessage } from '../../lib/types';
 import type { ToolStatus } from '../../lib/agent';
 import { useT } from '../../lib/i18n';
@@ -17,6 +27,17 @@ interface Props {
   /** The answer currently streaming in, if any. Rendered as a live assistant
    *  bubble; empty while the model is still thinking / running a tool. */
   streamingText?: string;
+  /** Re-run the last user turn (shown under the last assistant message). */
+  onRegenerate?: () => void;
+}
+
+// Text to put on the clipboard: drop the machine-only `anatomy-3d` fenced
+// block (it's a render directive, not something a student wants pasted).
+function toCopyText(md: string): string {
+  return md
+    .replace(/```anatomy-3d[\s\S]*?```/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 const TOOL_LABEL_KEYS: Record<string, TKey> = {
@@ -237,10 +258,17 @@ function Avatar({ role }: { role: 'user' | 'assistant' }) {
   );
 }
 
-export default function ChatLog({ messages, pending, status, streamingText }: Props) {
+export default function ChatLog({
+  messages,
+  pending,
+  status,
+  streamingText,
+  onRegenerate,
+}: Props) {
   const t = useT();
   const endRef = useRef<HTMLDivElement>(null);
   const streaming = pending && !!streamingText;
+  const lastId = messages[messages.length - 1]?.id;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -264,6 +292,14 @@ export default function ChatLog({ messages, pending, status, streamingText }: Pr
             <div className="mt-1 max-w-prose text-sm leading-relaxed text-text break-words">
               <Markdown text={m.text} t={t} />
             </div>
+            {m.role === 'assistant' && (
+              <MessageActions
+                text={m.text}
+                t={t}
+                canRegenerate={!pending && m.id === lastId && !!onRegenerate}
+                onRegenerate={onRegenerate}
+              />
+            )}
           </div>
         </div>
       ))}
@@ -290,6 +326,48 @@ export default function ChatLog({ messages, pending, status, streamingText }: Pr
         </div>
       )}
       <div ref={endRef} />
+    </div>
+  );
+}
+
+function MessageActions({
+  text,
+  t,
+  canRegenerate,
+  onRegenerate,
+}: {
+  text: string;
+  t: TFn;
+  canRegenerate: boolean;
+  onRegenerate?: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(toCopyText(text));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard blocked (insecure context / permissions) — no-op
+    }
+  }
+
+  const btn =
+    'inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs text-text-muted transition-colors hover:bg-surface-2 hover:text-text';
+
+  return (
+    <div className="mt-1.5 flex items-center gap-1">
+      <button onClick={copy} className={btn} aria-label={t('agent.copy')}>
+        {copied ? <Check size={13} /> : <Copy size={13} />}
+        <span>{copied ? t('agent.copied') : t('agent.copy')}</span>
+      </button>
+      {canRegenerate && (
+        <button onClick={onRegenerate} className={btn} aria-label={t('agent.regenerate')}>
+          <RefreshCw size={13} />
+          <span>{t('agent.regenerate')}</span>
+        </button>
+      )}
     </div>
   );
 }
