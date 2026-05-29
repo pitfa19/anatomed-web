@@ -109,20 +109,34 @@ Layered anatomy reveal: full skeleton at the top of the page; on scroll the musc
 
 ## Agent Architecture (`src/lib/agent.ts`, `src/routes/Agent.tsx`)
 
-### Hybrid model strategy
+### Model strategy — Sonnet drives the whole turn
 
-`chat()` runs a two-phase flow per user turn:
+`chat()` runs a single streaming loop, up to `MAX_TOOL_ITERATIONS = 5`, `max_tokens: 4096`, model `claude-sonnet-4-6`. Each turn streams; if `stop_reason === 'tool_use'`, the tool blocks run, the assistant turn + `tool_result` user turn are pushed, and the loop continues. The first text-only turn is the answer. An earlier Haiku-routing phase was **removed** (pure latency in a chat UX where the user is already watching a spinner — Sonnet picks tools fine on its own). Haiku 4.5 (`SUMMARY_MODEL`) now only does background rolling-window summarization.
 
-- **Phase 1 - Haiku 4.5 tool decision**, `max_tokens: 1024`. If `stop_reason === 'tool_use'`: tool block(s) run, push assistant turn + `tool_result` user turn, fall through. If text-only: **discard it**. Sonnet writes the answer fresh.
-- **Phase 2 - Sonnet 4.6 answer loop**, up to `MAX_TOOL_ITERATIONS = 5`, `max_tokens: 1024`. Returns first text-only response.
+Bilingual: `systemPromptFor(lang)` selects `SYSTEM_PROMPT_HR` / `SYSTEM_PROMPT_EN` from `ChatOptions.lang` (the UI language), so the agent answers in the active language. The HR prompt also enforces Croatian standard (no Serbian/Bosnian forms — *talas → val, vazduh → zrak, hiljadu → tisuću*).
 
-Why: Haiku is fast at routing (~400 ms); Sonnet writes consistently good prose. Trade-off: chitchat without tools pays one extra round-trip.
+### Streaming (SSE) — `streamAnthropic()`
 
-**Critical pitfall**: never return Haiku's text directly to the user.
+The answer streams token-by-token. `streamAnthropic(payload, onText, signal)` mirrors the dev-direct vs proxy split of `callAnthropic`:
 
-### Tool: `search_skripte` (`src/lib/tools.ts`)
+- **Dev (browser key set)**: the SDK's `messages.stream()` is consumed directly; `onText` gets each `(_, snapshot)` accumulated text.
+- **Prod (proxy)**: POSTs with `stream: true` to `/api/agent/chat`, which re-emits a tiny SSE feed — `event: delta` (text increment), one `event: final` (the full `Anthropic.Message`, so the tool-use loop can inspect `stop_reason`/`content`), or `event: error` (`{error, code}`; `missing_key` → `MissingApiKeyError`). The client accumulates deltas into a snapshot. The Vercel function aborts the upstream call if the browser disconnects.
 
-Fuzzy-matches against `data.allTerms` from the unified PDF index, returns up to 3 terms × 5 hits. Each hit gives a deep link `/docs?q=<term>&doc=<doc-filename>&page=<n>` - the agent must include this verbatim (system prompt forbids URL editing).
+`ChatOptions.onDelta(text)` reports the accumulated answer per delta; it's reset to `''` between tool iterations (the user-facing answer is the final post-tool turn). `ChatOptions.signal` aborts the in-flight request (Stop). `callAnthropic` (non-streaming) stays for `summarizeMessages`. The Anthropic SDK is **dev-only** — guarded by `import.meta.env.DEV` + dynamic `import()`, so it's dead-code-eliminated from the prod bundle (verify: no `anthropic-ai` strings in `dist/assets/*.js`).
+
+### Tools (`src/lib/tools.ts`)
+
+Two tools, both usable in one turn:
+
+- **`search_skripte`** — fuzzy-matches `data.allTerms` from the unified PDF index, returns up to 3 terms × 5 hits. Each hit gives a deep link `/docs?q=<term>&doc=<doc-filename>&page=<n>` the agent must include verbatim (system prompt forbids URL editing) → the **References** chips.
+- **`prikaz_3d`** — renders an inline 3D widget (`InlineAnatomy3D`) for spatial questions. Takes `{title, parts[]}`; `resolveQueryToParts` resolves each part against the catalog, expanding group aliases ("Foot bones", "Cervical spine", …) into all members. Returns `{title, focus, extras[], unmatched[], expanded?}`. The agent echoes that JSON in a fenced ` ```anatomy-3d ` block; `ChatLog`'s markdown `code` override parses it into the widget (and shows a quiet 3D-loading placeholder while the block is still streaming in). Unmatched parts surface via the localized `agent.notFound` label.
+
+### Chat UI (`Agent.tsx` + `ChatLog.tsx`)
+
+- **Streaming bubble**: while `pending`, a live assistant bubble renders `streamingText` with a blinking caret; before any text it shows the `PendingIndicator` (thinking / tool chip). Markdown is **memoized per message** (`Markdown` = `memo`) so streaming re-renders don't re-parse completed messages.
+- **Message actions** (`MessageActions`): Copy (strips the `anatomy-3d` block via `toCopyText`), and Regenerate on the last assistant message. While streaming, the composer's Send button becomes **Stop** (`onStop` → `AbortController.abort()`); the partial answer is kept, no error bubble.
+- **Suggested prompts** in the empty state **send on click** (not just pre-fill). The `?prompt=` deep-link seed still pre-fills the composer.
+- `send()` and `regenerate()` share a `runTurn(history)` core. Regenerate drops the trailing assistant message(s) and re-runs from the last user turn.
 
 ### Rolling-window context
 
@@ -134,15 +148,17 @@ Fuzzy-matches against `data.allTerms` from the unified PDF index, returns up to 
 
 Before `send()`: if `nextHistory.length - summarizedThrough > 6`, call `summarizeMessages()` (Haiku, ~400-token cap) on the older messages and merge into `summary`. Pass `summary` to `chat()` (prepended to system prompt). API receives at most 6 raw messages. `reset()` clears all three fields. Backwards-compat: a v1 array-only payload still loads.
 
-### Status callback + Croatian directive
+### Status callback + formatting directive
 
-`chat()` accepts `onStatus(status: ToolStatus)` - `null | {phase: 'thinking'} | {phase: 'tool', name, input} | {phase: 'summarizing'}`. `Agent.tsx` renders it as a chip via `ChatLog`'s `PendingIndicator`. Cleared in the `finally` block.
+`chat()` accepts `onStatus(status: ToolStatus)` - `null | {phase: 'thinking'} | {phase: 'tool', name, input} | {phase: 'summarizing'}`. `Agent.tsx` renders it as a chip via `ChatLog`'s `PendingIndicator` (only until the first streamed delta arrives, after which the streaming bubble takes over). Cleared in the `finally` block.
 
-System prompt enforces Croatian standard (no Serbian/Bosnian forms - *talas → val, vazduh → zrak, hiljadu → tisuću*), no markdown tables, bullet lists with **bold** labels, no emoji, 4–8 lines + max-4 reference chips. If formatting changes, also update the markdown components in `src/components/agent/ChatLog.tsx`.
+Both system prompts forbid markdown tables, require bullet lists with **bold** labels, no emoji, ~4–8 lines + max-4 reference chips. If formatting rules change, also update the markdown component overrides in `src/components/agent/ChatLog.tsx`.
 
-### Security caveat
+### Security posture
 
-`new Anthropic({ apiKey, dangerouslyAllowBrowser: true })` ships the key to every visitor. Fine for local prototyping. Before deploying, route LLM calls through a backend (or Vercel Function).
+The Anthropic SDK is **dev-only**: when `VITE_ANTHROPIC_API_KEY` is set, plain `npm run dev` calls Anthropic directly from the browser (`dangerouslyAllowBrowser: true`). `import.meta.env.DEV` gates this so the SDK is dead-code-eliminated from production builds. **Prod routes every LLM call through `/api/agent/chat`** (a Vercel Node function holding `ANTHROPIC_API_KEY` server-side). Same pattern in `aiGenerate.ts` → `/api/decks/generate`.
+
+⚠️ Remaining hole: the proxy **trusts the entire client payload** (model, system, tools, messages) and has no server-side token gate — anyone can POST arbitrary prompts and bill them to the deployer's key. There's a `TODO(server-side gate)` in `api/agent/chat.ts`; close it (re-check the user's balance via the service role, pin the model/system) before any non-demo deploy.
 
 ## Docs Deep Linking (`src/routes/Docs.tsx`)
 
