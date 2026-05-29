@@ -71,6 +71,7 @@ export default function Agent() {
   );
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<ToolStatus>(null);
+  const [streamingText, setStreamingText] = useState('');
   const [seed, setSeed] = useState<string | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, consumeTokens } = useAuth();
@@ -143,6 +144,7 @@ export default function Agent() {
     }
 
     setPending(true);
+    setStreamingText('');
 
     let activeSummary = summary;
     let activeSummarizedThrough = summarizedThrough;
@@ -166,6 +168,7 @@ export default function Agent() {
       const windowed = nextHistory.slice(activeSummarizedThrough);
       const replyText = await chat(windowed, {
         onStatus: setStatus,
+        onDelta: setStreamingText,
         summary: activeSummary || undefined,
         lang: t.lang,
       });
@@ -190,6 +193,7 @@ export default function Agent() {
     } finally {
       setPending(false);
       setStatus(null);
+      setStreamingText('');
     }
   }
 
@@ -217,7 +221,12 @@ export default function Agent() {
         {messages.length === 0 ? (
           <EmptyState onSend={send} t={t} />
         ) : (
-          <ChatLog messages={messages} pending={pending} status={status} />
+          <ChatLog
+            messages={messages}
+            pending={pending}
+            status={status}
+            streamingText={streamingText}
+          />
         )}
       </div>
       {user && user.credits > 0 && user.credits <= LOW_BALANCE_THRESHOLD && (

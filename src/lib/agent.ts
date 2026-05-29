@@ -15,15 +15,34 @@ const DEV_BROWSER_KEY: string | undefined =
     ? (import.meta.env.VITE_ANTHROPIC_API_KEY as string | undefined)
     : undefined;
 
-let browserClientPromise: Promise<{
-  messages: { create(p: Anthropic.MessageCreateParamsNonStreaming): Promise<Anthropic.Message> };
-}> | null = null;
+// Structural type for just the bits we call. Typing this as the full
+// `Anthropic` instance makes `tsc -b` try to resolve the SDK as a referenced
+// project (TS5083), so we keep it minimal — same reason the original only
+// typed `create`.
+interface BrowserAnthropic {
+  messages: {
+    create(p: Anthropic.MessageCreateParamsNonStreaming): Promise<Anthropic.Message>;
+    stream(
+      p: Anthropic.MessageCreateParamsNonStreaming,
+      options?: { signal?: AbortSignal },
+    ): {
+      on(event: 'text', cb: (delta: string, snapshot: string) => void): unknown;
+      finalMessage(): Promise<Anthropic.Message>;
+    };
+  };
+}
 
-function getBrowserClient() {
+let browserClientPromise: Promise<BrowserAnthropic> | null = null;
+
+function getBrowserClient(): Promise<BrowserAnthropic> | null {
   if (!DEV_BROWSER_KEY) return null;
   if (!browserClientPromise) {
     browserClientPromise = import('@anthropic-ai/sdk').then(
-      (mod) => new mod.default({ apiKey: DEV_BROWSER_KEY, dangerouslyAllowBrowser: true }),
+      (mod) =>
+        new mod.default({
+          apiKey: DEV_BROWSER_KEY,
+          dangerouslyAllowBrowser: true,
+        }) as unknown as BrowserAnthropic,
     );
   }
   return browserClientPromise;
@@ -56,6 +75,82 @@ async function callAnthropic(
     throw new Error(`Agent proxy ${r.status}: ${body.error ?? r.statusText}`);
   }
   return (await r.json()) as Anthropic.Message;
+}
+
+// Streaming variant of `callAnthropic`. `onText` receives the full accumulated
+// answer text after each delta (a *snapshot*, not the increment) so callers can
+// render the growing answer directly. Returns the final assembled message so the
+// tool-use loop can inspect `stop_reason` and `content`. Mirrors the dev-direct
+// vs proxy split of `callAnthropic`: locally the SDK streams over its own SSE;
+// in prod the Vercel function re-emits a tiny `delta`/`final`/`error` SSE feed.
+async function streamAnthropic(
+  payload: Anthropic.MessageCreateParamsNonStreaming,
+  onText: (snapshot: string) => void,
+  signal?: AbortSignal,
+): Promise<Anthropic.Message> {
+  const direct = getBrowserClient();
+  if (direct) {
+    const client = await direct;
+    const stream = client.messages.stream(payload, { signal });
+    stream.on('text', (_delta, snapshot) => onText(snapshot));
+    return await stream.finalMessage();
+  }
+
+  const r = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ...payload, stream: true }),
+    signal,
+  });
+  if (!r.ok || !r.body) {
+    let body: { error?: string; code?: string } = {};
+    try {
+      body = await r.json();
+    } catch {
+      // ignore
+    }
+    if (r.status === 500 && body.code === 'missing_key') {
+      throw new MissingApiKeyError();
+    }
+    throw new Error(`Agent proxy ${r.status}: ${body.error ?? r.statusText}`);
+  }
+
+  const reader = r.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+  let acc = '';
+  let finalMsg: Anthropic.Message | null = null;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    // SSE frames are separated by a blank line.
+    let sep: number;
+    while ((sep = buf.indexOf('\n\n')) !== -1) {
+      const frame = buf.slice(0, sep);
+      buf = buf.slice(sep + 2);
+      const event = /^event:\s*(.+)$/m.exec(frame)?.[1]?.trim();
+      const data = /^data:\s*([\s\S]+)$/m.exec(frame)?.[1];
+      if (!event || data == null) continue;
+      if (event === 'delta') {
+        const piece = (JSON.parse(data) as { text?: string }).text;
+        if (piece) {
+          acc += piece;
+          onText(acc);
+        }
+      } else if (event === 'final') {
+        finalMsg = JSON.parse(data) as Anthropic.Message;
+      } else if (event === 'error') {
+        const e = JSON.parse(data) as { error?: string; code?: string };
+        if (e.code === 'missing_key') throw new MissingApiKeyError();
+        throw new Error(e.error ?? 'Agent stream error');
+      }
+    }
+  }
+
+  if (!finalMsg) throw new Error('Agent stream ended without a final message.');
+  return finalMsg;
 }
 
 // Sonnet drives the whole user-facing turn (tool decisions + final prose).
@@ -289,11 +384,17 @@ export type ToolStatus =
 
 export interface ChatOptions {
   onStatus?: (status: ToolStatus) => void;
+  /** Called with the full accumulated answer text after each streamed delta,
+   * so the UI can render the answer as it arrives. Reset to '' between tool
+   * iterations (the visible answer is the final, post-tool turn). */
+  onDelta?: (text: string) => void;
   /** Rolling summary of older messages (those outside the window). When
    * provided, prepended to the system prompt as background context. */
   summary?: string;
   /** UI language; selects the system-prompt + summary language. */
   lang?: Lang;
+  /** Abort the in-flight request (Stop button). */
+  signal?: AbortSignal;
 }
 
 export async function summarizeMessages(
@@ -334,7 +435,7 @@ export async function chat(
   history: ChatMessage[],
   opts: ChatOptions = {},
 ): Promise<string> {
-  const { onStatus, summary, lang = 'hr' } = opts;
+  const { onStatus, onDelta, summary, lang = 'hr', signal } = opts;
 
   const basePrompt = systemPromptFor(lang);
   const summaryHeading =
@@ -377,22 +478,29 @@ export async function chat(
   try {
     for (let i = 0; i < MAX_TOOL_ITERATIONS; i++) {
       onStatus?.({ phase: 'thinking' });
-      const response = await callAnthropic({
-        model: ANSWER_MODEL,
-        // Generous budget so a `prikaz_3d` response with a 27-part group
-        // (~1k tokens of JSON the model must echo verbatim in the
-        // `anatomy-3d` block) plus prose + references still fits without
-        // hitting `max_tokens` and truncating mid-output.
-        max_tokens: 4096,
-        system,
-        tools: TOOL_DEFINITIONS,
-        messages,
-      });
+      const response = await streamAnthropic(
+        {
+          model: ANSWER_MODEL,
+          // Generous budget so a `prikaz_3d` response with a 27-part group
+          // (~1k tokens of JSON the model must echo verbatim in the
+          // `anatomy-3d` block) plus prose + references still fits without
+          // hitting `max_tokens` and truncating mid-output.
+          max_tokens: 4096,
+          system,
+          tools: TOOL_DEFINITIONS,
+          messages,
+        },
+        (snapshot) => onDelta?.(snapshot),
+        signal,
+      );
 
       if (response.stop_reason === 'tool_use') {
         messages.push({ role: 'assistant', content: response.content });
         const toolResults = await runToolBlocks(response.content);
         messages.push({ role: 'user', content: toolResults });
+        // Drop any pre-tool partial text; the user-facing answer is the
+        // next (post-tool) turn, which streams in fresh.
+        onDelta?.('');
         continue;
       }
 
