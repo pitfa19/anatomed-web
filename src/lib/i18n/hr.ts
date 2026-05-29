@@ -395,6 +395,7 @@ const hr = {
     loading3d: 'Učitavam 3D…',
     loadingCatalog: 'Učitavam katalog…',
     cannotLoad3d: 'Nije moguće učitati 3D model za odabrane dijelove.',
+    notFound: 'Ne nalazim: {parts}',
     openInViewer: 'Otvori u 3D pregledniku',
     open3d: 'Otvori 3D',
     thinking: 'Razmišljam',
