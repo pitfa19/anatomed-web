@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   BookOpen,
@@ -13,6 +13,7 @@ import {
   User as UserIcon,
   LogIn,
   Coins,
+  Loader2,
 } from 'lucide-react';
 import { cn } from './lib/cn';
 import { useTheme } from './lib/theme';
@@ -226,8 +227,18 @@ export default function App() {
         </div>
       </header>
       <main className={cn('relative flex-1 overflow-hidden', onHome && 'overflow-y-auto')}>
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
+    </div>
+  );
+}
+
+function RouteFallback() {
+  return (
+    <div className="flex h-full items-center justify-center text-text-muted">
+      <Loader2 size={20} className="animate-spin" />
     </div>
   );
 }
