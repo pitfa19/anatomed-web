@@ -23,7 +23,7 @@ const en: Dict = {
     openNav: 'Open navigation',
   },
   home: {
-    eyebrow: 'Anatom3d · for medical students',
+    eyebrow: 'Anatom3D · for medical students',
     subhead:
       'Your anatomy notes, a 3D model, and an AI agent in one place. Runs in the browser, nothing to install.',
     openNotes: 'Open notes',
