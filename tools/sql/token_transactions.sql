@@ -1,11 +1,19 @@
--- AI token pricing — Supabase schema additions
+-- AI usage ledger — Supabase schema
 --
 -- Run this once against the `anatom3d` Supabase project (id `uafyfwyyqzunabpuftue`)
 -- via the SQL editor in the dashboard. Idempotent so re-running is safe.
 --
+-- NOTE (2026-05): the app moved from a purchasable credit balance to a flat
+-- DAILY TOKEN BUDGET (see CLAUDE.md, "Auth + daily AI usage"). This table is
+-- now reused as a *usage log*: the server (api/_gate.ts) writes one
+-- `consumption` row per AI call with `delta = -<real Anthropic tokens>`, and
+-- "used today" = sum(-delta) since UTC midnight. The `purchase`/`signup_grant`
+-- kinds, the `package_id`/`price_eur` columns, the `users.credits` column and
+-- the `consume_tokens` RPC below are LEGACY/unused — left in place (harmless),
+-- so no migration is needed and no new columns are required for the budget.
+--
 -- Mirrors the permissive RLS posture used by `public.users` — fine for the
--- hackathon trust model, NOT fine for production. Tighten alongside the
--- auth-shim replacement (CLAUDE.md, "Auth + credits").
+-- hackathon trust model, NOT fine for production.
 
 -- 1. Transaction ledger ------------------------------------------------------
 

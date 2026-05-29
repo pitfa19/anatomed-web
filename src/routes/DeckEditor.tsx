@@ -20,10 +20,10 @@ import {
 } from '../lib/userDecks';
 import { generateCards } from '../lib/aiGenerate';
 import type { GeneratedCard } from '../lib/aiGenerate';
+import { DailyLimitError, AuthRequiredError } from '../lib/agentErrors';
 import { cn } from '../lib/cn';
 import { useAuth } from '../lib/AuthContext';
-import OutOfTokensModal from '../components/ai/OutOfTokensModal';
-import { FEATURE_LABEL_KEY } from '../lib/packages';
+import { nextDailyReset } from '../lib/usage';
 import { useT, plural } from '../lib/i18n';
 
 export default function DeckEditor() {
@@ -53,8 +53,7 @@ export default function DeckEditor() {
   const [aiError, setAIError] = useState<string | null>(null);
   const [aiCards, setAICards] = useState<GeneratedCard[]>([]);
   const [aiSelected, setAISelected] = useState<Set<number>>(new Set());
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const { user, consumeTokens } = useAuth();
+  const { user } = useAuth();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -109,23 +108,28 @@ export default function DeckEditor() {
 
   async function handleAIGenerate() {
     if (!aiTopic.trim()) return;
-    if (user) {
-      const result = await consumeTokens('deck_generate');
-      if (!result.ok) {
-        setShowBuyModal(true);
-        return;
-      }
-    }
     setAILoading(true);
     setAIError(null);
     setAICards([]);
     setAISelected(new Set());
     try {
-      const cards = await generateCards(aiTopic.trim(), aiCount);
+      // The daily-usage gate is server-authoritative (api/decks/generate);
+      // we just forward the user id and translate the gate's errors.
+      const cards = await generateCards(aiTopic.trim(), aiCount, user?.id);
       setAICards(cards);
       setAISelected(new Set(cards.map((_, i) => i)));
     } catch (e) {
-      setAIError(e instanceof Error ? e.message : String(e));
+      if (e instanceof DailyLimitError) {
+        const resetAt = nextDailyReset().toLocaleTimeString(
+          t.lang === 'hr' ? 'hr-HR' : 'en-GB',
+          { hour: '2-digit', minute: '2-digit' },
+        );
+        setAIError(t('common.dailyLimitReached', { time: resetAt }));
+      } else if (e instanceof AuthRequiredError) {
+        setAIError(t('agent.signInRequired'));
+      } else {
+        setAIError(e instanceof Error ? e.message : String(e));
+      }
     } finally {
       setAILoading(false);
     }
@@ -440,11 +444,6 @@ export default function DeckEditor() {
           </ul>
         )}
       </section>
-      <OutOfTokensModal
-        open={showBuyModal}
-        onClose={() => setShowBuyModal(false)}
-        featureLabel={t(FEATURE_LABEL_KEY.deck_generate)}
-      />
     </div>
   );
 }

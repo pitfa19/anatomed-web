@@ -16,6 +16,8 @@ const hr = {
     retry: 'Pokušaj ponovno',
     search: 'Pretraži',
     aiTokens: 'AI tokena',
+    dailyLimitReached:
+      'Potrošio/la si današnju AI kvotu. Obnavlja se u {time}. 3D model, skripte i ručno dodane kartice ostaju besplatni.',
   },
   nav: {
     home: 'Početna',
@@ -72,30 +74,6 @@ const hr = {
       'Prototip s četiri alata - pretragom skripti, agentom, ponavljanjem i 3D viewerom - prije nego što UI prijeđe u Unity. Slobodno klikaj okolo.',
     welcomeOk: 'U redu',
   },
-  ai: {
-    featureAgentChat: 'AI razgovor',
-    featureDeckGenerate: 'AI generiranje pitanja',
-    blurbStarter: 'Za povremeno korištenje',
-    blurbStandard: 'Mjesečni paket za prosječnog studenta',
-    blurbPro: 'Intenzivno korištenje tijekom ispitnih rokova',
-    recommended: 'Najpopularnije',
-    buy: 'Kupi',
-    tokensSuffix: 'tokena',
-    tokensAdded: 'Dodano {n} AI tokena.',
-    purchaseError: 'Greška prilikom kupnje.',
-    lowHeadline: 'Tokeni su pri kraju',
-    notEnoughFor: 'Nema dovoljno tokena za {feature}',
-    notEnoughDefault: 'Nema dovoljno AI tokena',
-    tokensExplain:
-      'AI dio aplikacije (tutor, generiranje pitanja) troši tokene. Sve ostalo — 3D model, skripte, ručno dodana pitanja — radi besplatno.',
-    currentBalance: 'Trenutno stanje:',
-    demoNote: 'Demo — klik = uplata. Bez automatske obnove i skrivenih troškova.',
-    remainingTokens: 'Preostalo {n} {unit}.',
-    tokenOne: 'token',
-    tokenFew: 'tokena',
-    tokenMany: 'tokena',
-    topUp: 'Dopuni',
-  },
   auth: {
     signIn: 'Prijava',
     signUp: 'Registracija',
@@ -108,15 +86,12 @@ const hr = {
   profile: {
     title: 'Profil',
     logout: 'Odjava',
-    balanceLabel: 'Trenutno stanje',
-    buyTokens: 'Kupi AI tokene',
-    history: 'Moje kupnje i potrošnja',
-    noRecords: 'Nema zapisa još.',
-    txSignupGrant: 'Besplatni početni paket',
-    txPurchase: 'Kupnja',
-    txConsumption: 'Potrošnja',
-    txRefund: 'Povrat',
-    txManualAdjust: 'Ručna prilagodba',
+    usageTitle: 'Dnevna AI potrošnja',
+    usageTokensToday: 'tokena iskorišteno danas',
+    usageRemaining: 'preostalo {n}',
+    usageResets: 'Obnavlja se u {time}',
+    usageExplain:
+      'AI razgovor i generiranje pitanja dijele jednu dnevnu kvotu tokena, kao Claude. Sve ostalo — 3D model, skripte, ručno dodane kartice — uvijek je besplatno.',
   },
   revise: {
     back: 'Natrag',
@@ -414,9 +389,6 @@ const hr = {
     suggested2: 'Razlika između neurocraniuma i viscerocraniuma?',
     suggested3: 'Generiraj 5 pitanja iz Skripte A1.',
     suggested4: 'Otvori stranicu o vaskularizaciji leđa.',
-    creditCheckError: 'Greška pri provjeri kredita: {error}',
-    noCredits:
-      'Nemaš dovoljno kredita za AI razgovor. Otvori prozor za kupnju ili idi na Profil.',
     signInRequired: 'Prijavi se za korištenje asistenta.',
     missingApiKey:
       'API ključ nije postavljen na poslužitelju. Dodaj `ANTHROPIC_API_KEY` u Vercel env vars (ili u `.env.local` za `vercel dev`).',

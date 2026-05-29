@@ -10,6 +10,8 @@ const en: Dict = {
     retry: 'Try again',
     search: 'Search',
     aiTokens: 'AI tokens',
+    dailyLimitReached:
+      "You've used today's AI allowance. It resets at {time}. The 3D model, notes and manually-added cards stay free.",
   },
   nav: {
     home: 'Home',
@@ -66,30 +68,6 @@ const en: Dict = {
       'A prototype with four tools — notes search, agent, revision and a 3D viewer — before the UI moves into Unity. Feel free to click around.',
     welcomeOk: 'Got it',
   },
-  ai: {
-    featureAgentChat: 'AI chat',
-    featureDeckGenerate: 'AI question generation',
-    blurbStarter: 'For occasional use',
-    blurbStandard: 'A monthly pack for the average student',
-    blurbPro: 'Heavy use during exam season',
-    recommended: 'Most popular',
-    buy: 'Buy',
-    tokensSuffix: 'tokens',
-    tokensAdded: 'Added {n} AI tokens.',
-    purchaseError: 'Something went wrong during purchase.',
-    lowHeadline: 'Running low on tokens',
-    notEnoughFor: 'Not enough tokens for {feature}',
-    notEnoughDefault: 'Not enough AI tokens',
-    tokensExplain:
-      'The AI part of the app (tutor, question generation) uses tokens. Everything else — the 3D model, notes, manually added questions — is free.',
-    currentBalance: 'Current balance:',
-    demoNote: 'Demo — a click counts as payment. No auto-renewal, no hidden costs.',
-    remainingTokens: '{n} {unit} remaining.',
-    tokenOne: 'token',
-    tokenFew: 'tokens',
-    tokenMany: 'tokens',
-    topUp: 'Top up',
-  },
   auth: {
     signIn: 'Sign in',
     signUp: 'Sign up',
@@ -102,15 +80,12 @@ const en: Dict = {
   profile: {
     title: 'Profile',
     logout: 'Log out',
-    balanceLabel: 'Current balance',
-    buyTokens: 'Buy AI tokens',
-    history: 'My purchases and usage',
-    noRecords: 'No records yet.',
-    txSignupGrant: 'Free starter pack',
-    txPurchase: 'Purchase',
-    txConsumption: 'Usage',
-    txRefund: 'Refund',
-    txManualAdjust: 'Manual adjustment',
+    usageTitle: 'Daily AI usage',
+    usageTokensToday: 'tokens used today',
+    usageRemaining: '{n} left',
+    usageResets: 'Resets at {time}',
+    usageExplain:
+      'AI chat and question generation share one daily token budget, like Claude. Everything else — the 3D model, notes, manually added cards — is always free.',
   },
   revise: {
     back: 'Back',
@@ -408,9 +383,6 @@ const en: Dict = {
     suggested2: 'Difference between the neurocranium and the viscerocranium?',
     suggested3: 'Generate 5 questions from Skripta A1.',
     suggested4: 'Open the page about the vascularization of the back.',
-    creditCheckError: 'Error checking credits: {error}',
-    noCredits:
-      "You don't have enough credits for AI chat. Open the purchase window or go to Profile.",
     signInRequired: 'Sign in to use the assistant.',
     missingApiKey:
       'The API key is not set on the server. Add `ANTHROPIC_API_KEY` to your Vercel env vars (or to `.env.local` for `vercel dev`).',

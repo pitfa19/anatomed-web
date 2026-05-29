@@ -1,4 +1,5 @@
 import type Anthropic from '@anthropic-ai/sdk';
+import { DailyLimitError, AuthRequiredError } from './agentErrors';
 
 export interface GeneratedCard {
   q: string;
@@ -70,7 +71,11 @@ async function generateCardsDirect(topic: string, count: number): Promise<Genera
   );
 }
 
-export async function generateCards(topic: string, count = 8): Promise<GeneratedCard[]> {
+export async function generateCards(
+  topic: string,
+  count = 8,
+  userId?: string,
+): Promise<GeneratedCard[]> {
   if (DEV_BROWSER_KEY) {
     return generateCardsDirect(topic, count);
   }
@@ -78,7 +83,7 @@ export async function generateCards(topic: string, count = 8): Promise<Generated
   const res = await fetch('/api/decks/generate', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ topic, count }),
+    body: JSON.stringify({ topic, count, userId }),
   });
 
   let body: GenerateResponse;
@@ -89,6 +94,9 @@ export async function generateCards(topic: string, count = 8): Promise<Generated
   }
 
   if (!res.ok) {
+    // Typed gate errors so the UI can show a localized, actionable message.
+    if (body.code === 'daily_limit' || body.code === 'no_tokens') throw new DailyLimitError();
+    if (body.code === 'auth_required') throw new AuthRequiredError();
     if (body.code === 'missing_key') {
       throw new Error(
         'API ključ nije postavljen na poslužitelju. Dodaj `ANTHROPIC_API_KEY` u Vercel env vars (ili u `.env.local` za `vercel dev`).',

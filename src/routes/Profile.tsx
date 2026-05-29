@@ -1,19 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Coins, History, LogOut, Sparkles, User } from 'lucide-react';
+import { LogOut, User, Zap } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
-import { PACKAGES, FEATURE_LABEL_KEY, type PackageId } from '../lib/packages';
-import type { TokenTransaction } from '../lib/transactions';
-import PackageCard from '../components/ai/PackageCard';
+import {
+  DAILY_TOKEN_LIMIT,
+  LOW_REMAINING_FRACTION,
+  formatTokens,
+  nextDailyReset,
+} from '../lib/usage';
+import { cn } from '../lib/cn';
 import { useT } from '../lib/i18n';
-import type { TFn } from '../lib/i18n';
 
 export default function Profile() {
   const t = useT();
-  const { user, loading, logout, purchasePackage, transactions } = useAuth();
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
-  const [busyId, setBusyId] = useState<PackageId | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate('/login', { replace: true });
@@ -21,19 +22,14 @@ export default function Profile() {
 
   if (loading || !user) return null;
 
-  const buy = async (id: PackageId) => {
-    setBusyId(id);
-    try {
-      await purchasePackage(id);
-      const pkg = PACKAGES.find((p) => p.id === id)!;
-      setToast(t('ai.tokensAdded', { n: pkg.tokens }));
-      window.setTimeout(() => setToast(null), 2200);
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : t('ai.purchaseError'));
-    } finally {
-      setBusyId(null);
-    }
-  };
+  const used = Math.min(user.tokensUsedToday, DAILY_TOKEN_LIMIT);
+  const remaining = Math.max(0, DAILY_TOKEN_LIMIT - user.tokensUsedToday);
+  const pct = Math.min(100, Math.round((user.tokensUsedToday / DAILY_TOKEN_LIMIT) * 100));
+  const low = remaining <= DAILY_TOKEN_LIMIT * LOW_REMAINING_FRACTION;
+  const resetAt = nextDailyReset().toLocaleTimeString(t.lang === 'hr' ? 'hr-HR' : 'en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <div className="mx-auto h-full w-full max-w-2xl overflow-y-auto px-4 py-8 sm:px-6">
@@ -59,106 +55,40 @@ export default function Profile() {
             <LogOut size={13} /> {t('profile.logout')}
           </button>
         </div>
-
-        <div className="mt-5 flex items-center gap-3 rounded-xl border border-border bg-surface-2 px-4 py-3">
-          <Coins size={20} className="text-accent-2" />
-          <div>
-            <div className="text-xs text-text-muted">{t('profile.balanceLabel')}</div>
-            <div className="text-2xl font-semibold text-text-strong">
-              {user.credits}{' '}
-              <span className="text-sm font-normal text-text-muted">{t('common.aiTokens')}</span>
-            </div>
-          </div>
-        </div>
       </section>
 
-      {/* Buy tokens */}
+      {/* Daily AI usage */}
       <section className="mt-6 rounded-2xl border border-border bg-surface p-5">
         <div className="flex items-center gap-2 text-text-strong">
-          <Sparkles size={16} className="text-accent" />
-          <h2 className="text-sm font-semibold">{t('profile.buyTokens')}</h2>
+          <Zap size={16} className="text-accent" />
+          <h2 className="text-sm font-semibold">{t('profile.usageTitle')}</h2>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {PACKAGES.map((p) => (
-            <PackageCard
-              key={p.id}
-              pkg={p}
-              busy={busyId !== null}
-              busyThis={busyId === p.id}
-              onBuy={buy}
-              recommended={p.id === 'standard'}
-            />
-          ))}
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className="text-2xl font-semibold text-text-strong">{formatTokens(used)}</span>
+          <span className="text-sm text-text-muted">/ {formatTokens(DAILY_TOKEN_LIMIT)}</span>
+          <span className="text-xs text-text-muted">{t('profile.usageTokensToday')}</span>
         </div>
 
-        {toast && (
-          <div className="mt-4 rounded-md border border-border bg-surface-2 px-3 py-2 text-xs text-text">
-            {toast}
-          </div>
-        )}
-      </section>
-
-      {/* Transaction history */}
-      <section className="mt-6 rounded-2xl border border-border bg-surface p-5">
-        <div className="flex items-center gap-2 text-text-strong">
-          <History size={16} className="text-accent-2" />
-          <h2 className="text-sm font-semibold">{t('profile.history')}</h2>
+        {/* Progress bar */}
+        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2">
+          <div
+            className={cn('h-full rounded-full transition-all', low ? 'bg-warn' : 'bg-accent')}
+            style={{ width: `${pct}%` }}
+          />
         </div>
-        {transactions.length === 0 ? (
-          <p className="mt-2 text-xs text-text-muted">{t('profile.noRecords')}</p>
-        ) : (
-          <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface-2">
-            {transactions.slice(0, 20).map((tx) => (
-              <TransactionRow key={tx.id} tx={tx} t={t} />
-            ))}
-          </ul>
-        )}
+
+        <div className="mt-2 flex items-center justify-between text-xs">
+          <span className="text-text-muted">{t('profile.usageResets', { time: resetAt })}</span>
+          <span className={cn('font-medium', low ? 'text-warn' : 'text-text-muted')}>
+            {t('profile.usageRemaining', { n: formatTokens(remaining) })}
+          </span>
+        </div>
+
+        <p className="mt-4 text-[11px] leading-relaxed text-text-muted">
+          {t('profile.usageExplain')}
+        </p>
       </section>
     </div>
   );
-}
-
-function TransactionRow({ tx, t }: { tx: TokenTransaction; t: TFn }) {
-  const ts = new Date(tx.created_at).toLocaleString(t.lang === 'hr' ? 'hr-HR' : 'en-GB', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-  const positive = tx.delta > 0;
-  const label = labelForKind(tx, t);
-  return (
-    <li className="flex items-center gap-3 px-3 py-2 text-xs">
-      <div className="min-w-0 flex-1">
-        <div className="truncate font-medium text-text">{label}</div>
-        <div className="text-[11px] text-text-muted">{ts}</div>
-      </div>
-      <div
-        className={`shrink-0 font-semibold ${positive ? 'text-accent-2' : 'text-text-muted'}`}
-      >
-        {positive ? '+' : ''}
-        {tx.delta}
-      </div>
-      <div className="w-14 shrink-0 text-right text-[11px] text-text-muted">
-        = {tx.balance_after}
-      </div>
-    </li>
-  );
-}
-
-function labelForKind(tx: TokenTransaction, t: TFn): string {
-  switch (tx.kind) {
-    case 'signup_grant':
-      return t('profile.txSignupGrant');
-    case 'purchase': {
-      const pkg = tx.package_id ? PACKAGES.find((p) => p.id === tx.package_id) : null;
-      const price = tx.price_eur != null ? ` · ${tx.price_eur} €` : '';
-      return `${t('profile.txPurchase')}${pkg ? ` (${pkg.label})` : ''}${price}`;
-    }
-    case 'consumption':
-      return tx.feature ? t(FEATURE_LABEL_KEY[tx.feature]) : t('profile.txConsumption');
-    case 'refund':
-      return t('profile.txRefund');
-    case 'manual_adjust':
-      return t('profile.txManualAdjust');
-  }
 }

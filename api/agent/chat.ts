@@ -5,28 +5,16 @@
 // Two layers:
 //   1. Hard caps — model allowlist, max_tokens clamp, message/body size caps.
 //      Bounds the cost of any single call regardless of who makes it.
-//   2. Token gate — every call must carry a `userId` of a real `public.users`
-//      row (checked via the Supabase SERVICE ROLE, bypassing RLS). Billed
-//      (Sonnet answer) calls decrement one credit; unbilled (Haiku summary)
-//      calls just need a valid user. Anonymous callers get 401.
-//
-// Fails CLOSED: if the service-role env isn't configured the gate denies
-// rather than reopening the hole — so prod MUST set SUPABASE_SERVICE_ROLE_KEY
-// (+ SUPABASE_URL, or it falls back to VITE_SUPABASE_URL) alongside
-// ANTHROPIC_API_KEY.
+//   2. Usage gate — every call must carry a `userId` of a real `public.users`
+//      row (checked via the Supabase SERVICE ROLE). The user must have daily
+//      AI-token budget left; after the call we record its real token cost.
+//      Anonymous callers get 401, over-budget users get 429. See `api/_gate.ts`.
 import Anthropic from '@anthropic-ai/sdk';
-import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { gateDaily, recordUsage } from '../_gate';
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const client = apiKey ? new Anthropic({ apiKey }) : null;
-
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const admin =
-  supabaseUrl && serviceKey
-    ? createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } })
-    : null;
 
 export const config = { runtime: 'nodejs', maxDuration: 60 };
 
@@ -36,56 +24,13 @@ const ALLOWED_MODELS = new Set([
   'claude-haiku-4-5',
   'claude-haiku-4-5-20251001',
 ]);
-// The user-facing answer model; Haiku calls are background summaries (free).
-const BILLED_MODEL = 'claude-sonnet-4-6';
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_MESSAGES = 64;
 const MAX_BODY_BYTES = 1_000_000;
-const TOKEN_COST = 1; // mirrors FEATURE_COST.agent_chat
 
-interface GateDenied {
-  status: number;
-  code: string;
-  error: string;
-}
-
-/** Returns null when the call may proceed, or a {status, code} to reject with.
- *  Billed calls atomically decrement one credit (race-safe via `gte`). */
-async function gate(userId: string | undefined, billed: boolean): Promise<GateDenied | null> {
-  if (!admin) {
-    return { status: 500, code: 'gate_unavailable', error: 'Token gate is not configured on the server.' };
-  }
-  if (!userId || typeof userId !== 'string') {
-    return { status: 401, code: 'auth_required', error: 'Sign in to use the assistant.' };
-  }
-  const { data: user, error } = await admin
-    .from('users')
-    .select('id, credits')
-    .eq('id', userId)
-    .maybeSingle();
-  if (error) {
-    return { status: 500, code: 'gate_error', error: error.message };
-  }
-  if (!user) {
-    return { status: 401, code: 'auth_required', error: 'Sign in to use the assistant.' };
-  }
-  if (!billed) return null; // valid user is enough for a free (summary) call
-
-  if ((user.credits ?? 0) < TOKEN_COST) {
-    return { status: 402, code: 'no_tokens', error: 'Not enough credits.' };
-  }
-  // Conditional decrement — only succeeds if credits are still sufficient,
-  // so concurrent requests can't drive the balance negative.
-  const { data: updated, error: uErr } = await admin
-    .from('users')
-    .update({ credits: user.credits - TOKEN_COST })
-    .eq('id', userId)
-    .gte('credits', TOKEN_COST)
-    .select('id')
-    .maybeSingle();
-  if (uErr) return { status: 500, code: 'gate_error', error: uErr.message };
-  if (!updated) return { status: 402, code: 'no_tokens', error: 'Not enough credits.' };
-  return null;
+/** Total tokens a finished message cost (what we meter against the budget). */
+function tokensOf(usage: Anthropic.Usage | undefined): number {
+  return (usage?.input_tokens ?? 0) + (usage?.output_tokens ?? 0);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -147,12 +92,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  // --- Token gate ---
-  const denied = await gate(userId, payload.model === BILLED_MODEL);
-  if (denied) {
-    res.status(denied.status).json({ error: denied.error, code: denied.code });
+  // --- Usage gate ---
+  const g = await gateDaily(userId);
+  if ('denied' in g) {
+    res.status(g.denied.status).json({ error: g.denied.error, code: g.denied.code });
     return;
   }
+  const usedToday = g.usedToday;
 
   // --- Streaming path: re-emit a tiny `delta`/`final`/`error` SSE feed ---
   if (wantsStream) {
@@ -177,6 +123,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
       const final = await stream.finalMessage();
       res.write(`event: final\ndata: ${JSON.stringify(final)}\n\n`);
+      // Meter the real token cost (await before ending so the write lands).
+      if (userId) await recordUsage(userId, tokensOf(final.usage), 'agent_chat', usedToday);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       res.write(`event: error\ndata: ${JSON.stringify({ error: message })}\n\n`);
@@ -188,6 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const response = await client.messages.create(payload);
+    if (userId) await recordUsage(userId, tokensOf(response.usage), 'agent_chat', usedToday);
     res.status(200).json(response);
   } catch (err) {
     const status = (err as { status?: number })?.status ?? 500;

@@ -2,6 +2,15 @@ import type Anthropic from '@anthropic-ai/sdk';
 import type { ChatMessage } from './types';
 import type { Lang } from './i18n';
 import { TOOL_DEFINITIONS, runTool } from './tools';
+import {
+  MissingApiKeyError,
+  DailyLimitError,
+  AuthRequiredError,
+  proxyError,
+} from './agentErrors';
+
+// Re-exported so existing consumers can keep importing from `agent`.
+export { MissingApiKeyError, DailyLimitError, AuthRequiredError };
 
 const PROXY_URL = '/api/agent/chat';
 
@@ -359,37 +368,6 @@ If \`prikaz_3d\` returns an \`error\` or \`unmatched\` is non-empty and leaves t
 
 function systemPromptFor(lang: Lang): string {
   return lang === 'en' ? SYSTEM_PROMPT_EN : SYSTEM_PROMPT_HR;
-}
-
-export class MissingApiKeyError extends Error {
-  constructor() {
-    super('ANTHROPIC_API_KEY is not set on the server.');
-    this.name = 'MissingApiKeyError';
-  }
-}
-
-/** Server token gate: the signed-in user is out of credits. */
-export class NoTokensError extends Error {
-  constructor() {
-    super('Not enough credits.');
-    this.name = 'NoTokensError';
-  }
-}
-
-/** Server token gate: no valid signed-in user (anonymous request rejected). */
-export class AuthRequiredError extends Error {
-  constructor() {
-    super('Sign in to use the assistant.');
-    this.name = 'AuthRequiredError';
-  }
-}
-
-/** Map a non-OK proxy response to a typed error the UI can react to. */
-function proxyError(status: number, body: { error?: string; code?: string }): Error {
-  if (body.code === 'missing_key') return new MissingApiKeyError();
-  if (body.code === 'no_tokens') return new NoTokensError();
-  if (body.code === 'auth_required') return new AuthRequiredError();
-  return new Error(`Agent proxy ${status}: ${body.error ?? 'request failed'}`);
 }
 
 const MAX_TOOL_ITERATIONS = 5;

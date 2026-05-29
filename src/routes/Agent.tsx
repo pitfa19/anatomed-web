@@ -2,19 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ChatLog from '../components/agent/ChatLog';
 import Composer from '../components/agent/Composer';
-import OutOfTokensModal from '../components/ai/OutOfTokensModal';
-import LowBalanceBanner from '../components/ai/LowBalanceBanner';
 import {
   chat,
   MissingApiKeyError,
-  NoTokensError,
+  DailyLimitError,
   AuthRequiredError,
   summarizeMessages,
   type ToolStatus,
 } from '../lib/agent';
 import type { ChatMessage } from '../lib/types';
 import { useAuth } from '../lib/AuthContext';
-import { LOW_BALANCE_THRESHOLD, FEATURE_LABEL_KEY } from '../lib/packages';
+import { nextDailyReset } from '../lib/usage';
 import { useT } from '../lib/i18n';
 import type { TKey, TFn } from '../lib/i18n';
 import { Sparkles } from 'lucide-react';
@@ -76,8 +74,7 @@ export default function Agent() {
   const [streamingText, setStreamingText] = useState('');
   const [seed, setSeed] = useState<string | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, refreshCredits } = useAuth();
-  const [showBuyModal, setShowBuyModal] = useState(false);
+  const { user, refreshUsage } = useAuth();
   // Abort controller for the in-flight turn (Stop button). `latestStream` keeps
   // the partial answer so Stop can commit what streamed in so far.
   const abortRef = useRef<AbortController | null>(null);
@@ -170,12 +167,20 @@ export default function Agent() {
         }
         return;
       }
-      // Out of credits — surface the buy modal, same as the old client gate.
-      if (err instanceof NoTokensError) {
-        setShowBuyModal(true);
+      // Daily AI budget spent — explain it resets, no purchase path.
+      if (err instanceof DailyLimitError) {
+        const resetAt = nextDailyReset().toLocaleTimeString(t.lang === 'hr' ? 'hr-HR' : 'en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
         setMessages((m) => [
           ...m,
-          { id: uid(), role: 'assistant', text: t('agent.noCredits'), ts: Date.now() },
+          {
+            id: uid(),
+            role: 'assistant',
+            text: t('common.dailyLimitReached', { time: resetAt }),
+            ts: Date.now(),
+          },
         ]);
         return;
       }
@@ -196,8 +201,8 @@ export default function Agent() {
       setStatus(null);
       setStreamingText('');
       abortRef.current = null;
-      // The server may have decremented credits — reconcile the header chip.
-      void refreshCredits();
+      // The server recorded this turn's token usage — refresh the meter.
+      void refreshUsage();
     }
   }
 
@@ -260,15 +265,7 @@ export default function Agent() {
           />
         )}
       </div>
-      {user && user.credits > 0 && user.credits <= LOW_BALANCE_THRESHOLD && (
-        <LowBalanceBanner credits={user.credits} onBuy={() => setShowBuyModal(true)} />
-      )}
       <Composer onSend={send} pending={pending} initial={seed} onStop={stop} />
-      <OutOfTokensModal
-        open={showBuyModal}
-        onClose={() => setShowBuyModal(false)}
-        featureLabel={t(FEATURE_LABEL_KEY.agent_chat)}
-      />
     </div>
   );
 }
