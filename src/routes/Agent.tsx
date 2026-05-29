@@ -215,7 +215,7 @@ export default function Agent() {
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {messages.length === 0 ? (
-          <EmptyState onPick={(text) => setSeed(text)} t={t} />
+          <EmptyState onSend={send} t={t} />
         ) : (
           <ChatLog messages={messages} pending={pending} status={status} />
         )}
@@ -233,7 +233,7 @@ export default function Agent() {
   );
 }
 
-function EmptyState({ onPick, t }: { onPick: (text: string) => void; t: TFn }) {
+function EmptyState({ onSend, t }: { onSend: (text: string) => void; t: TFn }) {
   return (
     <div className="mx-auto flex h-full max-w-2xl flex-col items-center justify-center gap-6 px-5 py-10 text-center">
       <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-white">
@@ -251,7 +251,7 @@ function EmptyState({ onPick, t }: { onPick: (text: string) => void; t: TFn }) {
           return (
             <button
               key={key}
-              onClick={() => onPick(text)}
+              onClick={() => onSend(text)}
               className="rounded-xl border border-border bg-surface p-3 text-left text-sm text-text transition-colors hover:border-accent/40 hover:bg-surface-2"
             >
               {text}
