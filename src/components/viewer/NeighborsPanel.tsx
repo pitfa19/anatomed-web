@@ -46,6 +46,7 @@ export default function NeighborsPanel({
   onToggleAll,
 }: Props) {
   const t = useT();
+  const sysLabel = (s: SystemMeta) => (t.lang === 'en' ? s.label_en : s.label_hr);
   const partsById = useMemo(() => {
     const m = new Map<string, Part>();
     for (const p of catalog.parts) m.set(p.id, p);
@@ -132,7 +133,7 @@ export default function NeighborsPanel({
               }
             >
               <span className="size-2 rounded-full" style={{ backgroundColor: g.system.tint }} />
-              <span>{g.system.label_hr}</span>
+              <span>{sysLabel(g.system)}</span>
               <span className="text-text-muted">·</span>
               <span>{g.rows.length}</span>
               {ticked > 0 && (
@@ -148,7 +149,7 @@ export default function NeighborsPanel({
       <div className="flex items-center justify-between px-1">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">
           {t('viewer.shown', { n: shownInSystem, total: totalInSystem })}
-          <span className="ml-1 text-text-muted/70 normal-case tracking-normal">· {activeGroup.system.label_hr}</span>
+          <span className="ml-1 text-text-muted/70 normal-case tracking-normal">· {sysLabel(activeGroup.system)}</span>
         </span>
         <div className="flex items-center gap-1">
           <button
@@ -157,8 +158,8 @@ export default function NeighborsPanel({
             aria-pressed={!canExpand}
             title={
               canExpand
-                ? t('viewer.showAllSystemTitle', { system: activeGroup.system.label_hr })
-                : t('viewer.clearSystemTitle', { system: activeGroup.system.label_hr })
+                ? t('viewer.showAllSystemTitle', { system: sysLabel(activeGroup.system) })
+                : t('viewer.clearSystemTitle', { system: sysLabel(activeGroup.system) })
             }
             className={
               'mr-0.5 flex h-9 items-center rounded-md border px-2 text-[11px] font-medium transition-colors lg:h-6 ' +

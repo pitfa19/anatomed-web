@@ -413,7 +413,7 @@ export default function Viewer() {
           <div className="flex items-start gap-2 rounded-xl border border-border bg-surface p-3">
             <div className="min-w-0 flex-1">
               <p className="text-[10px] uppercase tracking-wider text-text-muted">
-                {activeSystem.label_hr}
+                {t.lang === 'en' ? activeSystem.label_en : activeSystem.label_hr}
               </p>
               <p className="mt-1 text-base font-medium text-text-strong">{active.name_en}</p>
               {active.name_lat && active.name_lat !== active.name_en && (
@@ -671,6 +671,7 @@ function ModelLoadingOverlay() {
 }
 
 function SystemHints({ catalog }: { catalog: PartsCatalog }) {
+  const t = useT();
   return (
     <div className="grid gap-2 sm:grid-cols-2">
       {catalog.systems.map((s) => (
@@ -683,8 +684,12 @@ function SystemHints({ catalog }: { catalog: PartsCatalog }) {
             aria-hidden
             style={{ backgroundColor: s.tint }}
           />
-          <span className="font-medium text-text-strong">{s.label_hr}</span>
-          <span className="ml-auto text-xs text-text-muted">{s.label_en}</span>
+          <span className="font-medium text-text-strong">
+            {t.lang === 'en' ? s.label_en : s.label_hr}
+          </span>
+          <span className="ml-auto text-xs text-text-muted">
+            {t.lang === 'en' ? s.label_hr : s.label_en}
+          </span>
         </div>
       ))}
     </div>
